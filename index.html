@@ -232,6 +232,12 @@ function analyze(rows) {
       const issues = [];
       const registered = STEPS.filter(s => events.some(e => e.event === s));
 
+      // Validación de pasos completos — todos los pasos son obligatorios
+      const missingSteps = STEPS.slice(0, -1).filter(s => !registered.includes(s));
+      missingSteps.forEach(s => {
+        issues.push({ type: 'missing', msg: `Falta paso: ${s.split('-app_')[1]}` });
+      });
+
       // Validación geo — mismas condiciones de siempre
       const funnelEvents = STEPS
         .map(s => events.filter(e => e.event === s).sort((a,b) => a.time - b.time)[0])
@@ -241,13 +247,15 @@ function analyze(rows) {
         const p = funnelEvents[i-1], c = funnelEvents[i];
         const diff = (c.time - p.time) / 1000;
         if (p.city && c.city && p.city !== c.city && diff < CFG.minCityTravel)
-          issues.push({ msg: `📍 Ciudad imposible: ${tc(p.city)} → ${tc(c.city)} en ${Math.round(diff/60)}min` });
+          issues.push({ type: 'geo', msg: `📍 Ciudad imposible: ${tc(p.city)} → ${tc(c.city)} en ${Math.round(diff/60)}min` });
         if (p.state && c.state && p.state !== c.state && diff < CFG.minStateTravel)
-          issues.push({ msg: `🗺 Estado imposible: ${tc(p.state)} → ${tc(c.state)} en ${Math.round(diff/60)}min` });
+          issues.push({ type: 'geo', msg: `🗺 Estado imposible: ${tc(p.state)} → ${tc(c.state)} en ${Math.round(diff/60)}min` });
       }
 
-      const hasGeo   = issues.length > 0;
-      const status   = hasGeo ? 'geo' : 'clean';
+      const hasMissing = missingSteps.length > 0;
+      const hasGeo     = issues.some(i => i.type === 'geo');
+      // facturable = pasos completos + sin alerta geo
+      const status = hasMissing ? 'missing' : hasGeo ? 'geo' : 'clean';
       const cities   = [...new Set(funnelEvents.map(e => e.city).filter(Boolean))];
       return { id, status, registered, issues, cities };
     });
@@ -262,15 +270,15 @@ function renderUI() {
   document.getElementById('resultsSection').style.display = 'block';
   document.getElementById('uploadZone').style.display = 'none';
 
-  const total  = allResults.length;
-  const clean  = allResults.filter(r => r.status === 'clean').length;
-  const geo    = allResults.filter(r => r.status === 'geo').length;
-  const pct    = total > 0 ? Math.round(clean / total * 100) : 0;
+  const total   = allResults.length;
+  const clean   = allResults.filter(r => r.status === 'clean').length;
+  const geo     = allResults.filter(r => r.status === 'geo').length;
+  const pct     = total > 0 ? Math.round(clean / total * 100) : 0;
 
-  document.getElementById('statTotal').textContent     = total;
-  document.getElementById('statClean').textContent     = clean;
-  document.getElementById('statSuspicious').textContent= geo;
-  document.getElementById('statPct').textContent       = pct + '%';
+  document.getElementById('statTotal').textContent      = total;
+  document.getElementById('statClean').textContent      = clean;
+  document.getElementById('statSuspicious').textContent = geo;
+  document.getElementById('statPct').textContent        = pct + '%';
 
   setFilter('all');
 }
@@ -285,18 +293,20 @@ function setFilter(f, btn) {
                  : allResults;
 
   document.getElementById('tableBody').innerHTML = filtered.map(r => {
-    const isClean = r.status === 'clean';
-    const bc   = isClean ? 'badge-valid' : 'badge-warn';
-    const bt   = isClean ? '✓ Facturable' : '⚠ Alerta Geo';
-    const dot  = isClean ? 'dot-clean' : 'dot-geo';
+    const bc  = r.status === 'clean'   ? 'badge-valid' : 'badge-warn';
+    const bt  = r.status === 'clean'   ? '✓ Facturable'
+              : r.status === 'geo'     ? '⚠ Alerta Geo'
+              :                          '⚠ Pasos faltantes';
+    const dot = r.status === 'clean'   ? 'dot-clean' : 'dot-geo';
     const stepsHtml = STEPS.map(s => {
       const done = r.registered.includes(s);
       const label = s.split('-app_')[1] || s;
       return `<span style="color:${done?'var(--valid)':'var(--muted-soft)'};margin-right:6px">${done?'✓':'·'} ${label}</span>`;
     }).join('');
-    const issuesHtml = r.issues.length === 0
-      ? '<span style="color:var(--valid)">Sin alertas</span>'
-      : r.issues.map(i => `<div class="issue-item">${i.msg}</div>`).join('');
+    const geoIssues = r.issues.filter(i => i.type === 'geo');
+    const issuesHtml = geoIssues.length === 0
+      ? '<span style="color:var(--valid)">Sin alertas geo</span>'
+      : geoIssues.map(i => `<div class="issue-item">${i.msg}</div>`).join('');
     return `<tr>
       <td style="font-family:var(--mono);font-weight:600">${r.id}</td>
       <td><span class="badge ${bc}"><span class="dot ${dot}"></span>${bt}</span></td>
