@@ -76,7 +76,7 @@
 
   /* TABLE */
   .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  .table-scroll { overflow-x: auto; max-height: 600px; overflow-y: auto; }
+  .table-scroll { overflow-x: auto; max-height: 520px; overflow-y: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   thead { position: sticky; top: 0; z-index: 2; }
   th { background: var(--surface2); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.7px; border-bottom: 1px solid var(--border); }
@@ -89,9 +89,9 @@
   .badge-invalid { background: var(--invalid-bg); color: var(--invalid); }
   .badge-warn    { background: var(--warn-bg);    color: var(--warn); }
   .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-  .dot-valid   { background: var(--valid); }
-  .dot-invalid { background: var(--invalid); }
-  .dot-warn    { background: var(--warn); }
+  .dot-clean     { background: var(--valid); }
+  .dot-invalid   { background: var(--invalid); }
+  .dot-suspicious { background: var(--warn); }
 
   .issues-list { display: flex; flex-direction: column; gap: 2px; }
   .issue-item { font-size: 11px; color: var(--warn); }
@@ -100,6 +100,14 @@
   .filter-tabs { display: flex; gap: 6px; margin-bottom: 15px; }
   .tab { padding: 5px 13px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--muted); }
   .tab.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+  /* BUTTONS */
+  .btn { padding: 8px 16px; border-radius: var(--radius); font-weight: 600; font-size: 13px; cursor: pointer; border: none; transition: all 0.14s; font-family: var(--font); }
+  .btn-primary { background: var(--brand); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-danger { background: var(--invalid-bg); color: var(--invalid); border: 1px solid #FECACA; }
+
+  .export-row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -118,7 +126,7 @@
   <main class="main">
     <div class="page-header">
       <div class="page-title">Funnel Validator</div>
-      <button class="btn" style="background:var(--brand); color:#fff; padding:8px 16px; border-radius:8px; cursor:pointer; border:none; font-weight:600" onclick="document.getElementById('csvInput').click()">+ Cargar CSV</button>
+      <button class="btn btn-primary" onclick="document.getElementById('csvInput').click()">+ Cargar CSV</button>
     </div>
 
     <div class="kpi-grid" id="statsSection" style="display:none">
@@ -163,16 +171,19 @@
       <input type="file" accept=".csv" id="csvInput" style="display:none" />
       <div class="upload-icon-wrap" style="font-size:30px; margin-bottom:10px">📂</div>
       <h2>Arrastra tu archivo CSV aquí</h2>
-      <p>Se analizarán Step 5 y Completed Contratado</p>
+      <p>Análisis enfocado en Step 5 y Completed Contratado</p>
       <div class="upload-hint">📎 AppsFlyer ID · Event Name · Event Time · City · State</div>
     </div>
 
     <div id="resultsSection" style="display:none; margin-top:24px">
-      <div class="filter-tabs">
-        <button class="tab active" onclick="setFilter('all', this)">Todos</button>
-        <button class="tab" onclick="setFilter('clean', this)">✅ Facturables</button>
-        <button class="tab" onclick="setFilter('invalid', this)">✗ Inválidos/Sospechosos</button>
+      <div class="results-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
+        <div class="filter-tabs" style="margin-bottom:0">
+          <button class="tab active" onclick="setFilter('all', this)">Todos</button>
+          <button class="tab" onclick="setFilter('clean', this)">✅ Facturables</button>
+          <button class="tab" onclick="setFilter('invalid', this)">✗ Inválidos/Sospechosos</button>
+        </div>
       </div>
+      
       <div class="table-wrap">
         <div class="table-scroll">
           <table>
@@ -189,12 +200,17 @@
           </table>
         </div>
       </div>
+
+      <div class="export-row">
+        <button class="btn btn-ghost" onclick="exportCSV('all')">Exportar Todos</button>
+        <button class="btn btn-danger" onclick="exportCSV('invalid')">Exportar Inválidos</button>
+        <button class="btn btn-primary" onclick="exportCSV('clean')">Exportar Facturables</button>
+      </div>
     </div>
   </main>
 </div>
 
 <script>
-// FUNNEL: Solo Step 5 y Completed
 const STEPS = [
   'af_apertura_cuenta_en_linea_no_cliente-app_step_5',
   'af_apertura_cuenta_en_linea_no_cliente-app_completed_contratado'
@@ -232,12 +248,10 @@ function analyze(rows) {
     const registered = STEPS.filter(s => events.some(e => e.event === s));
     const missing = STEPS.filter(s => !registered.includes(s));
     
-    // Validar Funnel (Criterio 1)
     if (missing.length > 0) {
       issues.push({ type: 'error', msg: `Faltan pasos: ${missing.map(s => s.split('app_')[1]).join(', ')}` });
     }
 
-    // Validar Geo (Criterio 2)
     const sorted = events.sort((a, b) => a.time - b.time);
     for (let i = 1; i < sorted.length; i++) {
       const p = sorted[i-1], c = sorted[i];
@@ -254,15 +268,8 @@ function analyze(rows) {
     const hasWarn = issues.some(i => i.type === 'warn');
     const status = hasError ? 'invalid' : (hasWarn ? 'suspicious' : 'clean');
 
-    return {
-      id,
-      status,
-      isComplete: !hasError,
-      hasGeoIssue: hasWarn,
-      registered,
-      issues,
-      cities: [...new Set(events.map(e => e.city).filter(Boolean))]
-    };
+    return { id, status, isComplete: !hasError, hasGeoIssue: hasWarn, registered, issues, 
+             cities: [...new Set(events.map(e => e.city).filter(Boolean))] };
   });
 
   renderUI();
@@ -295,21 +302,44 @@ function setFilter(f, btn) {
                  f === 'clean' ? allResults.filter(r => r.status === 'clean') : 
                  allResults.filter(r => r.status !== 'clean');
 
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = filtered.map(r => {
+  document.getElementById('tableBody').innerHTML = filtered.map(r => {
     const bc = r.status === 'clean' ? 'badge-valid' : r.status === 'suspicious' ? 'badge-warn' : 'badge-invalid';
     const bt = r.status === 'clean' ? 'Facturable' : r.status === 'suspicious' ? 'Sospechoso' : 'Inválido';
-    
     return `
       <tr>
         <td style="font-family:var(--mono); font-weight:600">${r.id}</td>
         <td><span class="badge ${bc}"><span class="dot dot-${r.status}"></span>${bt}</span></td>
         <td style="font-size:11px">${STEPS.map(s => r.registered.includes(s) ? '✅' : '❌').join(' ')}</td>
-        <td style="font-size:11px; color:var(--muted); max-width:150px">${r.cities.join(' → ')}</td>
+        <td style="font-size:11px; color:var(--muted)">${r.cities.join(' → ')}</td>
         <td><div class="issues-list">${r.issues.map(i => `<div class="issue-item ${i.type}">${i.msg}</div>`).join('') || '<span style="color:var(--valid)">Sin problemas</span>'}</div></td>
       </tr>
     `;
   }).join('');
+}
+
+function exportCSV(which) {
+  let data = allResults;
+  if (which === 'clean') data = allResults.filter(r => r.status === 'clean');
+  if (which === 'invalid') data = allResults.filter(r => r.status !== 'clean');
+
+  const rows = [['AppsFlyer ID', 'Estado', 'Pasos OK', 'Ciudades', 'Problemas']];
+  data.forEach(r => {
+    rows.push([
+      r.id, 
+      r.status, 
+      r.registered.length + '/' + STEPS.length, 
+      r.cities.join(' > '), 
+      r.issues.map(i => i.msg).join(' | ')
+    ]);
+  });
+
+  const csvContent = rows.map(e => e.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+  const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`);
+  link.click();
 }
 </script>
 </body>
