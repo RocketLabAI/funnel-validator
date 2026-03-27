@@ -34,7 +34,6 @@
   .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
   .page-title{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.4px}
 
-  /* KPI — 4 cards ahora */
   .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
   .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;display:flex;align-items:flex-start;gap:12px}
   .kpi-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
@@ -99,7 +98,6 @@
       <button class="btn btn-primary" onclick="document.getElementById('csvInput').click()">+ Cargar CSV</button>
     </div>
 
-    <!-- KPI: 4 cards (sin "Faltan Pasos") -->
     <div class="kpi-grid" id="statsSection" style="display:none">
       <div class="kpi-card">
         <div class="kpi-icon purple">📂</div>
@@ -141,7 +139,6 @@
 
     <div id="resultsSection" style="display:none;margin-top:24px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
-        <!-- FILTROS: solo Todos, Alertas Geo, Facturables -->
         <div class="filter-tabs" style="margin-bottom:0">
           <button class="tab active" onclick="setFilter('all',this)">Todos</button>
           <button class="tab" onclick="setFilter('geo',this)">📍 Alertas Geo</button>
@@ -176,14 +173,14 @@
 </div>
 
 <script>
-// PASOS DEL FUNNEL — nuevo orden
+// ÚNICO CAMBIO: funnel de 2 pasos — step_5 y completed_contratado
 const STEPS = [
   'af_apertura_cuenta_en_linea_no_cliente-app_step_5',
   'af_apertura_cuenta_en_linea_no_cliente-app_completed_contratado'
 ];
-const FINAL_EVENT = STEPS[3];
+const FINAL_EVENT = STEPS[1];
 
-// Condiciones geográficas — sin cambios
+// Sin cambios
 const CFG = { minCityTravel: 3600, minStateTravel: 7200 };
 
 let allResults = [];
@@ -191,14 +188,12 @@ let allResults = [];
 document.getElementById('csvInput').addEventListener('change', e => {
   if (e.target.files[0]) {
     Papa.parse(e.target.files[0], {
-      header: true,
-      skipEmptyLines: true,
+      header: true, skipEmptyLines: true,
       complete: r => analyze(r.data)
     });
   }
 });
 
-// Drag & drop
 const uz = document.getElementById('uploadZone');
 uz.addEventListener('dragover', e => { e.preventDefault(); uz.style.borderColor = 'var(--brand)'; });
 uz.addEventListener('dragleave', () => { uz.style.borderColor = ''; });
@@ -223,20 +218,19 @@ function analyze(rows) {
     });
   });
 
-  // Solo procesar IDs que tienen el evento final
   allResults = Object.entries(byId)
     .filter(([, events]) => events.some(e => e.event === FINAL_EVENT))
     .map(([id, events]) => {
       const issues = [];
       const registered = STEPS.filter(s => events.some(e => e.event === s));
 
-      // Validación de pasos completos — todos los pasos son obligatorios
+      // Validación de pasos completos
       const missingSteps = STEPS.slice(0, -1).filter(s => !registered.includes(s));
       missingSteps.forEach(s => {
         issues.push({ type: 'missing', msg: `Falta paso: ${s.split('-app_')[1]}` });
       });
 
-      // Validación geo — mismas condiciones de siempre
+      // Validación geo — sin cambios
       const funnelEvents = STEPS
         .map(s => events.filter(e => e.event === s).sort((a,b) => a.time - b.time)[0])
         .filter(Boolean);
@@ -252,9 +246,8 @@ function analyze(rows) {
 
       const hasMissing = missingSteps.length > 0;
       const hasGeo     = issues.some(i => i.type === 'geo');
-      // facturable = pasos completos + sin alerta geo
-      const status = hasMissing ? 'missing' : hasGeo ? 'geo' : 'clean';
-      const cities   = [...new Set(funnelEvents.map(e => e.city).filter(Boolean))];
+      const status     = hasMissing ? 'missing' : hasGeo ? 'geo' : 'clean';
+      const cities     = [...new Set(funnelEvents.map(e => e.city).filter(Boolean))];
       return { id, status, registered, issues, cities };
     });
 
@@ -268,10 +261,10 @@ function renderUI() {
   document.getElementById('resultsSection').style.display = 'block';
   document.getElementById('uploadZone').style.display = 'none';
 
-  const total   = allResults.length;
-  const clean   = allResults.filter(r => r.status === 'clean').length;
-  const geo     = allResults.filter(r => r.status === 'geo').length;
-  const pct     = total > 0 ? Math.round(clean / total * 100) : 0;
+  const total = allResults.length;
+  const clean = allResults.filter(r => r.status === 'clean').length;
+  const geo   = allResults.filter(r => r.status === 'geo').length;
+  const pct   = total > 0 ? Math.round(clean / total * 100) : 0;
 
   document.getElementById('statTotal').textContent      = total;
   document.getElementById('statClean').textContent      = clean;
@@ -291,17 +284,17 @@ function setFilter(f, btn) {
                  : allResults;
 
   document.getElementById('tableBody').innerHTML = filtered.map(r => {
-    const bc  = r.status === 'clean'   ? 'badge-valid' : 'badge-warn';
-    const bt  = r.status === 'clean'   ? '✓ Facturable'
-              : r.status === 'geo'     ? '⚠ Alerta Geo'
-              :                          '⚠ Pasos faltantes';
-    const dot = r.status === 'clean'   ? 'dot-clean' : 'dot-geo';
+    const bc  = r.status === 'clean' ? 'badge-valid' : 'badge-warn';
+    const bt  = r.status === 'clean' ? '✓ Facturable'
+              : r.status === 'geo'   ? '⚠ Alerta Geo'
+              :                        '⚠ Pasos faltantes';
+    const dot = r.status === 'clean' ? 'dot-clean' : 'dot-geo';
     const stepsHtml = STEPS.map(s => {
-      const done = r.registered.includes(s);
+      const done  = r.registered.includes(s);
       const label = s.split('-app_')[1] || s;
       return `<span style="color:${done?'var(--valid)':'var(--muted-soft)'};margin-right:6px">${done?'✓':'·'} ${label}</span>`;
     }).join('');
-    const geoIssues = r.issues.filter(i => i.type === 'geo');
+    const geoIssues  = r.issues.filter(i => i.type === 'geo');
     const issuesHtml = geoIssues.length === 0
       ? '<span style="color:var(--valid)">Sin alertas geo</span>'
       : geoIssues.map(i => `<div class="issue-item">${i.msg}</div>`).join('');
@@ -321,8 +314,7 @@ function exportCSV(which) {
            : allResults;
   const rows = [['AppsFlyer ID','Estado','Pasos OK','Ciudades','Alertas Geo']];
   data.forEach(r => rows.push([
-    r.id,
-    r.status,
+    r.id, r.status,
     r.registered.length + '/' + STEPS.length,
     r.cities.map(tc).join(' > '),
     r.issues.map(i => i.msg).join(' | ')
