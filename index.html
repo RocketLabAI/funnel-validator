@@ -43,7 +43,7 @@
   .kpi-label{font-size:10.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px}
   .kpi-value{font-size:24px;font-weight:700;line-height:1;letter-spacing:-0.5px}
   .upload-zone{border:1.5px dashed var(--border);border-radius:var(--radius-lg);padding:40px;text-align:center;cursor:pointer;background:var(--surface2);transition:all 0.18s}
-  .upload-zone:hover{border-color:var(--brand);background:var(--brand-light)}
+  .upload-zone:hover,.upload-zone.drag-over{border-color:var(--brand);background:var(--brand-light)}
   .upload-zone h2{font-size:15px;font-weight:600;margin-bottom:6px}
   .upload-hint{margin-top:16px;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:6px 14px;border-radius:20px}
   .tabs-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
@@ -69,7 +69,9 @@
   .btn{padding:7px 14px;border-radius:var(--radius);font-weight:600;font-size:12.5px;cursor:pointer;border:none;font-family:var(--font)}
   .btn-primary{background:var(--brand);color:#fff}
   .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
-  .error-banner{background:var(--invalid-bg);border:1px solid #FECACA;color:var(--invalid);border-radius:var(--radius);padding:10px 14px;margin-bottom:14px;font-size:13px;display:none}
+  .msg{padding:12px 16px;border-radius:var(--radius);font-size:13px;margin-bottom:14px;display:none}
+  .msg-error{background:var(--invalid-bg);border:1px solid #FECACA;color:var(--invalid)}
+  .msg-info{background:var(--blue-bg);border:1px solid #BFDBFE;color:var(--blue)}
 </style>
 </head>
 <body>
@@ -87,30 +89,34 @@
       <div class="page-title">Funnel Validator — BBVA Colombia</div>
       <button class="btn btn-primary" onclick="document.getElementById('csvInput').click()">+ Cargar archivo</button>
     </div>
-    <div class="error-banner" id="errorBanner"></div>
 
+    <div class="msg msg-error" id="msgError"></div>
+    <div class="msg msg-info"  id="msgInfo"></div>
+
+    <!-- KPIs -->
     <div class="kpi-section" id="statsSection" style="display:none">
       <div>
         <div class="kpi-row-label">Global</div>
         <div class="kpi-grid-5">
-          <div class="kpi-card"><div class="kpi-icon purple">📂</div><div class="kpi-body"><div class="kpi-label">Total IDs</div><div class="kpi-value" id="statTotal">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icon green">✅</div><div class="kpi-body"><div class="kpi-label">Facturables</div><div class="kpi-value" style="color:var(--valid)" id="statClean">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icon amber">⚠️</div><div class="kpi-body"><div class="kpi-label">Pasos faltantes</div><div class="kpi-value" style="color:var(--warn)" id="statMissing">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icon red">❌</div><div class="kpi-body"><div class="kpi-label">Excluidos (no CO)</div><div class="kpi-value" style="color:var(--invalid)" id="statExcluded">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icon blue">💰</div><div class="kpi-body"><div class="kpi-label">% Facturable</div><div class="kpi-value" style="color:var(--brand)" id="statPct">0%</div></div></div>
+          <div class="kpi-card"><div class="kpi-icon purple">📂</div><div class="kpi-body"><div class="kpi-label">Total IDs</div><div class="kpi-value" id="sTotal">0</div></div></div>
+          <div class="kpi-card"><div class="kpi-icon green">✅</div><div class="kpi-body"><div class="kpi-label">Facturables</div><div class="kpi-value" style="color:var(--valid)" id="sClean">0</div></div></div>
+          <div class="kpi-card"><div class="kpi-icon amber">⚠️</div><div class="kpi-body"><div class="kpi-label">Pasos faltantes</div><div class="kpi-value" style="color:var(--warn)" id="sMissing">0</div></div></div>
+          <div class="kpi-card"><div class="kpi-icon red">❌</div><div class="kpi-body"><div class="kpi-label">Excluidos (no CO)</div><div class="kpi-value" style="color:var(--invalid)" id="sExcluded">0</div></div></div>
+          <div class="kpi-card"><div class="kpi-icon blue">💰</div><div class="kpi-body"><div class="kpi-label">% Facturable</div><div class="kpi-value" style="color:var(--brand)" id="sPct">0%</div></div></div>
         </div>
       </div>
       <div>
         <div class="kpi-row-label">Por Producto (solo facturables)</div>
         <div class="kpi-grid-3">
-          <div class="kpi-card"><div class="kpi-icon indigo">📘</div><div class="kpi-body"><div class="kpi-label">Cuenta Digital (libreton)</div><div class="kpi-value" style="color:#3730A3" id="statLibreton">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icon blue">💼</div><div class="kpi-body"><div class="kpi-label">Nómina</div><div class="kpi-value" style="color:var(--blue)" id="statNomina">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icon amber">❓</div><div class="kpi-body"><div class="kpi-label">Otro / Sin clasificar</div><div class="kpi-value" style="color:var(--warn)" id="statOther">0</div></div></div>
+          <div class="kpi-card"><div class="kpi-icon indigo">📘</div><div class="kpi-body"><div class="kpi-label">Cuenta Digital (libreton)</div><div class="kpi-value" style="color:#3730A3" id="sLibreton">0</div></div></div>
+          <div class="kpi-card"><div class="kpi-icon blue">💼</div><div class="kpi-body"><div class="kpi-label">Nómina</div><div class="kpi-value" style="color:var(--blue)" id="sNomina">0</div></div></div>
+          <div class="kpi-card"><div class="kpi-icon amber">❓</div><div class="kpi-body"><div class="kpi-label">Otro / Sin clasificar</div><div class="kpi-value" style="color:var(--warn)" id="sOther">0</div></div></div>
         </div>
       </div>
     </div>
 
-    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('csvInput').click()">
+    <!-- Upload -->
+    <div class="upload-zone" id="uploadZone">
       <input type="file" accept=".csv,.tsv,.txt" id="csvInput" style="display:none"/>
       <div style="font-size:32px;margin-bottom:10px">📂</div>
       <h2>Arrastrá tu archivo aquí</h2>
@@ -118,6 +124,7 @@
       <div class="upload-hint">step_6 · completed_aprobado · completed_contratado · Country CO</div>
     </div>
 
+    <!-- Results -->
     <div id="resultsSection" style="display:none;margin-top:20px">
       <div class="tabs-row">
         <div class="tab-group" id="statusTabs">
@@ -137,24 +144,18 @@
       <div class="table-wrap">
         <div class="table-scroll">
           <table>
-            <thead>
-              <tr>
-                <th>AppsFlyer ID</th>
-                <th>Estado</th>
-                <th>Producto</th>
-                <th>Pasos registrados</th>
-                <th>País</th>
-                <th>af_content</th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>AppsFlyer ID</th><th>Estado</th><th>Producto</th>
+              <th>Pasos registrados</th><th>País</th><th>af_content</th>
+            </tr></thead>
             <tbody id="tableBody"></tbody>
           </table>
         </div>
       </div>
       <div class="export-row">
-        <button class="btn btn-ghost" onclick="exportCSV('all')">Exportar Todos</button>
-        <button class="btn btn-ghost" onclick="exportCSV('libreton')">Exportar Cuenta Digital</button>
-        <button class="btn btn-ghost" onclick="exportCSV('nomina')">Exportar Nómina</button>
+        <button class="btn btn-ghost"   onclick="exportCSV('all')">Exportar Todos</button>
+        <button class="btn btn-ghost"   onclick="exportCSV('libreton')">Exportar Cuenta Digital</button>
+        <button class="btn btn-ghost"   onclick="exportCSV('nomina')">Exportar Nómina</button>
         <button class="btn btn-primary" onclick="exportCSV('clean')">Exportar Facturables</button>
       </div>
     </div>
@@ -162,84 +163,139 @@
 </div>
 
 <script>
-// ── Config ───────────────────────────────────────────────────────────────────
-// step_1: OPTIONAL (no penaliza si falta)
-// step_6, completed_aprobado, completed_contratado: OBLIGATORIOS
+// ── Config ────────────────────────────────────────────────────────────────────
 const OPTIONAL_STEPS = ['apertura_cuenta_en_linea_no_cliente-app_step_1'];
 const REQUIRED_STEPS = [
   'apertura_cuenta_en_linea_no_cliente-app_step_6',
   'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado',
   'apertura_cuenta_en_linea_no_cliente-app_completed_contratado'
 ];
-const ALL_STEPS    = [...OPTIONAL_STEPS, ...REQUIRED_STEPS];
-const FINAL_EVENT  = 'apertura_cuenta_en_linea_no_cliente-app_completed_contratado';
-const REQUIRED_CC  = 'CO';
+const ALL_STEPS   = [...OPTIONAL_STEPS, ...REQUIRED_STEPS];
+const FINAL_EVENT = 'apertura_cuenta_en_linea_no_cliente-app_completed_contratado';
+const REQUIRED_CC = 'CO';
 
 let allResults   = [];
 let activeStatus  = 'all';
 let activeProduct = 'all';
 
-// ── File reading ─────────────────────────────────────────────────────────────
-document.getElementById('csvInput').addEventListener('change', e => { if(e.target.files[0]) readFile(e.target.files[0]); e.target.value=''; });
-const uz = document.getElementById('uploadZone');
-uz.addEventListener('dragover', e => { e.preventDefault(); uz.style.borderColor='var(--brand)'; });
-uz.addEventListener('dragleave', () => { uz.style.borderColor=''; });
-uz.addEventListener('drop', e => { e.preventDefault(); uz.style.borderColor=''; if(e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); });
+// ── Upload zone wiring ────────────────────────────────────────────────────────
+const csvInput  = document.getElementById('csvInput');
+const uploadZone = document.getElementById('uploadZone');
 
-function readFile(file) {
+// Click on zone or button both trigger file picker
+uploadZone.addEventListener('click', () => csvInput.click());
+
+csvInput.addEventListener('change', e => {
+  if (e.target.files && e.target.files[0]) processFile(e.target.files[0]);
+  e.target.value = ''; // allow re-selecting same file
+});
+
+uploadZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  e.stopPropagation();
+  uploadZone.classList.add('drag-over');
+});
+uploadZone.addEventListener('dragleave', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag-over');
+});
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  e.stopPropagation();
+  uploadZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files && e.dataTransfer.files[0];
+  if (file) processFile(file);
+});
+
+// ── File processing ───────────────────────────────────────────────────────────
+function processFile(file) {
+  showInfo('Leyendo archivo: ' + file.name + ' (' + Math.round(file.size/1024) + ' KB)...');
+
+  // Step 1: read as binary to detect encoding & delimiter
   const reader = new FileReader();
-  reader.onload = evt => {
-    const ab = evt.target.result;
+  reader.onerror = () => showError('No se pudo leer el archivo.');
+  reader.onload  = evt => {
     let text;
-    try { text = new TextDecoder('utf-8',{fatal:true}).decode(ab); }
-    catch(e) { text = new TextDecoder('latin-1').decode(ab); }
-    const first = text.split(/\r?\n/)[0]||'';
-    const delim = ((first.match(/\t/g)||[]).length > (first.match(/,/g)||[]).length) ? '\t' : ',';
+    const bytes = new Uint8Array(evt.target.result);
+
+    // Try UTF-8 first; fall back to latin-1
+    try {
+      text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    } catch (e) {
+      text = new TextDecoder('iso-8859-1').decode(bytes);
+    }
+
+    // Strip BOM if present
+    if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+
+    // Detect delimiter from first line
+    const firstLine = text.split(/\r?\n/)[0] || '';
+    const tabs   = (firstLine.match(/\t/g) || []).length;
+    const commas = (firstLine.match(/,/g)  || []).length;
+    const delimiter = tabs > commas ? '\t' : ',';
+
+    showInfo('Archivo leído. Detectado: ' + (delimiter === '\t' ? 'TSV (tabs)' : 'CSV (comas)') + '. Procesando…');
+
+    // Step 2: parse with PapaParse using the decoded string
     Papa.parse(text, {
-      header:true, skipEmptyLines:true, delimiter:delim,
-      complete: r => {
-        if(!r.data||!r.data.length){ showError('Archivo vacío.'); return; }
-        const cols = Object.keys(r.data[0]||{}).map(c=>c.trim());
-        if(!cols.includes('AppsFlyer ID')||!cols.includes('Event Name')){
-          showError('Columnas esperadas no encontradas. Detectadas: '+cols.slice(0,8).join(', '));
+      header: true,
+      skipEmptyLines: true,
+      delimiter: delimiter,
+      transformHeader: h => h.trim(),   // strip any whitespace from header names
+      transform: v => (v || '').trim(), // strip whitespace from values
+      complete: result => {
+        hideInfo();
+        if (!result.data || result.data.length === 0) {
+          showError('El archivo está vacío o no pudo ser parseado.');
           return;
         }
-        hideError();
-        analyze(r.data);
+        const cols = Object.keys(result.data[0] || {});
+        if (!cols.includes('AppsFlyer ID') || !cols.includes('Event Name')) {
+          showError('No se encontraron las columnas esperadas. Columnas detectadas: ' + cols.slice(0, 10).join(', '));
+          return;
+        }
+        analyze(result.data);
       },
-      error: err => showError('Error: '+err.message)
+      error: err => showError('Error al parsear: ' + (err.message || err))
     });
   };
   reader.readAsArrayBuffer(file);
 }
 
-// ── Analysis ─────────────────────────────────────────────────────────────────
+// ── Analysis ──────────────────────────────────────────────────────────────────
 function analyze(rows) {
-  const norm = rows.map(row => {
-    const o={};
-    for(const [k,v] of Object.entries(row)) o[k.trim()]=(v||'').trim();
-    return o;
-  });
-
+  // Group events by AppsFlyer ID
   const byId = {};
-  norm.forEach(row => {
-    const id=row['AppsFlyer ID'], event=row['Event Name'];
-    if(!id||!event) return;
-    if(!byId[id]) byId[id]=[];
-    byId[id].push({ event:event.trim(), value:row['Event Value']||'', country:(row['Country Code']||'').toUpperCase() });
+  rows.forEach(row => {
+    const id    = row['AppsFlyer ID'];
+    const event = row['Event Name'];
+    if (!id || !event) return;
+    if (!byId[id]) byId[id] = [];
+    byId[id].push({
+      event:   event,
+      value:   row['Event Value']   || '',
+      country: (row['Country Code'] || '').toUpperCase()
+    });
   });
 
+  // Only keep IDs that fired the final event
   allResults = Object.entries(byId)
-    .filter(([,evs]) => evs.some(e => e.event === FINAL_EVENT))
+    .filter(([, evs]) => evs.some(e => e.event === FINAL_EVENT))
     .map(([id, evs]) => {
       const finalRow  = evs.find(e => e.event === FINAL_EVENT);
       const country   = finalRow ? finalRow.country : '';
       const validCC   = country === REQUIRED_CC;
+
       const registered      = ALL_STEPS.filter(s => evs.some(e => e.event === s));
       const missingRequired = REQUIRED_STEPS.filter(s => !registered.includes(s));
-      const product   = classifyProduct(finalRow ? finalRow.value : '');
+
       const afContent = getAfContent(finalRow ? finalRow.value : '');
-      const status    = !validCC ? 'excluded' : missingRequired.length ? 'missing' : 'clean';
+      const product   = classifyProduct(afContent);
+
+      const status = !validCC           ? 'excluded'
+                   : missingRequired.length ? 'missing'
+                   :                         'clean';
+
       return { id, status, country, registered, missingRequired, product, afContent };
     });
 
@@ -247,117 +303,140 @@ function analyze(rows) {
 }
 
 function getAfContent(val) {
-  try { return JSON.parse(val).af_content||''; } catch(e){ return ''; }
+  try { return JSON.parse(val).af_content || ''; } catch(e) { return ''; }
 }
-function classifyProduct(val) {
-  const c = getAfContent(val).toLowerCase();
-  if(c.includes('libreton')) return 'libreton';
-  if(c.includes('nomina')||c.includes('nómina')) return 'nomina';
+function classifyProduct(afContent) {
+  const c = afContent.toLowerCase();
+  if (c.includes('libreton')) return 'libreton';
+  if (c.includes('nomina') || c.includes('nómina')) return 'nomina';
   return 'other';
 }
 
 // ── Render ────────────────────────────────────────────────────────────────────
 function renderUI() {
-  document.getElementById('statsSection').style.display  = 'flex';
+  document.getElementById('statsSection').style.display   = 'flex';
   document.getElementById('resultsSection').style.display = 'block';
-  document.getElementById('uploadZone').style.display    = 'none';
+  document.getElementById('uploadZone').style.display     = 'none';
 
   const total    = allResults.length;
-  const clean    = allResults.filter(r=>r.status==='clean').length;
-  const missing  = allResults.filter(r=>r.status==='missing').length;
-  const excluded = allResults.filter(r=>r.status==='excluded').length;
-  const fact     = allResults.filter(r=>r.status==='clean');
+  const clean    = allResults.filter(r => r.status === 'clean').length;
+  const missing  = allResults.filter(r => r.status === 'missing').length;
+  const excluded = allResults.filter(r => r.status === 'excluded').length;
+  const fact     = allResults.filter(r => r.status === 'clean');
 
-  document.getElementById('statTotal').textContent    = total;
-  document.getElementById('statClean').textContent    = clean;
-  document.getElementById('statMissing').textContent  = missing;
-  document.getElementById('statExcluded').textContent = excluded;
-  document.getElementById('statPct').textContent      = total ? Math.round(clean/total*100)+'%' : '0%';
-  document.getElementById('statLibreton').textContent = fact.filter(r=>r.product==='libreton').length;
-  document.getElementById('statNomina').textContent   = fact.filter(r=>r.product==='nomina').length;
-  document.getElementById('statOther').textContent    = fact.filter(r=>r.product==='other').length;
+  document.getElementById('sTotal').textContent    = total;
+  document.getElementById('sClean').textContent    = clean;
+  document.getElementById('sMissing').textContent  = missing;
+  document.getElementById('sExcluded').textContent = excluded;
+  document.getElementById('sPct').textContent      = total ? Math.round(clean / total * 100) + '%' : '0%';
+  document.getElementById('sLibreton').textContent = fact.filter(r => r.product === 'libreton').length;
+  document.getElementById('sNomina').textContent   = fact.filter(r => r.product === 'nomina').length;
+  document.getElementById('sOther').textContent    = fact.filter(r => r.product === 'other').length;
+
   renderTable();
 }
 
 function setFilter(val, type, btn) {
-  if(type==='status'){ activeStatus=val; document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active')); }
-  else { activeProduct=val; document.querySelectorAll('#productTabs .tab').forEach(t=>t.classList.remove('active')); }
+  if (type === 'status') {
+    activeStatus = val;
+    document.querySelectorAll('#statusTabs .tab').forEach(t => t.classList.remove('active'));
+  } else {
+    activeProduct = val;
+    document.querySelectorAll('#productTabs .tab').forEach(t => t.classList.remove('active'));
+  }
   btn.classList.add('active');
   renderTable();
 }
 
 function renderTable() {
   let data = allResults;
-  if(activeStatus  !=='all') data = data.filter(r=>r.status  ===activeStatus);
-  if(activeProduct !=='all') data = data.filter(r=>r.product ===activeProduct);
+  if (activeStatus  !== 'all') data = data.filter(r => r.status  === activeStatus);
+  if (activeProduct !== 'all') data = data.filter(r => r.product === activeProduct);
 
   document.getElementById('tableBody').innerHTML = data.map(r => {
-    const sb = r.status==='clean'
+    const sb = r.status === 'clean'
       ? `<span class="badge bv"><span class="dot" style="background:var(--valid)"></span>Facturable</span>`
-      : r.status==='missing'
+      : r.status === 'missing'
       ? `<span class="badge bw"><span class="dot" style="background:var(--warn)"></span>Pasos faltantes</span>`
       : `<span class="badge bi"><span class="dot" style="background:var(--invalid)"></span>Excluido (no CO)</span>`;
 
-    const pb = r.status!=='clean' ? '—'
-      : r.product==='libreton' ? `<span class="badge bn">📘 Cuenta Digital</span>`
-      : r.product==='nomina'   ? `<span class="badge bb">💼 Nómina</span>`
-      :                          `<span class="badge bw">❓ Otro</span>`;
+    const pb = r.status !== 'clean' ? '—'
+      : r.product === 'libreton' ? `<span class="badge bn">📘 Cuenta Digital</span>`
+      : r.product === 'nomina'   ? `<span class="badge bb">💼 Nómina</span>`
+      :                            `<span class="badge bw">❓ Otro</span>`;
 
     const stepsHtml = ALL_STEPS.map(s => {
       const done = r.registered.includes(s);
       const opt  = OPTIONAL_STEPS.includes(s);
-      const lbl  = s.split('-app_')[1]||s;
+      const lbl  = s.split('-app_')[1] || s;
       const col  = done ? 'var(--valid)' : (opt ? 'var(--muted-soft)' : 'var(--invalid)');
       const icon = done ? '✓' : (opt ? '·' : '✗');
-      const suf  = opt&&!done ? '<em style="font-size:9px;opacity:.6">(opc.)</em>' : '';
-      return `<span style="color:${col};margin-right:7px;font-size:11px">${icon} ${lbl} ${suf}</span>`;
+      const suf  = opt && !done ? ' <em style="font-size:9px;opacity:.55">(opc.)</em>' : '';
+      return `<span style="color:${col};margin-right:7px;font-size:11px">${icon} ${lbl}${suf}</span>`;
     }).join('');
 
     const missHint = r.missingRequired.length
-      ? `<div style="margin-top:3px;font-size:10px;color:var(--warn)">Falta: ${r.missingRequired.map(s=>s.split('-app_')[1]).join(', ')}</div>`
+      ? `<div style="margin-top:3px;font-size:10px;color:var(--warn)">Falta: ${r.missingRequired.map(s => s.split('-app_')[1]).join(', ')}</div>`
       : '';
 
-    const ccBadge = r.country===REQUIRED_CC
+    const ccBadge = r.country === REQUIRED_CC
       ? `<span class="badge bv">${r.country}</span>`
-      : `<span class="badge bi">${r.country||'—'}</span>`;
+      : `<span class="badge bi">${r.country || '—'}</span>`;
 
     return `<tr>
-      <td style="font-family:var(--mono);font-size:11.5px;font-weight:600">${r.id}</td>
+      <td style="font-family:var(--mono);font-size:11.5px;font-weight:600">${esc(r.id)}</td>
       <td>${sb}</td>
       <td>${pb}</td>
-      <td style="max-width:340px">${stepsHtml}${missHint}</td>
+      <td style="max-width:360px">${stepsHtml}${missHint}</td>
       <td>${ccBadge}</td>
-      <td style="font-size:11px;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'—'}</td>
+      <td style="font-size:11px;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent) || '—'}</td>
     </tr>`;
-  }).join('')||`<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">Sin resultados</td></tr>`;
+  }).join('') || `<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">Sin resultados para este filtro</td></tr>`;
 }
-
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ── Export ────────────────────────────────────────────────────────────────────
 function exportCSV(which) {
   let data = allResults;
-  if(which==='clean')    data = data.filter(r=>r.status==='clean');
-  if(which==='libreton') data = data.filter(r=>r.status==='clean'&&r.product==='libreton');
-  if(which==='nomina')   data = data.filter(r=>r.status==='clean'&&r.product==='nomina');
+  if (which === 'clean')    data = data.filter(r => r.status === 'clean');
+  if (which === 'libreton') data = data.filter(r => r.status === 'clean' && r.product === 'libreton');
+  if (which === 'nomina')   data = data.filter(r => r.status === 'clean' && r.product === 'nomina');
 
-  const rows=[['AppsFlyer ID','Estado','Producto','País','Pasos OK/Total','Pasos faltantes','af_content']];
-  data.forEach(r=>rows.push([
+  const rows = [['AppsFlyer ID', 'Estado', 'Producto', 'País', 'Pasos OK/Total', 'Pasos faltantes', 'af_content']];
+  data.forEach(r => rows.push([
     r.id, r.status, r.product, r.country,
-    r.registered.length+'/'+ALL_STEPS.length,
-    r.missingRequired.map(s=>s.split('-app_')[1]).join('; '),
+    r.registered.length + '/' + ALL_STEPS.length,
+    r.missingRequired.map(s => s.split('-app_')[1]).join('; '),
     r.afContent
   ]));
-  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a = Object.assign(document.createElement('a'),{
-    href: URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'})),
-    download:`bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const a = Object.assign(document.createElement('a'), {
+    href:     URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })),
+    download: `bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`
   });
-  a.click(); URL.revokeObjectURL(a.href);
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
 }
 
-function showError(m){ const b=document.getElementById('errorBanner'); b.textContent='⚠ '+m; b.style.display='block'; }
-function hideError(){ document.getElementById('errorBanner').style.display='none'; }
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showError(msg) {
+  const e = document.getElementById('msgError');
+  e.textContent = '⚠ ' + msg;
+  e.style.display = 'block';
+  document.getElementById('msgInfo').style.display = 'none';
+}
+function showInfo(msg) {
+  const e = document.getElementById('msgInfo');
+  e.textContent = 'ℹ ' + msg;
+  e.style.display = 'block';
+  document.getElementById('msgError').style.display = 'none';
+}
+function hideInfo() {
+  document.getElementById('msgInfo').style.display = 'none';
+}
 </script>
 </body>
 </html>
