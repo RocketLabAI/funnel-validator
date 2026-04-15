@@ -136,9 +136,14 @@ tr:hover td{background:#faf9ff}
 .credits-input{width:140px;padding:6px 10px;border-radius:6px;border:1px solid var(--rl-card-border);font-size:12.5px;font-family:monospace;color:var(--rl-text-primary);background:#fff;text-align:right}
 .credits-input:focus{outline:none;border-color:var(--rl-accent-purple);box-shadow:0 0 0 2px rgba(124,58,237,0.1)}
 .credits-input:disabled{background:#f5f3fb;color:var(--rl-text-muted);cursor:not-allowed}
+.credits-input.computed{background:#f5f3fb;color:var(--rl-text-secondary);cursor:default}
 .credits-result{width:90px;padding:6px 10px;border-radius:6px;border:1px solid var(--rl-card-border);font-size:12.5px;font-family:monospace;font-weight:700;text-align:right;background:#f5f3fb;color:var(--rl-accent-purple)}
 .credits-rate{font-size:10.5px;color:var(--rl-text-muted);white-space:nowrap;flex-shrink:0;min-width:120px}
 .credits-divider{height:1px;background:var(--rl-card-border);margin:10px 0}
+
+/* Sub-row indent for Sessions */
+.credits-subrow{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding-left:14px;border-left:2px solid var(--rl-card-border)}
+
 .credits-total-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--rl-accent-purple-bg);border-radius:6px;margin-top:4px}
 .credits-total-label{font-size:13px;font-weight:600;color:var(--rl-accent-purple)}
 .credits-total-value{font-size:22px;font-weight:700;color:var(--rl-accent-purple);letter-spacing:-0.5px;font-family:monospace}
@@ -204,7 +209,6 @@ tr:hover td{background:#faf9ff}
       <div class="msg msg-error" id="msgError"></div>
       <div class="msg msg-info"  id="msgInfo"></div>
 
-      <!-- Criterios fijos -->
       <div class="criteria-info">
         <strong>Criterios de validación (fijos):</strong><br>
         · <strong>step_6</strong> obligatorio — <strong>completed_aprobado</strong> y/o <strong>completed_contratado</strong> al menos uno requerido<br>
@@ -213,7 +217,6 @@ tr:hover td{background:#faf9ff}
         · <strong>Múltiples completaciones:</strong> más de 2 veces el mismo producto → descartado
       </div>
 
-      <!-- KPIs -->
       <div id="statsSection" style="display:none">
         <div class="section-label">Resumen global</div>
         <div class="kpi-grid kpi-grid-5" style="margin-bottom:12px">
@@ -231,7 +234,6 @@ tr:hover td{background:#faf9ff}
         </div>
       </div>
 
-      <!-- Upload -->
       <div class="upload-zone" id="uploadZone">
         <input type="file" accept=".csv,.tsv,.txt" id="csvInput" style="display:none"/>
         <div style="font-size:32px;margin-bottom:10px">📂</div>
@@ -240,7 +242,6 @@ tr:hover td{background:#faf9ff}
         <div class="upload-hint">AppsFlyer ID · Event Name · Event Time · City · State · Country Code · Event Value</div>
       </div>
 
-      <!-- Results -->
       <div id="resultsSection" style="display:none;margin-top:4px">
         <div class="filter-bar">
           <div class="filter-tabs" id="statusTabs">
@@ -295,7 +296,6 @@ tr:hover td{background:#faf9ff}
         </div>
       </div>
 
-      <!-- Upload zone (shown when no data) -->
       <div class="upload-zone" id="creditsUploadZone" style="margin-bottom:20px">
         <div style="font-size:32px;margin-bottom:10px">📊</div>
         <h2>Arrastrá el CSV de AppsFlyer aquí</h2>
@@ -303,7 +303,6 @@ tr:hover td{background:#faf9ff}
         <div class="upload-hint">Clicks · Sessions · Conversions · Event counters</div>
       </div>
 
-      <!-- File loaded indicator (hidden until CSV loaded) -->
       <div id="creditsFileInfo" style="display:none;margin-bottom:16px">
         <div style="display:flex;align-items:center;justify-content:space-between;background:var(--rl-valid-bg);border:1px solid #a7f3d0;border-radius:6px;padding:10px 14px">
           <div style="display:flex;align-items:center;gap:8px">
@@ -319,12 +318,12 @@ tr:hover td{background:#faf9ff}
 
       <div class="criteria-info">
         <strong>Regla de cálculo:</strong> créditos = cantidad × tasa / 1,000,000 &nbsp;·&nbsp;
-        <strong>Events</strong> = suma de todos los <em>(Event counter)</em> + Sessions &nbsp;·&nbsp;
+        <strong>Events</strong> = (Event counters) + Sessions &nbsp;·&nbsp;
         <strong>Key Events</strong> = columnas terminadas en <code>_contratado</code> o <code>_finalizado</code>
       </div>
 
       <div class="credits-grid">
-        <!-- Columna izquierda: métricas de volumen -->
+        <!-- Columna izquierda -->
         <div class="credits-group">
           <div class="credits-group-title">📊 Métricas de volumen</div>
 
@@ -368,22 +367,50 @@ tr:hover td{background:#faf9ff}
             </div>
           </div>
 
-          <!-- Events -->
+          <div class="credits-divider"></div>
+
+          <!-- Events total (computed = IAEs + Sessions) -->
           <div class="credits-row">
             <div class="credits-label">
-              Events (IAEs & Sessions)
-              <span class="credits-sublabel">Todos los (Event counter) + Sessions</span>
+              Events (IAEs + Sessions)
+              <span class="credits-sublabel">Calculado automáticamente abajo ↓</span>
             </div>
             <div class="credits-input-wrap">
-              <input class="credits-input" type="number" id="inp_events" min="0" placeholder="0" oninput="calcCredits()">
+              <input class="credits-input computed" type="number" id="inp_events" min="0" placeholder="0" readonly tabindex="-1">
               <span class="credits-rate">× 2 / 1M</span>
               <div class="credits-result" id="res_events">0.00</div>
             </div>
           </div>
 
+          <!-- IAE counters sub-row -->
+          <div class="credits-subrow">
+            <div class="credits-label" style="font-size:12px;">
+              Event Counters (IAEs)
+              <span class="credits-sublabel">Suma de todos los (Event counter)</span>
+            </div>
+            <div class="credits-input-wrap">
+              <input class="credits-input" type="number" id="inp_iaes" min="0" placeholder="0" oninput="calcEventsTotal()">
+              <span class="credits-rate" style="min-width:120px;color:var(--rl-text-muted);font-size:10px;">componente</span>
+              <div class="credits-result" style="background:#f0eff5;color:var(--rl-text-secondary);font-size:11.5px;" id="res_iaes">—</div>
+            </div>
+          </div>
+
+          <!-- Sessions sub-row -->
+          <div class="credits-subrow" style="margin-bottom:0">
+            <div class="credits-label" style="font-size:12px;">
+              Sessions
+              <span class="credits-sublabel">Columna Sessions del reporte</span>
+            </div>
+            <div class="credits-input-wrap">
+              <input class="credits-input" type="number" id="inp_sessions" min="0" placeholder="0" oninput="calcEventsTotal()">
+              <span class="credits-rate" style="min-width:120px;color:var(--rl-text-muted);font-size:10px;">componente</span>
+              <div class="credits-result" style="background:#f0eff5;color:var(--rl-text-secondary);font-size:11.5px;" id="res_sessions">—</div>
+            </div>
+          </div>
+
           <div class="credits-divider"></div>
 
-          <!-- Key events (info only) -->
+          <!-- Key events -->
           <div class="credits-row">
             <div class="credits-label">
               Key Events
@@ -397,7 +424,7 @@ tr:hover td{background:#faf9ff}
           </div>
         </div>
 
-        <!-- Columna derecha: pendientes + resumen -->
+        <!-- Columna derecha -->
         <div style="display:flex;flex-direction:column;gap:16px">
 
           <!-- Pendientes -->
@@ -453,7 +480,18 @@ tr:hover td{background:#faf9ff}
                 <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Clicks</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_clicks">0.00</td></tr>
                 <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Re-engagements</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_reeng">0.00</td></tr>
                 <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Re-installs</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_reinst">0.00</td></tr>
-                <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Events</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_events">0.00</td></tr>
+                <tr>
+                  <td style="padding:3px 0;color:var(--rl-text-secondary)">Events (IAEs + Sessions)</td>
+                  <td style="text-align:right;font-family:monospace;font-weight:600" id="br_events">0.00</td>
+                </tr>
+                <tr>
+                  <td style="padding:2px 0 2px 14px;color:var(--rl-text-muted);font-size:10.5px">↳ IAE counters</td>
+                  <td style="text-align:right;font-family:monospace;font-size:10.5px;color:var(--rl-text-muted)" id="br_iaes">—</td>
+                </tr>
+                <tr>
+                  <td style="padding:2px 0 3px 14px;color:var(--rl-text-muted);font-size:10.5px">↳ Sessions</td>
+                  <td style="text-align:right;font-family:monospace;font-size:10.5px;color:var(--rl-text-muted)" id="br_sessions">—</td>
+                </tr>
                 <tr style="border-top:1px solid var(--rl-card-border)">
                   <td style="padding:5px 0 2px;font-weight:600">Total</td>
                   <td style="text-align:right;font-family:monospace;font-weight:700;color:var(--rl-accent-purple)" id="br_total">0.00</td>
@@ -465,8 +503,8 @@ tr:hover td{background:#faf9ff}
       </div>
     </div>
 
-  </div><!-- /content -->
-</div><!-- /app-body -->
+  </div>
+</div>
 
 <script>
 // ══════════════════════════════════════════════════════
@@ -489,8 +527,7 @@ function showPage(id, btn) {
 const RATES = { clicks: 2, reeng: 30, reinst: 60, events: 2 };
 const MAX_CLICKS = 30_000_000;
 
-// Wire credits CSV upload
-const csvCreditsInput = document.getElementById('csvCreditsInput');
+const csvCreditsInput  = document.getElementById('csvCreditsInput');
 const creditsUploadZone = document.getElementById('creditsUploadZone');
 
 csvCreditsInput.addEventListener('change', e => { if(e.target.files[0]) processCreditsFile(e.target.files[0]); e.target.value=''; });
@@ -535,34 +572,34 @@ function numVal(v) {
 function extractCreditsFromCSV(rows, fileName) {
   const cols = Object.keys(rows[0] || {});
 
-  // Clicks: numeric value in 'Clicks' column, only re-attribution rows
+  // Clicks: re-attribution rows only
   const totalClicks = rows
     .filter(r => (r['Conversion Type']||'').toLowerCase() === 're-attribution')
     .reduce((s, r) => s + numVal(r['Clicks']), 0);
 
-  // Re-engagements: Conversions where type = re-engagement
+  // Re-engagements
   const totalReeng = rows
     .filter(r => (r['Conversion Type']||'').toLowerCase() === 're-engagement')
     .reduce((s, r) => s + numVal(r['Conversions']), 0);
 
-  // Re-installs: Conversions where type = re-attribution
+  // Re-installs
   const totalReinst = rows
     .filter(r => (r['Conversion Type']||'').toLowerCase() === 're-attribution')
     .reduce((s, r) => s + numVal(r['Conversions']), 0);
 
-  // Sessions
+  // Sessions — separate column
   const totalSessions = rows.reduce((s, r) => s + numVal(r['Sessions']), 0);
 
-  // All event counter columns
+  // IAE counters — all (Event counter) columns
   const eventCols = cols.filter(c => c.includes('(Event counter)'));
-  const totalEventCounters = rows.reduce((s, r) => {
+  const totalIAEs = rows.reduce((s, r) => {
     return s + eventCols.reduce((es, c) => es + numVal(r[c]), 0);
   }, 0);
 
-  // Total events = event counters + sessions
-  const totalEvents = totalEventCounters + totalSessions;
+  // Total events = IAEs + Sessions
+  const totalEvents = totalIAEs + totalSessions;
 
-  // Key events: columns ending in _contratado or _finalizado (Event counter)
+  // Key events
   const keyCols = eventCols.filter(c => /_contratado|_finalizado/.test(c));
   const totalKeyEvents = rows.reduce((s, r) => {
     return s + keyCols.reduce((ks, c) => ks + numVal(r[c]), 0);
@@ -572,16 +609,25 @@ function extractCreditsFromCSV(rows, fileName) {
   document.getElementById('inp_clicks').value    = Math.round(totalClicks);
   document.getElementById('inp_reeng').value     = Math.round(totalReeng);
   document.getElementById('inp_reinst').value    = Math.round(totalReinst);
+  document.getElementById('inp_iaes').value      = Math.round(totalIAEs);
+  document.getElementById('inp_sessions').value  = Math.round(totalSessions);
   document.getElementById('inp_events').value    = Math.round(totalEvents);
   document.getElementById('inp_keyev_raw').value = Math.round(totalKeyEvents);
 
-  // Show file info, hide upload zone
   document.getElementById('creditsUploadZone').style.display = 'none';
   document.getElementById('creditsFileInfo').style.display   = 'block';
   document.getElementById('creditsFileName').textContent = fileName;
   document.getElementById('creditsFileRows').textContent =
-    `${rows.length} filas · ${eventCols.length} columnas de eventos · ${keyCols.length} key events detectados`;
+    `${rows.length} filas · ${eventCols.length} columnas de eventos · ${keyCols.length} key events · sessions: ${Math.round(totalSessions).toLocaleString('es-CO')}`;
 
+  calcCredits();
+}
+
+// Called when IAEs or Sessions inputs change manually
+function calcEventsTotal() {
+  const iaes     = parseFloat(document.getElementById('inp_iaes').value)     || 0;
+  const sessions = parseFloat(document.getElementById('inp_sessions').value) || 0;
+  document.getElementById('inp_events').value = Math.round(iaes + sessions);
   calcCredits();
 }
 
@@ -590,7 +636,7 @@ function calcCredits() {
     const v = parseFloat(document.getElementById('inp_' + id).value);
     return isNaN(v) || v < 0 ? 0 : v;
   };
-  const fmt = n => n.toFixed(4);
+  const fmt  = n => n.toFixed(4);
   const fmtN = n => n.toLocaleString('es-CO');
 
   const rawClicks = get('clicks');
@@ -598,6 +644,8 @@ function calcCredits() {
   const reeng     = get('reeng');
   const reinst    = get('reinst');
   const events    = get('events');
+  const iaes      = get('iaes');
+  const sessions  = get('sessions');
   const keyEvents = get('keyev_raw');
 
   const r_clicks = clicks  * RATES.clicks  / 1_000_000;
@@ -606,25 +654,33 @@ function calcCredits() {
   const r_events = events  * RATES.events  / 1_000_000;
   const total    = r_clicks + r_reeng + r_reinst + r_events;
 
-  document.getElementById('res_clicks').textContent = fmt(r_clicks);
-  document.getElementById('res_reeng').textContent  = fmt(r_reeng);
-  document.getElementById('res_reinst').textContent = fmt(r_reinst);
-  document.getElementById('res_events').textContent = fmt(r_events);
-  document.getElementById('br_clicks').textContent  = fmt(r_clicks);
-  document.getElementById('br_reeng').textContent   = fmt(r_reeng);
-  document.getElementById('br_reinst').textContent  = fmt(r_reinst);
-  document.getElementById('br_events').textContent  = fmt(r_events);
-  document.getElementById('br_total').textContent   = fmt(total);
+  document.getElementById('res_clicks').textContent  = fmt(r_clicks);
+  document.getElementById('res_reeng').textContent   = fmt(r_reeng);
+  document.getElementById('res_reinst').textContent  = fmt(r_reinst);
+  document.getElementById('res_events').textContent  = fmt(r_events);
+
+  // Sub-row displays (reference only)
+  document.getElementById('res_iaes').textContent     = iaes     ? fmtN(Math.round(iaes))     : '—';
+  document.getElementById('res_sessions').textContent = sessions ? fmtN(Math.round(sessions)) : '—';
+
+  // Breakdown
+  document.getElementById('br_clicks').textContent   = fmt(r_clicks);
+  document.getElementById('br_reeng').textContent    = fmt(r_reeng);
+  document.getElementById('br_reinst').textContent   = fmt(r_reinst);
+  document.getElementById('br_events').textContent   = fmt(r_events);
+  document.getElementById('br_iaes').textContent     = iaes     ? fmtN(Math.round(iaes))     : '—';
+  document.getElementById('br_sessions').textContent = sessions ? fmtN(Math.round(sessions)) : '—';
+  document.getElementById('br_total').textContent    = fmt(total);
   document.getElementById('totalCredits').textContent = fmt(total);
 
   // Clicks warning
   document.getElementById('warn_clicks').style.display = rawClicks > MAX_CLICKS ? 'block' : 'none';
 
-  // Key event / clicks %
-  const pctEl     = document.getElementById('keyevPctDisplay');
-  const badgeEl   = document.getElementById('keyevPctBadge');
-  const detailEl  = document.getElementById('keyevPctDetail');
-  const resKeyEl  = document.getElementById('res_keyev');
+  // Key event % / clicks
+  const pctEl    = document.getElementById('keyevPctDisplay');
+  const badgeEl  = document.getElementById('keyevPctBadge');
+  const detailEl = document.getElementById('keyevPctDetail');
+  const resKeyEl = document.getElementById('res_keyev');
 
   if (clicks > 0 && keyEvents > 0) {
     const pct = keyEvents / clicks * 100;
@@ -649,9 +705,12 @@ function calcCredits() {
 }
 
 function resetCredits() {
-  ['clicks','reeng','reinst','events','keyev_raw'].forEach(id => {
+  ['clicks','reeng','reinst','iaes','sessions','events','keyev_raw'].forEach(id => {
     const el = document.getElementById('inp_' + id);
     if (el) el.value = '';
+  });
+  ['res_iaes','res_sessions','res_keyev'].forEach(id => {
+    document.getElementById(id).textContent = '—';
   });
   document.getElementById('creditsUploadZone').style.display = 'block';
   document.getElementById('creditsFileInfo').style.display   = 'none';
@@ -668,18 +727,14 @@ const COMPLETED_CONTRATADO   = 'apertura_cuenta_en_linea_no_cliente-app_complete
 const ALL_STEPS = [...OPTIONAL_STEPS, STEP_6, COMPLETED_APROBADO, COMPLETED_CONTRATADO];
 const REQUIRED_CC = 'CO';
 
-// Geo: minimum minutes allowed between consecutive events in different cities/states
-const GEO_MIN_CITY_MIN  = 5;   // 3–8 min midpoint: 5 min
+const GEO_MIN_CITY_MIN  = 5;
 const GEO_MIN_STATE_MIN = 10;
-
-// Max completions of same product before flagging as duplicate
 const MAX_COMPLETIONS = 2;
 
 let allResults   = [];
 let activeStatus  = 'all';
 let activeProduct = 'all';
 
-// ── Upload wiring ──────────────────────────────────────
 const csvInput   = document.getElementById('csvInput');
 const uploadZone = document.getElementById('uploadZone');
 uploadZone.addEventListener('click',     () => csvInput.click());
@@ -688,7 +743,6 @@ uploadZone.addEventListener('dragleave', e => { e.preventDefault(); uploadZone.c
 uploadZone.addEventListener('drop',      e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) processFile(f); });
 csvInput.addEventListener('change', e => { if(e.target.files[0]) processFile(e.target.files[0]); e.target.value=''; });
 
-// ── File processing ────────────────────────────────────
 function processFile(file) {
   showInfo('Leyendo ' + file.name + ' (' + Math.round(file.size/1024) + ' KB)…');
   const reader = new FileReader();
@@ -712,9 +766,7 @@ function processFile(file) {
   reader.readAsArrayBuffer(file);
 }
 
-// ── Analysis ───────────────────────────────────────────
 function analyze(rows) {
-  // Group by AppsFlyer ID, keeping all event rows with timing
   const byId = {};
   rows.forEach(row => {
     const id    = row['AppsFlyer ID'];
@@ -734,7 +786,6 @@ function analyze(rows) {
   allResults = Object.entries(byId)
     .filter(([,evs]) => evs.some(e => e.event===COMPLETED_APROBADO||e.event===COMPLETED_CONTRATADO))
     .map(([id, evs]) => {
-      // Sort events by time ascending
       evs.sort((a,b)=>(a.time||0)-(b.time||0));
 
       const finalRow = evs.find(e=>e.event===COMPLETED_CONTRATADO)||evs.find(e=>e.event===COMPLETED_APROBADO);
@@ -752,13 +803,12 @@ function analyze(rows) {
       const afContent = getAfContent(finalRow?finalRow.value:'');
       const product   = classifyProduct(afContent);
 
-      // ── Geo check ──────────────────────────────────────
       const geoIssues = [];
       for (let i=1; i<evs.length; i++) {
         const prev=evs[i-1], curr=evs[i];
         if (!prev.time||!curr.time) continue;
         const diffMin = (curr.time - prev.time) / 60000;
-        if (diffMin < 0) continue; // ignore out-of-order after sort
+        if (diffMin < 0) continue;
         if (prev.city && curr.city && prev.city!==curr.city && diffMin < GEO_MIN_CITY_MIN) {
           geoIssues.push(`Ciudad imposible: ${prev.city}→${curr.city} en ${diffMin.toFixed(1)} min`);
         } else if (prev.state && curr.state && prev.state!==curr.state && diffMin < GEO_MIN_STATE_MIN) {
@@ -766,12 +816,10 @@ function analyze(rows) {
         }
       }
 
-      // ── Duplicate completions check ─────────────────────
       const completions = evs.filter(e=>e.event===COMPLETED_APROBADO||e.event===COMPLETED_CONTRATADO);
       const productCompletions = completions.length;
       const isDuplicate = productCompletions > MAX_COMPLETIONS;
 
-      // ── Status ─────────────────────────────────────────
       let status, exclusionReason = '';
       if (!validCC) {
         status = 'excluded'; exclusionReason = 'País no CO';
@@ -812,7 +860,6 @@ function classifyProduct(c) {
   return 'other';
 }
 
-// ── Render ─────────────────────────────────────────────
 function renderUI() {
   document.getElementById('statsSection').style.display   = 'flex';
   document.getElementById('statsSection').style.flexDirection = 'column';
@@ -826,7 +873,6 @@ function renderUI() {
   const dup      = allResults.filter(r=>r.status==='dup').length;
   const excluded = allResults.filter(r=>r.status==='excluded').length;
   const fact     = allResults.filter(r=>r.status==='clean');
-  const totalExcl = missing + geo + dup + excluded;
 
   document.getElementById('sTotal').textContent    = total;
   document.getElementById('sClean').textContent    = clean;
@@ -904,7 +950,6 @@ function renderTable() {
   }).join('')||`<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--rl-text-muted)">Sin resultados para este filtro</td></tr>`;
 }
 
-// ── Export ─────────────────────────────────────────────
 function exportCSV(which) {
   let data = allResults;
   if (which==='clean')    data=data.filter(r=>r.status==='clean');
@@ -921,7 +966,6 @@ function exportCSV(which) {
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
 }
 
-// ── Helpers ────────────────────────────────────────────
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function showError(m){const e=document.getElementById('msgError');e.textContent='⚠ '+m;e.style.display='block';document.getElementById('msgInfo').style.display='none';}
 function showInfo(m){const e=document.getElementById('msgInfo');e.textContent='ℹ '+m;e.style.display='block';document.getElementById('msgError').style.display='none';}
