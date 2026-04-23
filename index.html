@@ -24,7 +24,6 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:var(--font);min-height:100vh;display:flex}
 
-/* ── Sidebar ── */
 .sidebar{width:var(--rl-sidebar-width);background:var(--rl-sidebar-bg);height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100}
 .sidebar-logo{padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px}
 .sidebar-logo-mark{width:28px;height:28px;background:var(--rl-accent-purple);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
@@ -36,10 +35,7 @@ body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:va
 .sidebar-item.active{background:var(--rl-sidebar-active);color:#fff;font-weight:500}
 .sidebar-item .si-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
 
-/* ── Layout ── */
 .app-body{margin-left:var(--rl-sidebar-width);flex:1;display:flex;flex-direction:column;min-height:100vh}
-
-/* ── Topbar ── */
 .topbar{background:var(--rl-header-bg);border-bottom:1px solid var(--rl-header-border);height:52px;display:flex;align-items:center;padding:0 24px;gap:8px;position:sticky;top:0;z-index:50;flex-shrink:0}
 .topbar-crumb{font-size:12px;color:var(--rl-text-muted)}
 .topbar-crumb-sep{color:var(--rl-text-muted);font-size:12px}
@@ -48,7 +44,6 @@ body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:va
 .topbar-badge{font-size:11px;background:var(--rl-accent-purple-bg);color:var(--rl-accent-purple);border:1px solid #ddd6fe;padding:3px 10px;border-radius:4px;font-weight:500}
 .avatar{width:30px;height:30px;background:var(--rl-accent-purple);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
 
-/* ── Content ── */
 .content{padding:24px;flex:1}
 .page{display:none}
 .page.active{display:block}
@@ -56,14 +51,11 @@ body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:va
 .page-subtitle{font-size:12.5px;color:var(--rl-text-secondary);margin-top:3px}
 .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
 
-/* ── Section labels ── */
 .section-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.7px;color:var(--rl-text-muted);margin-bottom:8px;margin-top:20px}
 .section-label:first-child{margin-top:0}
 
-/* ── Cards ── */
 .card{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow)}
 
-/* ── KPI Grid ── */
 .kpi-grid{display:grid;gap:12px;margin-bottom:20px}
 .kpi-grid-5{grid-template-columns:repeat(5,1fr)}
 .kpi-grid-4{grid-template-columns:repeat(4,1fr)}
@@ -80,7 +72,6 @@ body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:va
 .kpi-value{font-size:24px;font-weight:700;line-height:1;letter-spacing:-0.5px;color:var(--rl-text-primary)}
 .kpi-sub{font-size:11px;color:var(--rl-text-muted);margin-top:3px}
 
-/* ── Tables ── */
 .table-wrap{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden;margin-bottom:14px}
 .table-scroll{overflow-x:auto;max-height:480px;overflow-y:auto}
 table{width:100%;border-collapse:collapse}
@@ -90,7 +81,6 @@ td{padding:9px 14px;border-bottom:1px solid #f5f3fb;font-size:12px;color:var(--r
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#faf9ff}
 
-/* ── Badges ── */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap}
 .bv{background:var(--rl-valid-bg);color:var(--rl-valid)}
 .bw{background:var(--rl-warn-bg);color:var(--rl-warn)}
@@ -99,32 +89,27 @@ tr:hover td{background:#faf9ff}
 .bb{background:#eff6ff;color:#2563eb}
 .bn{background:#e0e7ff;color:#3730a3}
 
-/* ── Buttons ── */
 .btn{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:opacity 0.15s}
 .btn:hover{opacity:0.88}
 .btn-primary{background:var(--rl-accent-purple);color:#fff}
 .btn-secondary{background:#fff;color:var(--rl-text-secondary);border:1px solid var(--rl-card-border)}
 
-/* ── Filter tabs ── */
 .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
 .filter-tabs{display:flex;gap:3px;background:#f0eff5;border-radius:6px;padding:3px}
 .tab{padding:4px 11px;border-radius:4px;font-size:11.5px;font-weight:500;background:transparent;color:var(--rl-text-secondary);border:none;cursor:pointer;font-family:var(--font);transition:all 0.1s}
 .tab.active{background:#fff;color:var(--rl-text-primary);box-shadow:0 1px 2px rgba(0,0,0,0.08)}
 .filter-sep{width:1px;background:var(--rl-card-border);align-self:stretch;margin:0 4px}
 
-/* ── Upload zone ── */
 .upload-zone{border:1.5px dashed var(--rl-card-border);border-radius:8px;padding:40px;text-align:center;cursor:pointer;background:#faf9ff;transition:all 0.18s}
 .upload-zone:hover,.upload-zone.drag-over{border-color:var(--rl-accent-purple);background:var(--rl-accent-purple-bg)}
 .upload-zone h2{font-size:15px;font-weight:600;margin-bottom:5px;color:var(--rl-text-primary)}
 .upload-zone p{font-size:12.5px;color:var(--rl-text-secondary)}
 .upload-hint{margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:monospace;color:var(--rl-text-muted);background:#fff;border:1px solid var(--rl-card-border);padding:5px 14px;border-radius:20px}
 
-/* ── Messages ── */
 .msg{padding:10px 14px;border-radius:6px;font-size:12.5px;margin-bottom:12px;display:none}
 .msg-error{background:var(--rl-invalid-bg);border:1px solid #fecaca;color:var(--rl-invalid)}
 .msg-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8}
 
-/* ── Credits form ── */
 .credits-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 .credits-group{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);padding:16px}
 .credits-group-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:var(--rl-text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
@@ -140,21 +125,15 @@ tr:hover td{background:#faf9ff}
 .credits-result{width:90px;padding:6px 10px;border-radius:6px;border:1px solid var(--rl-card-border);font-size:12.5px;font-family:monospace;font-weight:700;text-align:right;background:#f5f3fb;color:var(--rl-accent-purple)}
 .credits-rate{font-size:10.5px;color:var(--rl-text-muted);white-space:nowrap;flex-shrink:0;min-width:120px}
 .credits-divider{height:1px;background:var(--rl-card-border);margin:10px 0}
-
-/* Sub-row indent for Sessions */
 .credits-subrow{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding-left:14px;border-left:2px solid var(--rl-card-border)}
-
 .credits-total-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--rl-accent-purple-bg);border-radius:6px;margin-top:4px}
 .credits-total-label{font-size:13px;font-weight:600;color:var(--rl-accent-purple)}
 .credits-total-value{font-size:22px;font-weight:700;color:var(--rl-accent-purple);letter-spacing:-0.5px;font-family:monospace}
 .credits-warning{font-size:11px;color:var(--rl-invalid);background:var(--rl-invalid-bg);border:1px solid #fecaca;padding:5px 10px;border-radius:4px;margin-top:6px;display:none}
 .criteria-info{background:#f0eff5;border:1px solid var(--rl-card-border);border-radius:6px;padding:10px 14px;font-size:11.5px;color:var(--rl-text-secondary);line-height:1.7;margin-bottom:16px}
 .criteria-info strong{color:var(--rl-text-primary)}
-
-/* ── Export row ── */
 .export-row{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}
 
-/* ── Responsive ── */
 @media(max-width:900px){
   .kpi-grid-5,.kpi-grid-4{grid-template-columns:repeat(2,1fr)}
   .credits-grid{grid-template-columns:1fr}
@@ -163,7 +142,6 @@ tr:hover td{background:#faf9ff}
 </head>
 <body>
 
-<!-- ── Sidebar ────────────────────────────────────────── -->
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="sidebar-logo-mark">🚀</div>
@@ -181,7 +159,6 @@ tr:hover td{background:#faf9ff}
   </button>
 </aside>
 
-<!-- ── App body ───────────────────────────────────────── -->
 <div class="app-body">
   <div class="topbar">
     <span class="topbar-crumb">BBVA CO</span>
@@ -194,9 +171,7 @@ tr:hover td{background:#faf9ff}
 
   <div class="content">
 
-    <!-- ══════════════════════════════════════════════════
-         PAGE: FUNNEL VALIDATOR
-    ══════════════════════════════════════════════════ -->
+    <!-- FUNNEL VALIDATOR -->
     <div class="page active" id="page-validator">
       <div class="page-header">
         <div>
@@ -210,11 +185,12 @@ tr:hover td{background:#faf9ff}
       <div class="msg msg-info"  id="msgInfo"></div>
 
       <div class="criteria-info">
-        <strong>Criterios de validación (fijos):</strong><br>
+        <strong>Criterios de validación:</strong><br>
         · <strong>step_6</strong> obligatorio — <strong>completed_aprobado</strong> y/o <strong>completed_contratado</strong> al menos uno requerido<br>
         · <strong>País:</strong> solo registros con Country Code = CO son facturables<br>
-        · <strong>Geografía:</strong> cambio de ciudad en menos de 3–8 min → geográficamente imposible → excluido<br>
-        · <strong>Múltiples completaciones:</strong> más de 2 veces el mismo producto → descartado
+        · <strong>Geografía:</strong> cambio de ciudad en menos de 45 min → geográficamente imposible → excluido<br>
+        · <strong>Tiempo step_1 → step_6:</strong> si existen ambos, debe ser entre 12 y 60 minutos (menos de 12 = demasiado rápido, más de 60 = demasiado lento)<br>
+        · <strong>Múltiples completaciones:</strong> más de 2 completaciones → descartado
       </div>
 
       <div id="statsSection" style="display:none">
@@ -249,6 +225,7 @@ tr:hover td{background:#faf9ff}
             <button class="tab" onclick="setFilter('clean','status',this)">✅ Facturables</button>
             <button class="tab" onclick="setFilter('missing','status',this)">⚠ Pasos faltantes</button>
             <button class="tab" onclick="setFilter('geo','status',this)">📍 Alerta geo</button>
+            <button class="tab" onclick="setFilter('timing','status',this)">⏱ Timing inválido</button>
             <button class="tab" onclick="setFilter('dup','status',this)">🔁 Duplicados</button>
             <button class="tab" onclick="setFilter('excluded','status',this)">❌ Excluidos</button>
           </div>
@@ -280,9 +257,7 @@ tr:hover td{background:#faf9ff}
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════
-         PAGE: CALCULADORA DE CRÉDITOS
-    ══════════════════════════════════════════════════ -->
+    <!-- CALCULADORA DE CRÉDITOS -->
     <div class="page" id="page-credits">
       <div class="page-header">
         <div>
@@ -323,16 +298,10 @@ tr:hover td{background:#faf9ff}
       </div>
 
       <div class="credits-grid">
-        <!-- Columna izquierda -->
         <div class="credits-group">
           <div class="credits-group-title">📊 Métricas de volumen</div>
-
-          <!-- Clicks -->
           <div class="credits-row">
-            <div class="credits-label">
-              Clicks
-              <span class="credits-sublabel">Máx. 30,000,000 · filas re-attribution</span>
-            </div>
+            <div class="credits-label">Clicks<span class="credits-sublabel">Máx. 30,000,000 · filas re-attribution</span></div>
             <div class="credits-input-wrap">
               <input class="credits-input" type="number" id="inp_clicks" min="0" max="30000000" placeholder="0" oninput="calcCredits()">
               <span class="credits-rate">× 2 / 1M</span>
@@ -340,82 +309,50 @@ tr:hover td{background:#faf9ff}
             </div>
           </div>
           <div class="credits-warning" id="warn_clicks">⚠ Supera el máximo de 30,000,000 clicks</div>
-
-          <!-- Re-engagements -->
           <div class="credits-row">
-            <div class="credits-label">
-              Re-engagements
-              <span class="credits-sublabel">Conversions donde tipo = re-engagement</span>
-            </div>
+            <div class="credits-label">Re-engagements<span class="credits-sublabel">Conversions donde tipo = re-engagement</span></div>
             <div class="credits-input-wrap">
               <input class="credits-input" type="number" id="inp_reeng" min="0" placeholder="0" oninput="calcCredits()">
               <span class="credits-rate">× 30 / 1M</span>
               <div class="credits-result" id="res_reeng">0.00</div>
             </div>
           </div>
-
-          <!-- Re-installs -->
           <div class="credits-row">
-            <div class="credits-label">
-              Re-installs
-              <span class="credits-sublabel">Conversions donde tipo = re-attribution</span>
-            </div>
+            <div class="credits-label">Re-installs<span class="credits-sublabel">Conversions donde tipo = re-attribution</span></div>
             <div class="credits-input-wrap">
               <input class="credits-input" type="number" id="inp_reinst" min="0" placeholder="0" oninput="calcCredits()">
               <span class="credits-rate">× 60 / 1M</span>
               <div class="credits-result" id="res_reinst">0.00</div>
             </div>
           </div>
-
           <div class="credits-divider"></div>
-
-          <!-- Events total (computed = IAEs + Sessions) -->
           <div class="credits-row">
-            <div class="credits-label">
-              Events (IAEs + Sessions)
-              <span class="credits-sublabel">Calculado automáticamente abajo ↓</span>
-            </div>
+            <div class="credits-label">Events (IAEs + Sessions)<span class="credits-sublabel">Calculado automáticamente abajo ↓</span></div>
             <div class="credits-input-wrap">
               <input class="credits-input computed" type="number" id="inp_events" min="0" placeholder="0" readonly tabindex="-1">
               <span class="credits-rate">× 2 / 1M</span>
               <div class="credits-result" id="res_events">0.00</div>
             </div>
           </div>
-
-          <!-- IAE counters sub-row -->
           <div class="credits-subrow">
-            <div class="credits-label" style="font-size:12px;">
-              Event Counters (IAEs)
-              <span class="credits-sublabel">Suma de todos los (Event counter)</span>
-            </div>
+            <div class="credits-label" style="font-size:12px;">Event Counters (IAEs)<span class="credits-sublabel">Suma de todos los (Event counter)</span></div>
             <div class="credits-input-wrap">
               <input class="credits-input" type="number" id="inp_iaes" min="0" placeholder="0" oninput="calcEventsTotal()">
               <span class="credits-rate" style="min-width:120px;color:var(--rl-text-muted);font-size:10px;">componente</span>
               <div class="credits-result" style="background:#f0eff5;color:var(--rl-text-secondary);font-size:11.5px;" id="res_iaes">—</div>
             </div>
           </div>
-
-          <!-- Sessions sub-row -->
           <div class="credits-subrow" style="margin-bottom:0">
-            <div class="credits-label" style="font-size:12px;">
-              Sessions
-              <span class="credits-sublabel">Columna Sessions del reporte</span>
-            </div>
+            <div class="credits-label" style="font-size:12px;">Sessions<span class="credits-sublabel">Columna Sessions del reporte</span></div>
             <div class="credits-input-wrap">
               <input class="credits-input" type="number" id="inp_sessions" min="0" placeholder="0" oninput="calcEventsTotal()">
               <span class="credits-rate" style="min-width:120px;color:var(--rl-text-muted);font-size:10px;">componente</span>
               <div class="credits-result" style="background:#f0eff5;color:var(--rl-text-secondary);font-size:11.5px;" id="res_sessions">—</div>
             </div>
           </div>
-
           <div class="credits-divider"></div>
-
-          <!-- Key events -->
           <div class="credits-row">
-            <div class="credits-label">
-              Key Events
-              <span class="credits-sublabel">_contratado + _finalizado (solo referencia)</span>
-            </div>
+            <div class="credits-label">Key Events<span class="credits-sublabel">_contratado + _finalizado (solo referencia)</span></div>
             <div class="credits-input-wrap">
               <input class="credits-input" type="number" id="inp_keyev_raw" min="0" placeholder="0" oninput="calcCredits()" style="background:#f5f3fb;color:var(--rl-text-muted)" readonly>
               <span class="credits-rate" style="font-size:10px">no factura</span>
@@ -424,17 +361,11 @@ tr:hover td{background:#faf9ff}
           </div>
         </div>
 
-        <!-- Columna derecha -->
         <div style="display:flex;flex-direction:column;gap:16px">
-
-          <!-- Pendientes -->
           <div class="credits-group">
             <div class="credits-group-title">⏳ Pendientes de datos</div>
             <div class="credits-row">
-              <div class="credits-label">
-                Datalocker (incl Analytics)
-                <span class="credits-sublabel">Sin datos disponibles aún</span>
-              </div>
+              <div class="credits-label">Datalocker (incl Analytics)<span class="credits-sublabel">Sin datos disponibles aún</span></div>
               <div class="credits-input-wrap">
                 <input class="credits-input" type="number" id="inp_dlock" min="0" placeholder="—" disabled>
                 <span class="credits-rate">× 1 / 1M</span>
@@ -442,10 +373,7 @@ tr:hover td{background:#faf9ff}
               </div>
             </div>
             <div class="credits-row">
-              <div class="credits-label">
-                Pull API (Aggregated & RAW)
-                <span class="credits-sublabel">Sin datos disponibles aún</span>
-              </div>
+              <div class="credits-label">Pull API (Aggregated & RAW)<span class="credits-sublabel">Sin datos disponibles aún</span></div>
               <div class="credits-input-wrap">
                 <input class="credits-input" type="number" id="inp_api" min="0" placeholder="—" disabled>
                 <span class="credits-rate">× 10 / 1M</span>
@@ -453,21 +381,15 @@ tr:hover td{background:#faf9ff}
               </div>
             </div>
           </div>
-
-          <!-- % Key Event / Clicks -->
           <div class="credits-group">
             <div class="credits-group-title">📍 % Key Event / Clicks</div>
-            <div style="font-size:11.5px;color:var(--rl-text-secondary);margin-bottom:10px">
-              Rango esperado: <strong>0.003% – 0.009%</strong>
-            </div>
+            <div style="font-size:11.5px;color:var(--rl-text-secondary);margin-bottom:10px">Rango esperado: <strong>0.003% – 0.009%</strong></div>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
               <div style="font-size:28px;font-weight:700;font-family:monospace;letter-spacing:-1px" id="keyevPctDisplay">—</div>
               <div id="keyevPctBadge" style="font-size:12px;padding:4px 10px;border-radius:4px;font-weight:600">—</div>
             </div>
             <div style="margin-top:8px;font-size:11px;color:var(--rl-text-muted)" id="keyevPctDetail">Cargá un CSV para ver el cálculo</div>
           </div>
-
-          <!-- Total -->
           <div class="credits-group" style="border-top:3px solid var(--rl-accent-purple)">
             <div class="credits-group-title">💎 Total de créditos</div>
             <div class="credits-total-row">
@@ -480,22 +402,10 @@ tr:hover td{background:#faf9ff}
                 <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Clicks</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_clicks">0.00</td></tr>
                 <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Re-engagements</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_reeng">0.00</td></tr>
                 <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Re-installs</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_reinst">0.00</td></tr>
-                <tr>
-                  <td style="padding:3px 0;color:var(--rl-text-secondary)">Events (IAEs + Sessions)</td>
-                  <td style="text-align:right;font-family:monospace;font-weight:600" id="br_events">0.00</td>
-                </tr>
-                <tr>
-                  <td style="padding:2px 0 2px 14px;color:var(--rl-text-muted);font-size:10.5px">↳ IAE counters</td>
-                  <td style="text-align:right;font-family:monospace;font-size:10.5px;color:var(--rl-text-muted)" id="br_iaes">—</td>
-                </tr>
-                <tr>
-                  <td style="padding:2px 0 3px 14px;color:var(--rl-text-muted);font-size:10.5px">↳ Sessions</td>
-                  <td style="text-align:right;font-family:monospace;font-size:10.5px;color:var(--rl-text-muted)" id="br_sessions">—</td>
-                </tr>
-                <tr style="border-top:1px solid var(--rl-card-border)">
-                  <td style="padding:5px 0 2px;font-weight:600">Total</td>
-                  <td style="text-align:right;font-family:monospace;font-weight:700;color:var(--rl-accent-purple)" id="br_total">0.00</td>
-                </tr>
+                <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Events (IAEs + Sessions)</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_events">0.00</td></tr>
+                <tr><td style="padding:2px 0 2px 14px;color:var(--rl-text-muted);font-size:10.5px">↳ IAE counters</td><td style="text-align:right;font-family:monospace;font-size:10.5px;color:var(--rl-text-muted)" id="br_iaes">—</td></tr>
+                <tr><td style="padding:2px 0 3px 14px;color:var(--rl-text-muted);font-size:10.5px">↳ Sessions</td><td style="text-align:right;font-family:monospace;font-size:10.5px;color:var(--rl-text-muted)" id="br_sessions">—</td></tr>
+                <tr style="border-top:1px solid var(--rl-card-border)"><td style="padding:5px 0 2px;font-weight:600">Total</td><td style="text-align:right;font-family:monospace;font-weight:700;color:var(--rl-accent-purple)" id="br_total">0.00</td></tr>
               </table>
             </div>
           </div>
@@ -507,31 +417,27 @@ tr:hover td{background:#faf9ff}
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════════════════
+// ── NAVIGATION ─────────────────────────────────────────
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   btn.classList.add('active');
-  const names = { validator: 'Funnel Validator', credits: 'Calculadora de Créditos' };
+  const names  = { validator: 'Funnel Validator', credits: 'Calculadora de Créditos' };
   const badges = { validator: 'step_6 + aprobado|contratado', credits: 'AppsFlyer Credits' };
   document.getElementById('topbarActive').textContent = names[id];
   document.getElementById('topbarBadge').textContent  = badges[id];
 }
 
-// ══════════════════════════════════════════════════════
-// CREDITS CALCULATOR
-// ══════════════════════════════════════════════════════
+// ── CREDITS CALCULATOR ────────────────────────────────
 const RATES = { clicks: 2, reeng: 30, reinst: 60, events: 2 };
 const MAX_CLICKS = 30_000_000;
 
-const csvCreditsInput  = document.getElementById('csvCreditsInput');
+const csvCreditsInput   = document.getElementById('csvCreditsInput');
 const creditsUploadZone = document.getElementById('creditsUploadZone');
 
 csvCreditsInput.addEventListener('change', e => { if(e.target.files[0]) processCreditsFile(e.target.files[0]); e.target.value=''; });
-creditsUploadZone.addEventListener('click', () => csvCreditsInput.click());
+creditsUploadZone.addEventListener('click',     () => csvCreditsInput.click());
 creditsUploadZone.addEventListener('dragover',  e => { e.preventDefault(); creditsUploadZone.classList.add('drag-over'); });
 creditsUploadZone.addEventListener('dragleave', e => { e.preventDefault(); creditsUploadZone.classList.remove('drag-over'); });
 creditsUploadZone.addEventListener('drop', e => {
@@ -548,10 +454,8 @@ function processCreditsFile(file) {
     try { text = new TextDecoder('utf-8',{fatal:true}).decode(bytes); }
     catch(e) { text = new TextDecoder('iso-8859-1').decode(bytes); }
     if (text.charCodeAt(0)===0xFEFF) text = text.slice(1);
-
     const firstLine = text.split(/\r?\n/)[0]||'';
     const delim = (firstLine.match(/\t/g)||[]).length > (firstLine.match(/,/g)||[]).length ? '\t' : ',';
-
     Papa.parse(text, {
       header: true, skipEmptyLines: true, delimiter: delim,
       transformHeader: h => h.trim(), transform: v => (v||'').trim(),
@@ -571,41 +475,16 @@ function numVal(v) {
 
 function extractCreditsFromCSV(rows, fileName) {
   const cols = Object.keys(rows[0] || {});
-
-  // Clicks: re-attribution rows only
-  const totalClicks = rows
-    .filter(r => (r['Conversion Type']||'').toLowerCase() === 're-attribution')
-    .reduce((s, r) => s + numVal(r['Clicks']), 0);
-
-  // Re-engagements
-  const totalReeng = rows
-    .filter(r => (r['Conversion Type']||'').toLowerCase() === 're-engagement')
-    .reduce((s, r) => s + numVal(r['Conversions']), 0);
-
-  // Re-installs
-  const totalReinst = rows
-    .filter(r => (r['Conversion Type']||'').toLowerCase() === 're-attribution')
-    .reduce((s, r) => s + numVal(r['Conversions']), 0);
-
-  // Sessions — separate column
+  const totalClicks  = rows.filter(r => (r['Conversion Type']||'').toLowerCase() === 're-attribution').reduce((s, r) => s + numVal(r['Clicks']), 0);
+  const totalReeng   = rows.filter(r => (r['Conversion Type']||'').toLowerCase() === 're-engagement').reduce((s, r) => s + numVal(r['Conversions']), 0);
+  const totalReinst  = rows.filter(r => (r['Conversion Type']||'').toLowerCase() === 're-attribution').reduce((s, r) => s + numVal(r['Conversions']), 0);
   const totalSessions = rows.reduce((s, r) => s + numVal(r['Sessions']), 0);
+  const eventCols    = cols.filter(c => c.includes('(Event counter)'));
+  const totalIAEs    = rows.reduce((s, r) => s + eventCols.reduce((es, c) => es + numVal(r[c]), 0), 0);
+  const totalEvents  = totalIAEs + totalSessions;
+  const keyCols      = eventCols.filter(c => /_contratado|_finalizado/.test(c));
+  const totalKeyEvents = rows.reduce((s, r) => s + keyCols.reduce((ks, c) => ks + numVal(r[c]), 0), 0);
 
-  // IAE counters — all (Event counter) columns
-  const eventCols = cols.filter(c => c.includes('(Event counter)'));
-  const totalIAEs = rows.reduce((s, r) => {
-    return s + eventCols.reduce((es, c) => es + numVal(r[c]), 0);
-  }, 0);
-
-  // Total events = IAEs + Sessions
-  const totalEvents = totalIAEs + totalSessions;
-
-  // Key events
-  const keyCols = eventCols.filter(c => /_contratado|_finalizado/.test(c));
-  const totalKeyEvents = rows.reduce((s, r) => {
-    return s + keyCols.reduce((ks, c) => ks + numVal(r[c]), 0);
-  }, 0);
-
-  // Fill inputs
   document.getElementById('inp_clicks').value    = Math.round(totalClicks);
   document.getElementById('inp_reeng').value     = Math.round(totalReeng);
   document.getElementById('inp_reinst').value    = Math.round(totalReinst);
@@ -617,13 +496,10 @@ function extractCreditsFromCSV(rows, fileName) {
   document.getElementById('creditsUploadZone').style.display = 'none';
   document.getElementById('creditsFileInfo').style.display   = 'block';
   document.getElementById('creditsFileName').textContent = fileName;
-  document.getElementById('creditsFileRows').textContent =
-    `${rows.length} filas · ${eventCols.length} columnas de eventos · ${keyCols.length} key events · sessions: ${Math.round(totalSessions).toLocaleString('es-CO')}`;
-
+  document.getElementById('creditsFileRows').textContent = `${rows.length} filas · ${eventCols.length} columnas de eventos · ${keyCols.length} key events · sessions: ${Math.round(totalSessions).toLocaleString('es-CO')}`;
   calcCredits();
 }
 
-// Called when IAEs or Sessions inputs change manually
 function calcEventsTotal() {
   const iaes     = parseFloat(document.getElementById('inp_iaes').value)     || 0;
   const sessions = parseFloat(document.getElementById('inp_sessions').value) || 0;
@@ -632,38 +508,25 @@ function calcEventsTotal() {
 }
 
 function calcCredits() {
-  const get = id => {
-    const v = parseFloat(document.getElementById('inp_' + id).value);
-    return isNaN(v) || v < 0 ? 0 : v;
-  };
+  const get = id => { const v = parseFloat(document.getElementById('inp_' + id).value); return isNaN(v) || v < 0 ? 0 : v; };
   const fmt  = n => n.toFixed(4);
   const fmtN = n => n.toLocaleString('es-CO');
-
   const rawClicks = get('clicks');
-  const clicks    = Math.min(rawClicks, MAX_CLICKS);
-  const reeng     = get('reeng');
-  const reinst    = get('reinst');
-  const events    = get('events');
-  const iaes      = get('iaes');
-  const sessions  = get('sessions');
-  const keyEvents = get('keyev_raw');
-
-  const r_clicks = clicks  * RATES.clicks  / 1_000_000;
-  const r_reeng  = reeng   * RATES.reeng   / 1_000_000;
-  const r_reinst = reinst  * RATES.reinst  / 1_000_000;
-  const r_events = events  * RATES.events  / 1_000_000;
-  const total    = r_clicks + r_reeng + r_reinst + r_events;
+  const clicks = Math.min(rawClicks, MAX_CLICKS);
+  const reeng  = get('reeng'), reinst = get('reinst'), events = get('events');
+  const iaes   = get('iaes'),  sessions = get('sessions'), keyEvents = get('keyev_raw');
+  const r_clicks = clicks * RATES.clicks / 1_000_000;
+  const r_reeng  = reeng  * RATES.reeng  / 1_000_000;
+  const r_reinst = reinst * RATES.reinst / 1_000_000;
+  const r_events = events * RATES.events / 1_000_000;
+  const total = r_clicks + r_reeng + r_reinst + r_events;
 
   document.getElementById('res_clicks').textContent  = fmt(r_clicks);
   document.getElementById('res_reeng').textContent   = fmt(r_reeng);
   document.getElementById('res_reinst').textContent  = fmt(r_reinst);
   document.getElementById('res_events').textContent  = fmt(r_events);
-
-  // Sub-row displays (reference only)
-  document.getElementById('res_iaes').textContent     = iaes     ? fmtN(Math.round(iaes))     : '—';
-  document.getElementById('res_sessions').textContent = sessions ? fmtN(Math.round(sessions)) : '—';
-
-  // Breakdown
+  document.getElementById('res_iaes').textContent    = iaes     ? fmtN(Math.round(iaes))     : '—';
+  document.getElementById('res_sessions').textContent= sessions ? fmtN(Math.round(sessions)) : '—';
   document.getElementById('br_clicks').textContent   = fmt(r_clicks);
   document.getElementById('br_reeng').textContent    = fmt(r_reeng);
   document.getElementById('br_reinst').textContent   = fmt(r_reinst);
@@ -671,65 +534,49 @@ function calcCredits() {
   document.getElementById('br_iaes').textContent     = iaes     ? fmtN(Math.round(iaes))     : '—';
   document.getElementById('br_sessions').textContent = sessions ? fmtN(Math.round(sessions)) : '—';
   document.getElementById('br_total').textContent    = fmt(total);
-  document.getElementById('totalCredits').textContent = fmt(total);
-
-  // Clicks warning
+  document.getElementById('totalCredits').textContent= fmt(total);
   document.getElementById('warn_clicks').style.display = rawClicks > MAX_CLICKS ? 'block' : 'none';
 
-  // Key event % / clicks
-  const pctEl    = document.getElementById('keyevPctDisplay');
-  const badgeEl  = document.getElementById('keyevPctBadge');
-  const detailEl = document.getElementById('keyevPctDetail');
-  const resKeyEl = document.getElementById('res_keyev');
-
+  const pctEl = document.getElementById('keyevPctDisplay'), badgeEl = document.getElementById('keyevPctBadge'), detailEl = document.getElementById('keyevPctDetail'), resKeyEl = document.getElementById('res_keyev');
   if (clicks > 0 && keyEvents > 0) {
-    const pct = keyEvents / clicks * 100;
-    const inRange = pct >= 0.003 && pct <= 0.009;
-    pctEl.textContent   = pct.toFixed(4) + '%';
-    pctEl.style.color   = inRange ? 'var(--rl-valid)' : 'var(--rl-warn)';
+    const pct = keyEvents / clicks * 100, inRange = pct >= 0.003 && pct <= 0.009;
+    pctEl.textContent = pct.toFixed(4) + '%'; pctEl.style.color = inRange ? 'var(--rl-valid)' : 'var(--rl-warn)';
     badgeEl.textContent = inRange ? '✓ En rango' : '⚠ Fuera de rango';
     badgeEl.style.background = inRange ? 'var(--rl-valid-bg)' : 'var(--rl-warn-bg)';
     badgeEl.style.color      = inRange ? 'var(--rl-valid)'    : 'var(--rl-warn)';
     detailEl.textContent = `${fmtN(Math.round(keyEvents))} key events / ${fmtN(Math.round(clicks))} clicks`;
-    resKeyEl.textContent = fmtN(Math.round(keyEvents));
-    resKeyEl.style.color = inRange ? 'var(--rl-valid)' : 'var(--rl-warn)';
+    resKeyEl.textContent = fmtN(Math.round(keyEvents)); resKeyEl.style.color = inRange ? 'var(--rl-valid)' : 'var(--rl-warn)';
   } else {
-    pctEl.textContent   = '—';
-    pctEl.style.color   = 'var(--rl-text-muted)';
-    badgeEl.textContent = '—';
-    badgeEl.style.background = '#f0eff5';
-    badgeEl.style.color      = 'var(--rl-text-muted)';
-    detailEl.textContent = 'Cargá un CSV para ver el cálculo';
-    resKeyEl.textContent = '—';
+    pctEl.textContent = '—'; pctEl.style.color = 'var(--rl-text-muted)';
+    badgeEl.textContent = '—'; badgeEl.style.background = '#f0eff5'; badgeEl.style.color = 'var(--rl-text-muted)';
+    detailEl.textContent = 'Cargá un CSV para ver el cálculo'; resKeyEl.textContent = '—';
   }
 }
 
 function resetCredits() {
-  ['clicks','reeng','reinst','iaes','sessions','events','keyev_raw'].forEach(id => {
-    const el = document.getElementById('inp_' + id);
-    if (el) el.value = '';
-  });
-  ['res_iaes','res_sessions','res_keyev'].forEach(id => {
-    document.getElementById(id).textContent = '—';
-  });
+  ['clicks','reeng','reinst','iaes','sessions','events','keyev_raw'].forEach(id => { const el = document.getElementById('inp_' + id); if (el) el.value = ''; });
+  ['res_iaes','res_sessions','res_keyev'].forEach(id => { document.getElementById(id).textContent = '—'; });
+  document.getElementById('creditsUploadZone').style.display = 'none'; // keep hidden on reset since file was already loaded
   document.getElementById('creditsUploadZone').style.display = 'block';
   document.getElementById('creditsFileInfo').style.display   = 'none';
   calcCredits();
 }
 
-// ══════════════════════════════════════════════════════
-// FUNNEL VALIDATOR — CONFIG
-// ══════════════════════════════════════════════════════
-const OPTIONAL_STEPS         = ['apertura_cuenta_en_linea_no_cliente-app_step_1'];
-const STEP_6                 = 'apertura_cuenta_en_linea_no_cliente-app_step_6';
-const COMPLETED_APROBADO     = 'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado';
-const COMPLETED_CONTRATADO   = 'apertura_cuenta_en_linea_no_cliente-app_completed_contratado';
+// ── FUNNEL VALIDATOR ──────────────────────────────────
+const OPTIONAL_STEPS       = ['apertura_cuenta_en_linea_no_cliente-app_step_1'];
+const STEP_1               = 'apertura_cuenta_en_linea_no_cliente-app_step_1';
+const STEP_6               = 'apertura_cuenta_en_linea_no_cliente-app_step_6';
+const COMPLETED_APROBADO   = 'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado';
+const COMPLETED_CONTRATADO = 'apertura_cuenta_en_linea_no_cliente-app_completed_contratado';
 const ALL_STEPS = [...OPTIONAL_STEPS, STEP_6, COMPLETED_APROBADO, COMPLETED_CONTRATADO];
 const REQUIRED_CC = 'CO';
 
-const GEO_MIN_CITY_MIN  = 5;
-const GEO_MIN_STATE_MIN = 10;
-const MAX_COMPLETIONS = 2;
+// ── UPDATED VALIDATION CONSTANTS ──────────────────────
+const GEO_MIN_CITY_MIN       = 45;   // cambio de ciudad imposible si < 45 min
+const GEO_MIN_STATE_MIN      = 10;   // cambio de dpto imposible si < 10 min (sin cambios)
+const MAX_COMPLETIONS        = 2;    // más de 2 completaciones → duplicado
+const STEP1_TO_STEP6_MIN_MIN = 12;   // step1→step6 mínimo 12 min
+const STEP1_TO_STEP6_MAX_MIN = 60;   // step1→step6 máximo 60 min
 
 let allResults   = [];
 let activeStatus  = 'all';
@@ -756,7 +603,7 @@ function processFile(file) {
     const first = text.split(/\r?\n/)[0]||'';
     const delim = (first.match(/\t/g)||[]).length > (first.match(/,/g)||[]).length ? '\t' : ',';
     showInfo('Parseando…');
-    Papa.parse(text,{
+    Papa.parse(text, {
       header:true, skipEmptyLines:true, delimiter:delim,
       transformHeader:h=>h.trim(), transform:v=>(v||'').trim(),
       complete: r => { hideInfo(); if(!r.data||!r.data.length){showError('Archivo vacío.');return;} analyze(r.data); },
@@ -772,7 +619,7 @@ function analyze(rows) {
     const id    = row['AppsFlyer ID'];
     const event = row['Event Name'];
     if (!id||!event) return;
-    if (!byId[id]) byId[id]=[];
+    if (!byId[id]) byId[id] = [];
     byId[id].push({
       event,
       value:   row['Event Value']||'',
@@ -786,45 +633,63 @@ function analyze(rows) {
   allResults = Object.entries(byId)
     .filter(([,evs]) => evs.some(e => e.event===COMPLETED_APROBADO||e.event===COMPLETED_CONTRATADO))
     .map(([id, evs]) => {
-      evs.sort((a,b)=>(a.time||0)-(b.time||0));
+      evs.sort((a,b) => (a.time||0) - (b.time||0));
 
-      const finalRow = evs.find(e=>e.event===COMPLETED_CONTRATADO)||evs.find(e=>e.event===COMPLETED_APROBADO);
+      const finalRow = evs.find(e=>e.event===COMPLETED_CONTRATADO) || evs.find(e=>e.event===COMPLETED_APROBADO);
       const country  = finalRow ? finalRow.country : '';
       const validCC  = country === REQUIRED_CC;
 
-      const registered = ALL_STEPS.filter(s=>evs.some(e=>e.event===s));
-      const missingStep6    = !registered.includes(STEP_6);
-      const hasAnyCompleted = registered.includes(COMPLETED_APROBADO)||registered.includes(COMPLETED_CONTRATADO);
-      const missingRequired = [
-        ...(missingStep6    ?[STEP_6]:[]),
-        ...(!hasAnyCompleted?['completed_aprobado o completed_contratado']:[])
+      const registered     = ALL_STEPS.filter(s => evs.some(e => e.event===s));
+      const missingStep6   = !registered.includes(STEP_6);
+      const hasAnyCompleted= registered.includes(COMPLETED_APROBADO) || registered.includes(COMPLETED_CONTRATADO);
+      const missingRequired= [
+        ...(missingStep6     ? [STEP_6] : []),
+        ...(!hasAnyCompleted ? ['completed_aprobado o completed_contratado'] : [])
       ];
 
-      const afContent = getAfContent(finalRow?finalRow.value:'');
+      const afContent = getAfContent(finalRow ? finalRow.value : '');
       const product   = classifyProduct(afContent);
 
+      // ── RULE 1: geo imposible (45 min umbral ciudad) ──
       const geoIssues = [];
-      for (let i=1; i<evs.length; i++) {
-        const prev=evs[i-1], curr=evs[i];
-        if (!prev.time||!curr.time) continue;
+      for (let i = 1; i < evs.length; i++) {
+        const prev = evs[i-1], curr = evs[i];
+        if (!prev.time || !curr.time) continue;
         const diffMin = (curr.time - prev.time) / 60000;
         if (diffMin < 0) continue;
-        if (prev.city && curr.city && prev.city!==curr.city && diffMin < GEO_MIN_CITY_MIN) {
-          geoIssues.push(`Ciudad imposible: ${prev.city}→${curr.city} en ${diffMin.toFixed(1)} min`);
-        } else if (prev.state && curr.state && prev.state!==curr.state && diffMin < GEO_MIN_STATE_MIN) {
+        if (prev.city && curr.city && prev.city !== curr.city && diffMin < GEO_MIN_CITY_MIN) {
+          geoIssues.push(`Ciudad imposible: ${prev.city}→${curr.city} en ${diffMin.toFixed(1)} min (mín. ${GEO_MIN_CITY_MIN} min)`);
+        } else if (prev.state && curr.state && prev.state !== curr.state && diffMin < GEO_MIN_STATE_MIN) {
           geoIssues.push(`Departamento imposible: ${prev.state}→${curr.state} en ${diffMin.toFixed(1)} min`);
         }
       }
 
-      const completions = evs.filter(e=>e.event===COMPLETED_APROBADO||e.event===COMPLETED_CONTRATADO);
-      const productCompletions = completions.length;
-      const isDuplicate = productCompletions > MAX_COMPLETIONS;
+      // ── RULE 2: timing step_1 → step_6 (12–60 min) ──
+      let timingIssue = '';
+      const step1Event = evs.find(e => e.event === STEP_1);
+      const step6Event = evs.find(e => e.event === STEP_6);
+      if (step1Event && step6Event && step1Event.time && step6Event.time) {
+        const diffMin = (step6Event.time - step1Event.time) / 60000;
+        if (diffMin < STEP1_TO_STEP6_MIN_MIN) {
+          timingIssue = `step_1→step_6 demasiado rápido: ${diffMin.toFixed(1)} min (mín. ${STEP1_TO_STEP6_MIN_MIN} min)`;
+        } else if (diffMin > STEP1_TO_STEP6_MAX_MIN) {
+          timingIssue = `step_1→step_6 demasiado lento: ${diffMin.toFixed(1)} min (máx. ${STEP1_TO_STEP6_MAX_MIN} min)`;
+        }
+      }
 
-      let status, exclusionReason = '';
+      // ── RULE 3: duplicados ──
+      const completions        = evs.filter(e => e.event===COMPLETED_APROBADO||e.event===COMPLETED_CONTRATADO);
+      const productCompletions = completions.length;
+      const isDuplicate        = productCompletions > MAX_COMPLETIONS;
+
+      // ── STATUS PRIORITY: país → geo → timing → duplicado → missing steps ──
+      let status = '', exclusionReason = '';
       if (!validCC) {
         status = 'excluded'; exclusionReason = 'País no CO';
       } else if (geoIssues.length > 0) {
         status = 'geo'; exclusionReason = geoIssues[0];
+      } else if (timingIssue) {
+        status = 'timing'; exclusionReason = timingIssue;
       } else if (isDuplicate) {
         status = 'dup'; exclusionReason = `${productCompletions} completaciones (máx ${MAX_COMPLETIONS})`;
       } else if (missingRequired.length > 0) {
@@ -837,7 +702,7 @@ function analyze(rows) {
         id, status, country, registered, missingRequired,
         hasAprobado:   registered.includes(COMPLETED_APROBADO),
         hasContratado: registered.includes(COMPLETED_CONTRATADO),
-        product, afContent, geoIssues, isDuplicate,
+        product, afContent, geoIssues, timingIssue, isDuplicate,
         productCompletions, exclusionReason
       };
     });
@@ -861,22 +726,23 @@ function classifyProduct(c) {
 }
 
 function renderUI() {
-  document.getElementById('statsSection').style.display   = 'flex';
-  document.getElementById('statsSection').style.flexDirection = 'column';
-  document.getElementById('resultsSection').style.display = 'block';
-  document.getElementById('uploadZone').style.display     = 'none';
+  document.getElementById('statsSection').style.display      = 'flex';
+  document.getElementById('statsSection').style.flexDirection= 'column';
+  document.getElementById('resultsSection').style.display    = 'block';
+  document.getElementById('uploadZone').style.display        = 'none';
 
-  const total    = allResults.length;
-  const clean    = allResults.filter(r=>r.status==='clean').length;
-  const missing  = allResults.filter(r=>r.status==='missing').length;
-  const geo      = allResults.filter(r=>r.status==='geo').length;
-  const dup      = allResults.filter(r=>r.status==='dup').length;
-  const excluded = allResults.filter(r=>r.status==='excluded').length;
-  const fact     = allResults.filter(r=>r.status==='clean');
+  const total   = allResults.length;
+  const clean   = allResults.filter(r=>r.status==='clean').length;
+  const missing = allResults.filter(r=>r.status==='missing').length;
+  const geo     = allResults.filter(r=>r.status==='geo').length;
+  const timing  = allResults.filter(r=>r.status==='timing').length;
+  const dup     = allResults.filter(r=>r.status==='dup').length;
+  const excluded= allResults.filter(r=>r.status==='excluded').length;
+  const fact    = allResults.filter(r=>r.status==='clean');
 
   document.getElementById('sTotal').textContent    = total;
   document.getElementById('sClean').textContent    = clean;
-  document.getElementById('sMissing').textContent  = missing + geo + dup;
+  document.getElementById('sMissing').textContent  = missing + geo + timing + dup;
   document.getElementById('sExcluded').textContent = excluded;
   document.getElementById('sPct').textContent      = total ? Math.round(clean/total*100)+'%' : '0%';
   document.getElementById('sLibreton').textContent = fact.filter(r=>r.product==='libreton').length;
@@ -888,10 +754,10 @@ function renderUI() {
 
 function setFilter(val, type, btn) {
   if (type==='status') {
-    activeStatus=val;
+    activeStatus = val;
     document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));
   } else {
-    activeProduct=val;
+    activeProduct = val;
     document.querySelectorAll('#productTabs .tab').forEach(t=>t.classList.remove('active'));
   }
   btn.classList.add('active');
@@ -900,8 +766,8 @@ function setFilter(val, type, btn) {
 
 function renderTable() {
   let data = allResults;
-  if (activeStatus  !=='all') data=data.filter(r=>r.status===activeStatus);
-  if (activeProduct !=='all') data=data.filter(r=>r.product===activeProduct);
+  if (activeStatus  !== 'all') data = data.filter(r=>r.status===activeStatus);
+  if (activeProduct !== 'all') data = data.filter(r=>r.product===activeProduct);
 
   document.getElementById('tableBody').innerHTML = data.map(r => {
     const sb = r.status==='clean'
@@ -910,6 +776,8 @@ function renderTable() {
       ? `<span class="badge bw">⚠ Pasos faltantes</span>`
       : r.status==='geo'
       ? `<span class="badge bw">📍 Alerta geo</span>`
+      : r.status==='timing'
+      ? `<span class="badge bw">⏱ Timing inválido</span>`
       : r.status==='dup'
       ? `<span class="badge bw">🔁 Duplicado</span>`
       : `<span class="badge bi">❌ Excluido</span>`;
@@ -917,7 +785,7 @@ function renderTable() {
     const pb = r.status!=='clean' ? '—'
       : r.product==='libreton' ? `<span class="badge bn">📘 Cuenta Digital</span>`
       : r.product==='nomina'   ? `<span class="badge bb">💼 Nómina</span>`
-      :                           `<span class="badge bw">❓ Otro</span>`;
+      :                          `<span class="badge bw">❓ Otro</span>`;
 
     const stepsHtml = ALL_STEPS.map(s => {
       const done = r.registered.includes(s);
@@ -944,26 +812,26 @@ function renderTable() {
       <td>${pb}</td>
       <td style="max-width:340px">${stepsHtml}</td>
       <td>${ccBadge}</td>
-      <td style="max-width:220px">${reasonCell}</td>
+      <td style="max-width:240px">${reasonCell}</td>
       <td style="font-size:11px;color:var(--rl-text-muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'—'}</td>
     </tr>`;
-  }).join('')||`<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--rl-text-muted)">Sin resultados para este filtro</td></tr>`;
+  }).join('') || `<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--rl-text-muted)">Sin resultados para este filtro</td></tr>`;
 }
 
 function exportCSV(which) {
   let data = allResults;
-  if (which==='clean')    data=data.filter(r=>r.status==='clean');
-  if (which==='libreton') data=data.filter(r=>r.status==='clean'&&r.product==='libreton');
-  if (which==='nomina')   data=data.filter(r=>r.status==='clean'&&r.product==='nomina');
-  const rows=[['AppsFlyer ID','Estado','Producto','País','Pasos OK','Razón exclusión','af_content']];
-  data.forEach(r=>rows.push([r.id,r.status,r.product,r.country,r.registered.length+'/'+ALL_STEPS.length,r.exclusionReason,r.afContent]));
-  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=Object.assign(document.createElement('a'),{
-    href:URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'})),
-    download:`bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`
+  if (which==='clean')    data = data.filter(r=>r.status==='clean');
+  if (which==='libreton') data = data.filter(r=>r.status==='clean'&&r.product==='libreton');
+  if (which==='nomina')   data = data.filter(r=>r.status==='clean'&&r.product==='nomina');
+  const rows = [['AppsFlyer ID','Estado','Producto','País','Pasos OK','Razón exclusión','af_content']];
+  data.forEach(r => rows.push([r.id, r.status, r.product, r.country, r.registered.length+'/'+ALL_STEPS.length, r.exclusionReason, r.afContent]));
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'})),
+    download: `bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`
   });
-  document.body.appendChild(a);a.click();
-  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
