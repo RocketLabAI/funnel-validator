@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+]<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -56,6 +56,19 @@ body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:va
 
 .card{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow)}
 
+/* Funnel steps */
+.funnel-steps{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-bottom:20px;background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden}
+.funnel-step{padding:14px 16px;border-right:1px solid var(--rl-card-border);position:relative}
+.funnel-step:last-child{border-right:none}
+.funnel-step-num{font-size:10px;font-weight:600;color:var(--rl-text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px}
+.funnel-step-value{font-size:22px;font-weight:700;letter-spacing:-0.5px;line-height:1}
+.funnel-step-label{font-size:10.5px;color:var(--rl-text-secondary);margin-top:3px}
+.funnel-step-excl{font-size:10px;color:var(--rl-invalid);margin-top:2px;font-weight:500}
+.funnel-step.step-start .funnel-step-value{color:var(--rl-text-primary)}
+.funnel-step.step-filter .funnel-step-value{color:var(--rl-warn)}
+.funnel-step.step-end .funnel-step-value{color:var(--rl-valid)}
+.funnel-arrow{position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:16px;height:16px;background:var(--rl-content-bg);border:1px solid var(--rl-card-border);border-radius:2px;z-index:2;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--rl-text-muted)}
+
 .kpi-grid{display:grid;gap:12px;margin-bottom:20px}
 .kpi-grid-5{grid-template-columns:repeat(5,1fr)}
 .kpi-grid-4{grid-template-columns:repeat(4,1fr)}
@@ -110,6 +123,11 @@ tr:hover td{background:#faf9ff}
 .msg-error{background:var(--rl-invalid-bg);border:1px solid #fecaca;color:var(--rl-invalid)}
 .msg-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8}
 
+.criteria-info{background:#f0eff5;border:1px solid var(--rl-card-border);border-radius:6px;padding:10px 14px;font-size:11.5px;color:var(--rl-text-secondary);line-height:1.7;margin-bottom:16px}
+.criteria-info strong{color:var(--rl-text-primary)}
+.export-row{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+/* Credits */
 .credits-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 .credits-group{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);padding:16px}
 .credits-group-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:var(--rl-text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
@@ -130,12 +148,10 @@ tr:hover td{background:#faf9ff}
 .credits-total-label{font-size:13px;font-weight:600;color:var(--rl-accent-purple)}
 .credits-total-value{font-size:22px;font-weight:700;color:var(--rl-accent-purple);letter-spacing:-0.5px;font-family:monospace}
 .credits-warning{font-size:11px;color:var(--rl-invalid);background:var(--rl-invalid-bg);border:1px solid #fecaca;padding:5px 10px;border-radius:4px;margin-top:6px;display:none}
-.criteria-info{background:#f0eff5;border:1px solid var(--rl-card-border);border-radius:6px;padding:10px 14px;font-size:11.5px;color:var(--rl-text-secondary);line-height:1.7;margin-bottom:16px}
-.criteria-info strong{color:var(--rl-text-primary)}
-.export-row{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}
 
 @media(max-width:900px){
   .kpi-grid-5,.kpi-grid-4{grid-template-columns:repeat(2,1fr)}
+  .funnel-steps{grid-template-columns:repeat(3,1fr)}
   .credits-grid{grid-template-columns:1fr}
 }
 </style>
@@ -165,13 +181,13 @@ tr:hover td{background:#faf9ff}
     <span class="topbar-crumb-sep">/</span>
     <span class="topbar-crumb-active" id="topbarActive">Funnel Validator</span>
     <div class="topbar-sep"></div>
-    <span class="topbar-badge" id="topbarBadge">step_6 + aprobado|contratado</span>
+    <span class="topbar-badge" id="topbarBadge">step_6 + completed_aprobado</span>
     <div class="avatar">RL</div>
   </div>
 
   <div class="content">
 
-    <!-- FUNNEL VALIDATOR -->
+    <!-- ═══ FUNNEL VALIDATOR ═══ -->
     <div class="page active" id="page-validator">
       <div class="page-header">
         <div>
@@ -185,26 +201,63 @@ tr:hover td{background:#faf9ff}
       <div class="msg msg-info"  id="msgInfo"></div>
 
       <div class="criteria-info">
-        <strong>Criterios de validación:</strong><br>
-        · <strong>step_6</strong> obligatorio — <strong>completed_aprobado</strong> y/o <strong>completed_contratado</strong> al menos uno requerido<br>
-        · <strong>País:</strong> solo registros con Country Code = CO son facturables<br>
-        · <strong>Geografía:</strong> cambio de ciudad en menos de 50 min → geográficamente imposible → excluido<br>
-        · <strong>Timing:</strong> duración del funnel fuera de rango → alerta pero <em>sigue siendo facturable</em><br>
-        · <strong>Múltiples completaciones:</strong> más de 1 evento de completion → descartado
+        <strong>Lógica de filtros (secuencial):</strong><br>
+        &nbsp;1. Base: IDs que tienen <strong>completed_aprobado</strong> (o completed_contratado)<br>
+        &nbsp;2. <strong>País CO + Is Primary</strong> → excluye Non-CO y no-primary<br>
+        &nbsp;3. <strong>Múltiples completions</strong> → más de 1 completion por AppsFlyer ID → excluido<br>
+        &nbsp;4. <strong>Sin step_6</strong> → step_6 obligatorio, step_1 no obligatorio<br>
+        &nbsp;5. <strong>Salto geográfico &lt;50 min</strong> → cambio de ciudad entre eventos consecutivos en menos de 50 min → excluido<br>
+        <span style="color:var(--rl-text-muted)">Nota: la detección geo opera sobre los eventos in-app del CSV. Para detectar saltos click-city → event-city se requiere el export de clicks de AF.</span>
       </div>
 
-      <div id="statsSection" style="display:none">
-        <div class="section-label">Resumen global</div>
-        <div class="kpi-grid kpi-grid-5" style="margin-bottom:12px">
-          <div class="kpi-card accent-gray"><div class="kpi-label">Total IDs</div><div class="kpi-value" id="sTotal">0</div></div>
-          <div class="kpi-card accent-green"><div class="kpi-label">Facturables</div><div class="kpi-value" style="color:var(--rl-valid)" id="sClean">0</div></div>
-          <div class="kpi-card accent-amber"><div class="kpi-label">Pasos faltantes</div><div class="kpi-value" style="color:var(--rl-warn)" id="sMissing">0</div></div>
-          <div class="kpi-card accent-red"><div class="kpi-label">Excluidos</div><div class="kpi-value" style="color:var(--rl-invalid)" id="sExcluded">0</div></div>
-          <div class="kpi-card accent-purple"><div class="kpi-label">% Facturable</div><div class="kpi-value" style="color:var(--rl-accent-purple)" id="sPct">0%</div></div>
+      <!-- FUNNEL WATERFALL (shown after load) -->
+      <div id="funnelSection" style="display:none">
+        <div class="section-label">Waterfall de filtros</div>
+        <div class="funnel-steps">
+          <div class="funnel-step step-start">
+            <div class="funnel-step-num">Base</div>
+            <div class="funnel-step-value" id="fS0">—</div>
+            <div class="funnel-step-label">Altas brutas únicas</div>
+            <div class="funnel-arrow">›</div>
+          </div>
+          <div class="funnel-step step-filter">
+            <div class="funnel-step-num">Filtro 1</div>
+            <div class="funnel-step-value" id="fS1">—</div>
+            <div class="funnel-step-label">Tras excluir País/Primary</div>
+            <div class="funnel-step-excl" id="fE1">−0</div>
+            <div class="funnel-arrow">›</div>
+          </div>
+          <div class="funnel-step step-filter">
+            <div class="funnel-step-num">Filtro 2</div>
+            <div class="funnel-step-value" id="fS2">—</div>
+            <div class="funnel-step-label">Tras excluir múlt. completions</div>
+            <div class="funnel-step-excl" id="fE2">−0</div>
+            <div class="funnel-arrow">›</div>
+          </div>
+          <div class="funnel-step step-filter">
+            <div class="funnel-step-num">Filtro 3</div>
+            <div class="funnel-step-value" id="fS3">—</div>
+            <div class="funnel-step-label">Tras excluir sin step_6</div>
+            <div class="funnel-step-excl" id="fE3">−0</div>
+            <div class="funnel-arrow">›</div>
+          </div>
+          <div class="funnel-step step-filter">
+            <div class="funnel-step-num">Filtro 4</div>
+            <div class="funnel-step-value" id="fS4">—</div>
+            <div class="funnel-step-label">Tras excluir salto geo</div>
+            <div class="funnel-step-excl" id="fE4">−0</div>
+            <div class="funnel-arrow">›</div>
+          </div>
+          <div class="funnel-step step-end">
+            <div class="funnel-step-num">Válidas</div>
+            <div class="funnel-step-value" id="fValid">—</div>
+            <div class="funnel-step-label">Altas válidas / pagables</div>
+          </div>
         </div>
+
         <div class="section-label">Por producto (solo facturables)</div>
         <div class="kpi-grid kpi-grid-3" style="margin-bottom:20px">
-          <div class="kpi-card accent-purple"><div class="kpi-label">Cuenta Digital (libreton)</div><div class="kpi-value" style="color:var(--rl-accent-purple)" id="sLibreton">0</div></div>
+          <div class="kpi-card accent-purple"><div class="kpi-label">Libreton / Cuenta Digital</div><div class="kpi-value" style="color:var(--rl-accent-purple)" id="sLibreton">0</div></div>
           <div class="kpi-card accent-blue"><div class="kpi-label">Nómina</div><div class="kpi-value" style="color:#2563eb" id="sNomina">0</div></div>
           <div class="kpi-card accent-amber"><div class="kpi-label">Otro / Sin clasificar</div><div class="kpi-value" style="color:var(--rl-warn)" id="sOther">0</div></div>
         </div>
@@ -213,9 +266,9 @@ tr:hover td{background:#faf9ff}
       <div class="upload-zone" id="uploadZone">
         <input type="file" accept=".csv,.tsv,.txt" id="csvInput" style="display:none"/>
         <div style="font-size:32px;margin-bottom:10px">📂</div>
-        <h2>Arrastrá tu archivo aquí</h2>
-        <p>CSV o TSV exportado de AppsFlyer</p>
-        <div class="upload-hint">AppsFlyer ID · Event Name · Event Time · City · State · Country Code · Event Value</div>
+        <h2>Arrastrá el CSV de AF aquí</h2>
+        <p>Raw data export de AppsFlyer (non-organic in-app events)</p>
+        <div class="upload-hint">AppsFlyer ID · Event Name · Event Time · City · Country Code · Is Primary Attribution · Event Value</div>
       </div>
 
       <div id="resultsSection" style="display:none;margin-top:4px">
@@ -223,16 +276,15 @@ tr:hover td{background:#faf9ff}
           <div class="filter-tabs" id="statusTabs">
             <button class="tab active" onclick="setFilter('all','status',this)">Todos</button>
             <button class="tab" onclick="setFilter('clean','status',this)">✅ Facturables</button>
-            <button class="tab" onclick="setFilter('clean_timing','status',this)">⚠️ Fact. c/ alerta timing</button>
-            <button class="tab" onclick="setFilter('missing','status',this)">⚠ Pasos faltantes</button>
-            <button class="tab" onclick="setFilter('geo','status',this)">📍 Alerta geo</button>
-            <button class="tab" onclick="setFilter('dup','status',this)">🔁 Duplicados</button>
-            <button class="tab" onclick="setFilter('excluded','status',this)">❌ Excluidos</button>
+            <button class="tab" onclick="setFilter('excl_co','status',this)">🌐 País/Primary</button>
+            <button class="tab" onclick="setFilter('excl_dup','status',this)">🔁 Múlt. completions</button>
+            <button class="tab" onclick="setFilter('excl_step6','status',this)">⚠ Sin step_6</button>
+            <button class="tab" onclick="setFilter('excl_geo','status',this)">📍 Salto geo</button>
           </div>
           <div class="filter-sep"></div>
           <div class="filter-tabs" id="productTabs">
             <button class="tab active" onclick="setFilter('all','product',this)">Todos</button>
-            <button class="tab" onclick="setFilter('libreton','product',this)">📘 Cuenta Digital</button>
+            <button class="tab" onclick="setFilter('libreton','product',this)">📘 Libreton</button>
             <button class="tab" onclick="setFilter('nomina','product',this)">💼 Nómina</button>
             <button class="tab" onclick="setFilter('other','product',this)">❓ Otro</button>
           </div>
@@ -241,8 +293,15 @@ tr:hover td{background:#faf9ff}
           <div class="table-scroll">
             <table>
               <thead><tr>
-                <th>AppsFlyer ID</th><th>Estado</th><th>Producto</th>
-                <th>Pasos registrados</th><th>País</th><th>Razón exclusión / Alerta</th><th>af_content</th>
+                <th>AppsFlyer ID</th>
+                <th>Estado</th>
+                <th>Filtro aplicado</th>
+                <th>Producto</th>
+                <th>País</th>
+                <th>Completions</th>
+                <th>step_6</th>
+                <th>Detalle geo</th>
+                <th>af_content</th>
               </tr></thead>
               <tbody id="tableBody"></tbody>
             </table>
@@ -250,14 +309,14 @@ tr:hover td{background:#faf9ff}
         </div>
         <div class="export-row">
           <button class="btn btn-secondary" onclick="exportCSV('all')">Exportar Todos</button>
-          <button class="btn btn-secondary" onclick="exportCSV('libreton')">Exportar Cuenta Digital</button>
+          <button class="btn btn-secondary" onclick="exportCSV('libreton')">Exportar Libreton</button>
           <button class="btn btn-secondary" onclick="exportCSV('nomina')">Exportar Nómina</button>
           <button class="btn btn-primary"   onclick="exportCSV('clean')">Exportar Facturables</button>
         </div>
       </div>
-    </div>
+    </div><!-- /page-validator -->
 
-    <!-- CALCULADORA DE CRÉDITOS -->
+    <!-- ═══ CALCULADORA DE CRÉDITOS ═══ -->
     <div class="page" id="page-credits">
       <div class="page-header">
         <div>
@@ -411,25 +470,25 @@ tr:hover td{background:#faf9ff}
           </div>
         </div>
       </div>
-    </div>
+    </div><!-- /page-credits -->
 
   </div>
 </div>
 
 <script>
-// ── NAVIGATION ─────────────────────────────────────────
+// ─── NAVIGATION ────────────────────────────────────────────────────────────────
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   btn.classList.add('active');
   const names  = { validator: 'Funnel Validator', credits: 'Calculadora de Créditos' };
-  const badges = { validator: 'step_6 + aprobado|contratado', credits: 'AppsFlyer Credits' };
+  const badges = { validator: 'step_6 + completed_aprobado', credits: 'AppsFlyer Credits' };
   document.getElementById('topbarActive').textContent = names[id];
   document.getElementById('topbarBadge').textContent  = badges[id];
 }
 
-// ── CREDITS CALCULATOR ────────────────────────────────
+// ─── CREDITS CALCULATOR ────────────────────────────────────────────────────────
 const RATES = { clicks: 2, reeng: 30, reinst: 60, events: 2 };
 const MAX_CLICKS = 30_000_000;
 
@@ -439,7 +498,7 @@ const creditsUploadZone = document.getElementById('creditsUploadZone');
 csvCreditsInput.addEventListener('change', e => { if(e.target.files[0]) processCreditsFile(e.target.files[0]); e.target.value=''; });
 creditsUploadZone.addEventListener('click',     () => csvCreditsInput.click());
 creditsUploadZone.addEventListener('dragover',  e => { e.preventDefault(); creditsUploadZone.classList.add('drag-over'); });
-creditsUploadZone.addEventListener('dragleave', e => { e.preventDefault(); creditsUploadZone.classList.remove('drag-over'); });
+creditsUploadZone.addEventListener('dragleave', () => creditsUploadZone.classList.remove('drag-over'));
 creditsUploadZone.addEventListener('drop', e => {
   e.preventDefault(); creditsUploadZone.classList.remove('drag-over');
   const f = e.dataTransfer.files[0]; if(f) processCreditsFile(f);
@@ -457,34 +516,27 @@ function processCreditsFile(file) {
     const firstLine = text.split(/\r?\n/)[0]||'';
     const delim = (firstLine.match(/\t/g)||[]).length > (firstLine.match(/,/g)||[]).length ? '\t' : ',';
     Papa.parse(text, {
-      header: true, skipEmptyLines: true, delimiter: delim,
-      transformHeader: h => h.trim(), transform: v => (v||'').trim(),
-      complete: result => {
-        if (!result.data || !result.data.length) { alert('Archivo vacío.'); return; }
-        extractCreditsFromCSV(result.data, file.name);
-      }
+      header:true, skipEmptyLines:true, delimiter:delim,
+      transformHeader:h=>h.trim(), transform:v=>(v||'').trim(),
+      complete: r => { if(!r.data||!r.data.length){alert('Archivo vacío.');return;} extractCreditsFromCSV(r.data, file.name); }
     });
   };
   reader.readAsArrayBuffer(file);
 }
 
-function numVal(v) {
-  const n = parseFloat(String(v||'').replace(/,/g,'').trim());
-  return isNaN(n) || n < 0 ? 0 : n;
-}
+function numVal(v){const n=parseFloat(String(v||'').replace(/,/g,'').trim());return isNaN(n)||n<0?0:n;}
 
 function extractCreditsFromCSV(rows, fileName) {
-  const cols = Object.keys(rows[0] || {});
-  const totalClicks  = rows.filter(r => (r['Conversion Type']||'').toLowerCase() === 're-attribution').reduce((s, r) => s + numVal(r['Clicks']), 0);
-  const totalReeng   = rows.filter(r => (r['Conversion Type']||'').toLowerCase() === 're-engagement').reduce((s, r) => s + numVal(r['Conversions']), 0);
-  const totalReinst  = rows.filter(r => (r['Conversion Type']||'').toLowerCase() === 're-attribution').reduce((s, r) => s + numVal(r['Conversions']), 0);
-  const totalSessions = rows.reduce((s, r) => s + numVal(r['Sessions']), 0);
-  const eventCols    = cols.filter(c => c.includes('(Event counter)'));
-  const totalIAEs    = rows.reduce((s, r) => s + eventCols.reduce((es, c) => es + numVal(r[c]), 0), 0);
-  const totalEvents  = totalIAEs + totalSessions;
-  const keyCols      = eventCols.filter(c => /_contratado|_finalizado/.test(c));
-  const totalKeyEvents = rows.reduce((s, r) => s + keyCols.reduce((ks, c) => ks + numVal(r[c]), 0), 0);
-
+  const cols = Object.keys(rows[0]||{});
+  const totalClicks   = rows.filter(r=>(r['Conversion Type']||'').toLowerCase()==='re-attribution').reduce((s,r)=>s+numVal(r['Clicks']),0);
+  const totalReeng    = rows.filter(r=>(r['Conversion Type']||'').toLowerCase()==='re-engagement').reduce((s,r)=>s+numVal(r['Conversions']),0);
+  const totalReinst   = rows.filter(r=>(r['Conversion Type']||'').toLowerCase()==='re-attribution').reduce((s,r)=>s+numVal(r['Conversions']),0);
+  const totalSessions = rows.reduce((s,r)=>s+numVal(r['Sessions']),0);
+  const eventCols     = cols.filter(c=>c.includes('(Event counter)'));
+  const totalIAEs     = rows.reduce((s,r)=>s+eventCols.reduce((es,c)=>es+numVal(r[c]),0),0);
+  const totalEvents   = totalIAEs + totalSessions;
+  const keyCols       = eventCols.filter(c=>/_contratado|_finalizado/.test(c));
+  const totalKeyEvents= rows.reduce((s,r)=>s+keyCols.reduce((ks,c)=>ks+numVal(r[c]),0),0);
   document.getElementById('inp_clicks').value    = Math.round(totalClicks);
   document.getElementById('inp_reeng').value     = Math.round(totalReeng);
   document.getElementById('inp_reinst').value    = Math.round(totalReinst);
@@ -492,90 +544,76 @@ function extractCreditsFromCSV(rows, fileName) {
   document.getElementById('inp_sessions').value  = Math.round(totalSessions);
   document.getElementById('inp_events').value    = Math.round(totalEvents);
   document.getElementById('inp_keyev_raw').value = Math.round(totalKeyEvents);
-
-  document.getElementById('creditsUploadZone').style.display = 'none';
-  document.getElementById('creditsFileInfo').style.display   = 'block';
-  document.getElementById('creditsFileName').textContent = fileName;
-  document.getElementById('creditsFileRows').textContent = `${rows.length} filas · ${eventCols.length} columnas de eventos · ${keyCols.length} key events · sessions: ${Math.round(totalSessions).toLocaleString('es-CO')}`;
+  document.getElementById('creditsUploadZone').style.display='none';
+  document.getElementById('creditsFileInfo').style.display='block';
+  document.getElementById('creditsFileName').textContent=fileName;
+  document.getElementById('creditsFileRows').textContent=`${rows.length} filas · ${eventCols.length} cols eventos · ${keyCols.length} key events · sessions: ${Math.round(totalSessions).toLocaleString('es-CO')}`;
   calcCredits();
 }
 
 function calcEventsTotal() {
-  const iaes     = parseFloat(document.getElementById('inp_iaes').value)     || 0;
-  const sessions = parseFloat(document.getElementById('inp_sessions').value) || 0;
-  document.getElementById('inp_events').value = Math.round(iaes + sessions);
+  const iaes=parseFloat(document.getElementById('inp_iaes').value)||0;
+  const sessions=parseFloat(document.getElementById('inp_sessions').value)||0;
+  document.getElementById('inp_events').value=Math.round(iaes+sessions);
   calcCredits();
 }
 
 function calcCredits() {
-  const get = id => { const v = parseFloat(document.getElementById('inp_' + id).value); return isNaN(v) || v < 0 ? 0 : v; };
-  const fmt  = n => n.toFixed(4);
-  const fmtN = n => n.toLocaleString('es-CO');
-  const rawClicks = get('clicks');
-  const clicks = Math.min(rawClicks, MAX_CLICKS);
-  const reeng  = get('reeng'), reinst = get('reinst'), events = get('events');
-  const iaes   = get('iaes'),  sessions = get('sessions'), keyEvents = get('keyev_raw');
-  const r_clicks = clicks * RATES.clicks / 1_000_000;
-  const r_reeng  = reeng  * RATES.reeng  / 1_000_000;
-  const r_reinst = reinst * RATES.reinst / 1_000_000;
-  const r_events = events * RATES.events / 1_000_000;
-  const total = r_clicks + r_reeng + r_reinst + r_events;
-
-  document.getElementById('res_clicks').textContent  = fmt(r_clicks);
-  document.getElementById('res_reeng').textContent   = fmt(r_reeng);
-  document.getElementById('res_reinst').textContent  = fmt(r_reinst);
-  document.getElementById('res_events').textContent  = fmt(r_events);
-  document.getElementById('res_iaes').textContent    = iaes     ? fmtN(Math.round(iaes))     : '—';
-  document.getElementById('res_sessions').textContent= sessions ? fmtN(Math.round(sessions)) : '—';
-  document.getElementById('br_clicks').textContent   = fmt(r_clicks);
-  document.getElementById('br_reeng').textContent    = fmt(r_reeng);
-  document.getElementById('br_reinst').textContent   = fmt(r_reinst);
-  document.getElementById('br_events').textContent   = fmt(r_events);
-  document.getElementById('br_iaes').textContent     = iaes     ? fmtN(Math.round(iaes))     : '—';
-  document.getElementById('br_sessions').textContent = sessions ? fmtN(Math.round(sessions)) : '—';
-  document.getElementById('br_total').textContent    = fmt(total);
-  document.getElementById('totalCredits').textContent= fmt(total);
-  document.getElementById('warn_clicks').style.display = rawClicks > MAX_CLICKS ? 'block' : 'none';
-
-  const pctEl = document.getElementById('keyevPctDisplay'), badgeEl = document.getElementById('keyevPctBadge'), detailEl = document.getElementById('keyevPctDetail'), resKeyEl = document.getElementById('res_keyev');
-  if (clicks > 0 && keyEvents > 0) {
-    const pct = keyEvents / clicks * 100, inRange = pct >= 0.003 && pct <= 0.009;
-    pctEl.textContent = pct.toFixed(4) + '%'; pctEl.style.color = inRange ? 'var(--rl-valid)' : 'var(--rl-warn)';
-    badgeEl.textContent = inRange ? '✓ En rango' : '⚠ Fuera de rango';
-    badgeEl.style.background = inRange ? 'var(--rl-valid-bg)' : 'var(--rl-warn-bg)';
-    badgeEl.style.color      = inRange ? 'var(--rl-valid)'    : 'var(--rl-warn)';
-    detailEl.textContent = `${fmtN(Math.round(keyEvents))} key events / ${fmtN(Math.round(clicks))} clicks`;
-    resKeyEl.textContent = fmtN(Math.round(keyEvents)); resKeyEl.style.color = inRange ? 'var(--rl-valid)' : 'var(--rl-warn)';
+  const get=id=>{const v=parseFloat(document.getElementById('inp_'+id).value);return isNaN(v)||v<0?0:v;};
+  const fmt=n=>n.toFixed(4), fmtN=n=>n.toLocaleString('es-CO');
+  const rawClicks=get('clicks'), clicks=Math.min(rawClicks,MAX_CLICKS);
+  const reeng=get('reeng'),reinst=get('reinst'),events=get('events');
+  const iaes=get('iaes'),sessions=get('sessions'),keyEvents=get('keyev_raw');
+  const r_clicks=clicks*RATES.clicks/1_000_000, r_reeng=reeng*RATES.reeng/1_000_000;
+  const r_reinst=reinst*RATES.reinst/1_000_000, r_events=events*RATES.events/1_000_000;
+  const total=r_clicks+r_reeng+r_reinst+r_events;
+  ['clicks','reeng','reinst','events'].forEach(k=>document.getElementById('res_'+k).textContent=fmt(eval('r_'+k)));
+  document.getElementById('res_iaes').textContent    =iaes    ?fmtN(Math.round(iaes))    :'—';
+  document.getElementById('res_sessions').textContent=sessions?fmtN(Math.round(sessions)):'—';
+  ['clicks','reeng','reinst','events'].forEach(k=>document.getElementById('br_'+k).textContent=fmt(eval('r_'+k)));
+  document.getElementById('br_iaes').textContent    =iaes    ?fmtN(Math.round(iaes))    :'—';
+  document.getElementById('br_sessions').textContent=sessions?fmtN(Math.round(sessions)):'—';
+  document.getElementById('br_total').textContent   =fmt(total);
+  document.getElementById('totalCredits').textContent=fmt(total);
+  document.getElementById('warn_clicks').style.display=rawClicks>MAX_CLICKS?'block':'none';
+  const pctEl=document.getElementById('keyevPctDisplay'),badgeEl=document.getElementById('keyevPctBadge'),detailEl=document.getElementById('keyevPctDetail'),resKeyEl=document.getElementById('res_keyev');
+  if(clicks>0&&keyEvents>0){
+    const pct=keyEvents/clicks*100,inRange=pct>=0.003&&pct<=0.009;
+    pctEl.textContent=pct.toFixed(4)+'%';pctEl.style.color=inRange?'var(--rl-valid)':'var(--rl-warn)';
+    badgeEl.textContent=inRange?'✓ En rango':'⚠ Fuera de rango';
+    badgeEl.style.background=inRange?'var(--rl-valid-bg)':'var(--rl-warn-bg)';
+    badgeEl.style.color=inRange?'var(--rl-valid)':'var(--rl-warn)';
+    detailEl.textContent=`${fmtN(Math.round(keyEvents))} key events / ${fmtN(Math.round(clicks))} clicks`;
+    resKeyEl.textContent=fmtN(Math.round(keyEvents));resKeyEl.style.color=inRange?'var(--rl-valid)':'var(--rl-warn)';
   } else {
-    pctEl.textContent = '—'; pctEl.style.color = 'var(--rl-text-muted)';
-    badgeEl.textContent = '—'; badgeEl.style.background = '#f0eff5'; badgeEl.style.color = 'var(--rl-text-muted)';
-    detailEl.textContent = 'Cargá un CSV para ver el cálculo'; resKeyEl.textContent = '—';
+    pctEl.textContent='—';pctEl.style.color='var(--rl-text-muted)';
+    badgeEl.textContent='—';badgeEl.style.background='#f0eff5';badgeEl.style.color='var(--rl-text-muted)';
+    detailEl.textContent='Cargá un CSV para ver el cálculo';resKeyEl.textContent='—';
   }
 }
 
 function resetCredits() {
-  ['clicks','reeng','reinst','iaes','sessions','events','keyev_raw'].forEach(id => { const el = document.getElementById('inp_' + id); if (el) el.value = ''; });
-  ['res_iaes','res_sessions','res_keyev'].forEach(id => { document.getElementById(id).textContent = '—'; });
-  document.getElementById('creditsUploadZone').style.display = 'block';
-  document.getElementById('creditsFileInfo').style.display   = 'none';
+  ['clicks','reeng','reinst','iaes','sessions','events','keyev_raw'].forEach(id=>{const el=document.getElementById('inp_'+id);if(el)el.value='';});
+  ['res_iaes','res_sessions','res_keyev'].forEach(id=>{document.getElementById(id).textContent='—';});
+  document.getElementById('creditsUploadZone').style.display='block';
+  document.getElementById('creditsFileInfo').style.display='none';
   calcCredits();
 }
 
-// ── FUNNEL VALIDATOR ──────────────────────────────────
-const OPTIONAL_STEPS       = ['apertura_cuenta_en_linea_no_cliente-app_step_1'];
+// ─── FUNNEL VALIDATOR ─────────────────────────────────────────────────────────
+// Event names
 const STEP_1               = 'apertura_cuenta_en_linea_no_cliente-app_step_1';
 const STEP_6               = 'apertura_cuenta_en_linea_no_cliente-app_step_6';
 const COMPLETED_APROBADO   = 'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado';
 const COMPLETED_CONTRATADO = 'apertura_cuenta_en_linea_no_cliente-app_completed_contratado';
-const ALL_STEPS = [...OPTIONAL_STEPS, STEP_6, COMPLETED_APROBADO, COMPLETED_CONTRATADO];
-const REQUIRED_CC = 'CO';
+const KNOWN_STEPS          = [STEP_1, STEP_6, COMPLETED_APROBADO, COMPLETED_CONTRATADO];
+const COMPLETION_EVENTS    = [COMPLETED_APROBADO, COMPLETED_CONTRATADO];
 
-// ── VALIDATION CONSTANTS ──────────────────────────────
-const GEO_MIN_CITY_MIN       = 50;   // cambio de ciudad imposible si < 50 min
-const GEO_MIN_STATE_MIN      = 50;   // cambio de dpto imposible si < 50 min
-const MAX_COMPLETIONS        = 1;    // más de 1 completion → duplicado descartado
-const STEP1_TO_STEP6_MIN_MIN = 8;    // step1→completion mínimo 8 min  (solo alerta)
-const STEP1_TO_STEP6_MAX_MIN = 60;   // step1→completion máximo 60 min (solo alerta)
+const GEO_MIN_MIN = 50;  // < 50 min entre eventos con ciudad diferente → excluir
+
+// Filter statuses (in priority order)
+// excl_co → excl_dup → excl_step6 → excl_geo → clean
+const FILTER_ORDER = ['excl_co','excl_dup','excl_step6','excl_geo'];
 
 let allResults   = [];
 let activeStatus  = 'all';
@@ -584,281 +622,269 @@ let activeProduct = 'all';
 const csvInput   = document.getElementById('csvInput');
 const uploadZone = document.getElementById('uploadZone');
 uploadZone.addEventListener('click',     () => csvInput.click());
-uploadZone.addEventListener('dragover',  e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-uploadZone.addEventListener('dragleave', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); });
-uploadZone.addEventListener('drop',      e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) processFile(f); });
-csvInput.addEventListener('change', e => { if(e.target.files[0]) processFile(e.target.files[0]); e.target.value=''; });
+uploadZone.addEventListener('dragover',  e=>{e.preventDefault();uploadZone.classList.add('drag-over');});
+uploadZone.addEventListener('dragleave', e=>{e.preventDefault();uploadZone.classList.remove('drag-over');});
+uploadZone.addEventListener('drop',      e=>{e.preventDefault();uploadZone.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)processFile(f);});
+csvInput.addEventListener('change', e=>{if(e.target.files[0])processFile(e.target.files[0]);e.target.value='';});
 
 function processFile(file) {
-  showInfo('Leyendo ' + file.name + ' (' + Math.round(file.size/1024) + ' KB)…');
-  const reader = new FileReader();
-  reader.onerror = () => showError('No se pudo leer el archivo.');
-  reader.onload  = evt => {
+  showInfo('Leyendo '+file.name+' ('+Math.round(file.size/1024)+' KB)…');
+  const reader=new FileReader();
+  reader.onerror=()=>showError('No se pudo leer el archivo.');
+  reader.onload=evt=>{
     let text;
-    const bytes = new Uint8Array(evt.target.result);
-    try { text = new TextDecoder('utf-8',{fatal:true}).decode(bytes); }
-    catch(e) { text = new TextDecoder('iso-8859-1').decode(bytes); }
-    if (text.charCodeAt(0)===0xFEFF) text = text.slice(1);
-    const first = text.split(/\r?\n/)[0]||'';
-    const delim = (first.match(/\t/g)||[]).length > (first.match(/,/g)||[]).length ? '\t' : ',';
+    const bytes=new Uint8Array(evt.target.result);
+    try{text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);}
+    catch(e){text=new TextDecoder('iso-8859-1').decode(bytes);}
+    if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
+    const first=text.split(/\r?\n/)[0]||'';
+    const delim=(first.match(/\t/g)||[]).length>(first.match(/,/g)||[]).length?'\t':',';
     showInfo('Parseando…');
-    Papa.parse(text, {
-      header:true, skipEmptyLines:true, delimiter:delim,
-      transformHeader:h=>h.trim(), transform:v=>(v||'').trim(),
-      complete: r => { hideInfo(); if(!r.data||!r.data.length){showError('Archivo vacío.');return;} analyze(r.data); },
-      error: err => showError('Error: '+(err.message||err))
+    Papa.parse(text,{
+      header:true,skipEmptyLines:true,delimiter:delim,
+      transformHeader:h=>h.trim(),transform:v=>(v||'').trim(),
+      complete:r=>{hideInfo();if(!r.data||!r.data.length){showError('Archivo vacío.');return;}analyze(r.data);},
+      error:err=>showError('Error: '+(err.message||err))
     });
   };
   reader.readAsArrayBuffer(file);
 }
 
+function parseTime(s){
+  if(!s)return null;
+  const d=new Date(s.replace(' ','T'));
+  return isNaN(d.getTime())?null:d.getTime();
+}
+function getAfContent(val){
+  try{return JSON.parse(val).af_content||'';}catch(e){return '';}
+}
+function classifyProduct(c){
+  c=(c||'').toLowerCase();
+  if(c.includes('libreton'))return 'libreton';
+  if(c.includes('nomina')||c.includes('nómina')||c.includes('pensional'))return 'nomina';
+  return 'other';
+}
+
 function analyze(rows) {
+  // ── Step 0: group by AppsFlyer ID ──
+  // Only keep IDs that have at least one completion event (aprobado or contratado)
   const byId = {};
   rows.forEach(row => {
     const id    = row['AppsFlyer ID'];
     const event = row['Event Name'];
-    if (!id||!event) return;
-    if (!byId[id]) byId[id] = [];
+    if(!id||!event) return;
+    if(!byId[id]) byId[id] = [];
     byId[id].push({
       event,
-      value:   row['Event Value']||'',
-      country:(row['Country Code']||'').toUpperCase(),
-      city:   (row['City']||'').toLowerCase(),
-      state:  (row['State']||'').toLowerCase(),
-      time:    parseEventTime(row['Event Time']||'')
+      value:    row['Event Value']||'',
+      country: (row['Country Code']||'').toUpperCase().trim(),
+      isPrimary:(row['Is Primary Attribution']||'').toLowerCase().trim(),
+      city:    (row['City']||'').toLowerCase().trim(),
+      state:   (row['State']||'').toLowerCase().trim(),
+      time:    parseTime(row['Event Time']||'')
     });
   });
 
-  allResults = Object.entries(byId)
-    .filter(([,evs]) => evs.some(e => e.event===COMPLETED_APROBADO||e.event===COMPLETED_CONTRATADO))
-    .map(([id, evs]) => {
-      evs.sort((a,b) => (a.time||0) - (b.time||0));
+  // Only process IDs with at least one completion event
+  const completionIds = Object.keys(byId).filter(id =>
+    byId[id].some(e => COMPLETION_EVENTS.includes(e.event))
+  );
 
-      const finalRow = evs.find(e=>e.event===COMPLETED_CONTRATADO) || evs.find(e=>e.event===COMPLETED_APROBADO);
-      const country  = finalRow ? finalRow.country : '';
-      const validCC  = country === REQUIRED_CC;
+  // ── Sequential filters ──
+  const results = [];
 
-      const registered     = ALL_STEPS.filter(s => evs.some(e => e.event===s));
-      const missingStep6   = !registered.includes(STEP_6);
-      const hasAnyCompleted= registered.includes(COMPLETED_APROBADO) || registered.includes(COMPLETED_CONTRATADO);
-      const missingRequired= [
-        ...(missingStep6     ? [STEP_6] : []),
-        ...(!hasAnyCompleted ? ['completed_aprobado o completed_contratado'] : [])
-      ];
+  completionIds.forEach(id => {
+    const evs = byId[id].sort((a,b)=>(a.time||0)-(b.time||0));
 
-      const afContent = getAfContent(finalRow ? finalRow.value : '');
-      const product   = classifyProduct(afContent);
+    // Grab country + isPrimary from the COMPLETION event row
+    const completionEv = evs.find(e=>e.event===COMPLETED_CONTRATADO) || evs.find(e=>e.event===COMPLETED_APROBADO);
+    const country   = completionEv ? completionEv.country   : '';
+    const isPrimary = completionEv ? completionEv.isPrimary : '';
 
-      // ── RULE 1: geo imposible (< 50 min entre ciudades distintas) ──
-      const geoIssues = [];
-      for (let i = 1; i < evs.length; i++) {
-        const prev = evs[i-1], curr = evs[i];
-        if (!prev.time || !curr.time) continue;
-        const diffMin = (curr.time - prev.time) / 60000;
-        if (diffMin < 0) continue;
-        if (prev.city && curr.city && prev.city !== curr.city && diffMin < GEO_MIN_CITY_MIN) {
-          geoIssues.push(`Ciudad imposible: ${prev.city}→${curr.city} en ${diffMin.toFixed(1)} min (mín. ${GEO_MIN_CITY_MIN} min)`);
-        } else if (prev.state && curr.state && prev.state !== curr.state && diffMin < GEO_MIN_STATE_MIN) {
-          geoIssues.push(`Departamento imposible: ${prev.state}→${curr.state} en ${diffMin.toFixed(1)} min`);
-        }
-      }
+    // af_content from completion row
+    const afContent = getAfContent(completionEv?completionEv.value:'');
+    const product   = classifyProduct(afContent);
 
-      // ── RULE 2: timing → solo alerta, NO excluye ──
-      // Si tiene step_1 Rocket: medir step_1 → completion. Rango válido: 8–60 min.
-      // Si NO tiene step_1 Rocket: no aplicar (step_1 real está en otra fuente).
-      let timingAlert = '';
-      const step1Event      = evs.find(e => e.event === STEP_1);
-      const completionEvent = evs.find(e => e.event === COMPLETED_CONTRATADO) || evs.find(e => e.event === COMPLETED_APROBADO);
+    // Count completions
+    const completionCount = evs.filter(e=>COMPLETION_EVENTS.includes(e.event)).length;
+    const hasStep6        = evs.some(e=>e.event===STEP_6);
+    const hasStep1        = evs.some(e=>e.event===STEP_1);
 
-      if (step1Event && completionEvent && step1Event.time && completionEvent.time) {
-        const diffMin = (completionEvent.time - step1Event.time) / 60000;
-        const completionName = completionEvent.event.split('-app_')[1] || completionEvent.event;
-        if (diffMin < STEP1_TO_STEP6_MIN_MIN) {
-          timingAlert = `⏱ Duración corta: step_1→${completionName} = ${diffMin.toFixed(1)} min (esperado ≥ ${STEP1_TO_STEP6_MIN_MIN} min)`;
-        } else if (diffMin > STEP1_TO_STEP6_MAX_MIN) {
-          timingAlert = `⏱ Duración larga: step_1→${completionName} = ${diffMin.toFixed(1)} min (esperado ≤ ${STEP1_TO_STEP6_MAX_MIN} min)`;
-        }
-      }
+    // Registered known steps
+    const registered = KNOWN_STEPS.filter(s=>evs.some(e=>e.event===s));
 
-      // ── RULE 3: duplicados → MAX 1 completion ──
-      const completions        = evs.filter(e => e.event===COMPLETED_APROBADO||e.event===COMPLETED_CONTRATADO);
-      const productCompletions = completions.length;
-      const isDuplicate        = productCompletions > MAX_COMPLETIONS;
+    // ── FILTER 1: País CO + Is Primary Attribution ──
+    const validCO      = country === 'CO';
+    const validPrimary = isPrimary === 'true' || isPrimary === '' || isPrimary === '1';
+    // (if column doesn't exist we treat as valid)
+    if(!validCO || !validPrimary) {
+      const reason = !validCO ? `País no CO (${country})` : 'No es primary attribution';
+      results.push({id, status:'excl_co', filter:'País/Primary', country, product, afContent, completionCount, hasStep6, hasStep1, registered, geoDetail:'', exclusionReason:reason});
+      return;
+    }
 
-      // ── STATUS PRIORITY (orden del cliente): duplicado → país → geo → missing steps → (timing = solo alerta) ──
-      let status = '', exclusionReason = '', alert = '';
-      if (isDuplicate) {
-        status = 'dup'; exclusionReason = `${productCompletions} completaciones (máx ${MAX_COMPLETIONS})`;
-      } else if (!validCC) {
-        status = 'excluded'; exclusionReason = 'País no CO';
-      } else if (geoIssues.length > 0) {
-        status = 'geo'; exclusionReason = geoIssues[0];
-      } else if (missingRequired.length > 0) {
-        status = 'missing'; exclusionReason = 'Falta: ' + missingRequired.map(s=>s.split('-app_')[1]||s).join(', ');
-      } else {
-        // Facturable — puede tener alerta de timing
-        status = timingAlert ? 'clean_timing' : 'clean';
-        alert  = timingAlert;
-      }
+    // ── FILTER 2: Múltiples completions ──
+    if(completionCount > 1) {
+      // Check geo for info even if excluded by dup
+      const geo = detectGeoJump(evs);
+      results.push({id, status:'excl_dup', filter:`Múltiples completions (${completionCount})`, country, product, afContent, completionCount, hasStep6, hasStep1, registered, geoDetail:geo.detail, exclusionReason:`${completionCount} completions`});
+      return;
+    }
 
+    // ── FILTER 3: Sin step_6 ──
+    if(!hasStep6) {
+      results.push({id, status:'excl_step6', filter:'Sin step_6 obligatorio', country, product, afContent, completionCount, hasStep6, hasStep1, registered, geoDetail:'', exclusionReason:'Falta step_6'});
+      return;
+    }
+
+    // ── FILTER 4: Salto geográfico < 50 min ──
+    const geo = detectGeoJump(evs);
+    if(geo.hasJump) {
+      results.push({id, status:'excl_geo', filter:'Salto geográfico <50 min', country, product, afContent, completionCount, hasStep6, hasStep1, registered, geoDetail:geo.detail, exclusionReason:geo.detail});
+      return;
+    }
+
+    // ── CLEAN / FACTURABLE ──
+    results.push({id, status:'clean', filter:'—', country, product, afContent, completionCount, hasStep6, hasStep1, registered, geoDetail:'', exclusionReason:''});
+  });
+
+  allResults = results;
+  renderUI(completionIds.length);
+}
+
+function detectGeoJump(evs) {
+  // Check all consecutive pairs of events
+  for(let i=1;i<evs.length;i++) {
+    const prev=evs[i-1], curr=evs[i];
+    if(!prev.time||!curr.time) continue;
+    const diffMin=(curr.time-prev.time)/60000;
+    if(diffMin<0) continue;
+    if(prev.city&&curr.city&&prev.city!==curr.city&&diffMin<GEO_MIN_MIN) {
+      const prevEvtShort = prev.event.split('-app_')[1]||prev.event;
+      const currEvtShort = curr.event.split('-app_')[1]||curr.event;
       return {
-        id, status, country, registered, missingRequired,
-        hasAprobado:   registered.includes(COMPLETED_APROBADO),
-        hasContratado: registered.includes(COMPLETED_CONTRATADO),
-        product, afContent, geoIssues, timingAlert, isDuplicate,
-        productCompletions, exclusionReason, alert
+        hasJump:true,
+        detail:`${prev.city}→${curr.city} en ${diffMin.toFixed(1)} min (${prevEvtShort}→${currEvtShort})`
       };
-    });
-
-  renderUI();
+    }
+  }
+  return {hasJump:false, detail:''};
 }
 
-function parseEventTime(s) {
-  if (!s) return null;
-  const d = new Date(s.replace(' ','T'));
-  return isNaN(d.getTime()) ? null : d.getTime();
-}
-function getAfContent(val) {
-  try { return JSON.parse(val).af_content||''; } catch(e){ return ''; }
-}
-function classifyProduct(c) {
-  c = c.toLowerCase();
-  if (c.includes('libreton')) return 'libreton';
-  if (c.includes('nomina')||c.includes('nómina')) return 'nomina';
-  return 'other';
-}
+function renderUI(totalBase) {
+  // Waterfall counts (sequential — each filter applied on the remaining pool)
+  const s0 = totalBase;
+  const excluded_co   = allResults.filter(r=>r.status==='excl_co').length;
+  const excluded_dup  = allResults.filter(r=>r.status==='excl_dup').length;
+  const excluded_step6= allResults.filter(r=>r.status==='excl_step6').length;
+  const excluded_geo  = allResults.filter(r=>r.status==='excl_geo').length;
+  const clean         = allResults.filter(r=>r.status==='clean').length;
+  const s1 = s0 - excluded_co;
+  const s2 = s1 - excluded_dup;
+  const s3 = s2 - excluded_step6;
+  const s4 = s3 - excluded_geo; // = clean
 
-function isFacturable(r) {
-  return r.status === 'clean' || r.status === 'clean_timing';
-}
+  document.getElementById('fS0').textContent = s0;
+  document.getElementById('fS1').textContent = s1; document.getElementById('fE1').textContent = excluded_co   ? `−${excluded_co}`   : '—';
+  document.getElementById('fS2').textContent = s2; document.getElementById('fE2').textContent = excluded_dup  ? `−${excluded_dup}`  : '—';
+  document.getElementById('fS3').textContent = s3; document.getElementById('fE3').textContent = excluded_step6? `−${excluded_step6}`: '—';
+  document.getElementById('fS4').textContent = s4; document.getElementById('fE4').textContent = excluded_geo  ? `−${excluded_geo}`  : '—';
+  document.getElementById('fValid').textContent = clean;
 
-function renderUI() {
-  document.getElementById('statsSection').style.display      = 'flex';
-  document.getElementById('statsSection').style.flexDirection= 'column';
-  document.getElementById('resultsSection').style.display    = 'block';
-  document.getElementById('uploadZone').style.display        = 'none';
-
-  const total    = allResults.length;
-  const clean    = allResults.filter(r=>isFacturable(r)).length;
-  const missing  = allResults.filter(r=>r.status==='missing').length;
-  const geo      = allResults.filter(r=>r.status==='geo').length;
-  const dup      = allResults.filter(r=>r.status==='dup').length;
-  const excluded = allResults.filter(r=>r.status==='excluded').length;
-  const fact     = allResults.filter(r=>isFacturable(r));
-
-  document.getElementById('sTotal').textContent    = total;
-  document.getElementById('sClean').textContent    = clean;
-  document.getElementById('sMissing').textContent  = missing + geo + dup;
-  document.getElementById('sExcluded').textContent = excluded;
-  document.getElementById('sPct').textContent      = total ? Math.round(clean/total*100)+'%' : '0%';
+  const fact = allResults.filter(r=>r.status==='clean');
   document.getElementById('sLibreton').textContent = fact.filter(r=>r.product==='libreton').length;
   document.getElementById('sNomina').textContent   = fact.filter(r=>r.product==='nomina').length;
   document.getElementById('sOther').textContent    = fact.filter(r=>r.product==='other').length;
 
+  document.getElementById('funnelSection').style.display  = 'block';
+  document.getElementById('resultsSection').style.display = 'block';
+  document.getElementById('uploadZone').style.display     = 'none';
+
   renderTable();
 }
 
-function setFilter(val, type, btn) {
-  if (type==='status') {
-    activeStatus = val;
-    document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));
-  } else {
-    activeProduct = val;
-    document.querySelectorAll('#productTabs .tab').forEach(t=>t.classList.remove('active'));
-  }
+function setFilter(val,type,btn) {
+  if(type==='status'){activeStatus=val;document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));}
+  else{activeProduct=val;document.querySelectorAll('#productTabs .tab').forEach(t=>t.classList.remove('active'));}
   btn.classList.add('active');
   renderTable();
 }
 
 function renderTable() {
   let data = allResults;
-  // Para el filtro "Facturables" incluir ambos (clean y clean_timing)
-  if (activeStatus === 'clean') {
-    data = data.filter(r => isFacturable(r));
-  } else if (activeStatus !== 'all') {
-    data = data.filter(r=>r.status===activeStatus);
-  }
-  if (activeProduct !== 'all') data = data.filter(r=>r.product===activeProduct);
+  if(activeStatus!=='all') data=data.filter(r=>r.status===activeStatus);
+  if(activeProduct!=='all') data=data.filter(r=>r.product===activeProduct);
 
-  document.getElementById('tableBody').innerHTML = data.map(r => {
-    let sb;
-    if (r.status === 'clean') {
-      sb = `<span class="badge bv">✓ Facturable</span>`;
-    } else if (r.status === 'clean_timing') {
-      sb = `<span class="badge bv">✓ Facturable</span> <span class="badge bw" style="margin-left:4px">⏱ Alerta timing</span>`;
-    } else if (r.status === 'missing') {
-      sb = `<span class="badge bw">⚠ Pasos faltantes</span>`;
-    } else if (r.status === 'geo') {
-      sb = `<span class="badge bi">📍 Geo imposible</span>`;
-    } else if (r.status === 'dup') {
-      sb = `<span class="badge bi">🔁 Duplicado</span>`;
-    } else {
-      sb = `<span class="badge bi">❌ Excluido</span>`;
-    }
+  document.getElementById('tableBody').innerHTML = data.map(r=>{
+    // Status badge
+    const sb = r.status==='clean'
+      ? `<span class="badge bv">✅ Facturable</span>`
+      : r.status==='excl_co'
+      ? `<span class="badge bi">🌐 País/Primary</span>`
+      : r.status==='excl_dup'
+      ? `<span class="badge bi">🔁 Múlt. completions</span>`
+      : r.status==='excl_step6'
+      ? `<span class="badge bw">⚠ Sin step_6</span>`
+      : `<span class="badge bi">📍 Salto geo</span>`;
 
-    const pb = !isFacturable(r) ? '—'
-      : r.product==='libreton' ? `<span class="badge bn">📘 Cuenta Digital</span>`
+    // Filter badge (which filter caught it)
+    const fb = r.filter==='—' ? `<span style="color:var(--rl-text-muted);font-size:11px">—</span>`
+      : `<span style="font-size:11px;color:var(--rl-invalid)">${esc(r.filter)}</span>`;
+
+    // Product
+    const pb = r.status!=='clean' ? '<span style="color:var(--rl-text-muted);font-size:11px">—</span>'
+      : r.product==='libreton' ? `<span class="badge bn">📘 Libreton</span>`
       : r.product==='nomina'   ? `<span class="badge bb">💼 Nómina</span>`
       :                          `<span class="badge bw">❓ Otro</span>`;
 
-    const stepsHtml = ALL_STEPS.map(s => {
-      const done = r.registered.includes(s);
-      const opt  = OPTIONAL_STEPS.includes(s);
-      const lbl  = s.split('-app_')[1]||s;
-      const isCompleted = (s===COMPLETED_APROBADO||s===COMPLETED_CONTRATADO);
-      const otherOk = isCompleted && (r.hasAprobado||r.hasContratado);
-      const col  = done ? 'var(--rl-valid)' : (opt||(isCompleted&&otherOk)) ? 'var(--rl-text-muted)' : 'var(--rl-invalid)';
-      const icon = done ? '✓' : (opt||(isCompleted&&otherOk)) ? '·' : '✗';
-      return `<span style="color:${col};margin-right:8px;font-size:11px">${icon} ${lbl}</span>`;
-    }).join('');
-
-    const ccBadge = r.country===REQUIRED_CC
+    // Country
+    const ccBadge = r.country==='CO'
       ? `<span class="badge bv">${r.country}</span>`
       : `<span class="badge bi">${r.country||'—'}</span>`;
 
-    // Mostrar alerta de timing en facturables, razón de exclusión en el resto
-    const noteText = r.status === 'clean_timing'
-      ? r.alert
-      : (r.exclusionReason || '');
-    const noteColor = r.status === 'clean_timing' ? 'var(--rl-warn)' : 'var(--rl-warn)';
-    const reasonCell = noteText
-      ? `<span style="font-size:11px;color:${noteColor}">${esc(noteText)}</span>`
+    // Completions
+    const compBadge = r.completionCount===1
+      ? `<span style="font-size:12px;color:var(--rl-text-secondary)">1</span>`
+      : `<span class="badge bi">${r.completionCount}</span>`;
+
+    // step_6
+    const s6Badge = r.hasStep6
+      ? `<span class="badge bv">✓</span>`
+      : `<span class="badge bi">✗</span>`;
+
+    // Geo detail
+    const geoCell = r.geoDetail
+      ? `<span style="font-size:11px;color:var(--rl-invalid)">${esc(r.geoDetail)}</span>`
       : `<span style="color:var(--rl-text-muted);font-size:11px">—</span>`;
 
     return `<tr>
-      <td style="font-family:monospace;font-size:11.5px;font-weight:600">${esc(r.id)}</td>
+      <td style="font-family:monospace;font-size:11px;font-weight:600">${esc(r.id)}</td>
       <td>${sb}</td>
+      <td>${fb}</td>
       <td>${pb}</td>
-      <td style="max-width:340px">${stepsHtml}</td>
       <td>${ccBadge}</td>
-      <td style="max-width:260px">${reasonCell}</td>
+      <td style="text-align:center">${compBadge}</td>
+      <td style="text-align:center">${s6Badge}</td>
+      <td style="max-width:260px">${geoCell}</td>
       <td style="font-size:11px;color:var(--rl-text-muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'—'}</td>
     </tr>`;
-  }).join('') || `<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--rl-text-muted)">Sin resultados para este filtro</td></tr>`;
+  }).join('') || `<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--rl-text-muted)">Sin resultados para este filtro</td></tr>`;
 }
 
 function exportCSV(which) {
   let data = allResults;
-  if (which==='clean')    data = data.filter(r=>isFacturable(r));
-  if (which==='libreton') data = data.filter(r=>isFacturable(r)&&r.product==='libreton');
-  if (which==='nomina')   data = data.filter(r=>isFacturable(r)&&r.product==='nomina');
-  const rows = [['AppsFlyer ID','Estado','Producto','País','Pasos OK','Razón exclusión / Alerta','af_content']];
-  data.forEach(r => rows.push([
-    r.id,
-    r.status,
-    r.product,
-    r.country,
-    r.registered.length+'/'+ALL_STEPS.length,
-    r.status === 'clean_timing' ? r.alert : r.exclusionReason,
-    r.afContent
-  ]));
-  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'})),
-    download: `bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`
+  if(which==='clean')    data=data.filter(r=>r.status==='clean');
+  if(which==='libreton') data=data.filter(r=>r.status==='clean'&&r.product==='libreton');
+  if(which==='nomina')   data=data.filter(r=>r.status==='clean'&&r.product==='nomina');
+  const rows=[['AppsFlyer ID','Estado','Filtro aplicado','Producto','País','Completions','Tiene step_6','Detalle geo','af_content']];
+  data.forEach(r=>rows.push([r.id,r.status,r.filter,r.product,r.country,r.completionCount,r.hasStep6?'Sí':'No',r.geoDetail,r.afContent]));
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=Object.assign(document.createElement('a'),{
+    href:URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'})),
+    download:`bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`
   });
-  document.body.appendChild(a); a.click();
-  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
