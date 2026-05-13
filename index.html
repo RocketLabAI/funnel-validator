@@ -685,14 +685,14 @@ function analyze(rows) {
       const productCompletions = completions.length;
       const isDuplicate        = productCompletions > MAX_COMPLETIONS;
 
-      // ── STATUS PRIORITY: país → geo → duplicado → missing steps → (timing = solo alerta) ──
+      // ── STATUS PRIORITY (orden del cliente): duplicado → país → geo → missing steps → (timing = solo alerta) ──
       let status = '', exclusionReason = '', alert = '';
-      if (!validCC) {
+      if (isDuplicate) {
+        status = 'dup'; exclusionReason = `${productCompletions} completaciones (máx ${MAX_COMPLETIONS})`;
+      } else if (!validCC) {
         status = 'excluded'; exclusionReason = 'País no CO';
       } else if (geoIssues.length > 0) {
         status = 'geo'; exclusionReason = geoIssues[0];
-      } else if (isDuplicate) {
-        status = 'dup'; exclusionReason = `${productCompletions} completaciones (máx ${MAX_COMPLETIONS})`;
       } else if (missingRequired.length > 0) {
         status = 'missing'; exclusionReason = 'Falta: ' + missingRequired.map(s=>s.split('-app_')[1]||s).join(', ');
       } else {
