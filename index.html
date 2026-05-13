@@ -188,9 +188,9 @@ tr:hover td{background:#faf9ff}
         <strong>Criterios de validación:</strong><br>
         · <strong>step_6</strong> obligatorio — <strong>completed_aprobado</strong> y/o <strong>completed_contratado</strong> al menos uno requerido<br>
         · <strong>País:</strong> solo registros con Country Code = CO son facturables<br>
-        · <strong>Geografía:</strong> cambio de ciudad en menos de 10 min → geográficamente imposible → excluido<br>
-        · <strong>Duración del funnel:</strong> si existe step_1 Rocket, el tiempo step_1→completion debe ser entre 8 y 60 min. Si no hay step_1 Rocket, no se aplica (el step_1 real está en otra fuente)<br>
-        · <strong>Múltiples completaciones:</strong> más de 2 completaciones → descartado
+        · <strong>Geografía:</strong> cambio de ciudad en menos de 50 min → geográficamente imposible → excluido<br>
+        · <strong>Timing:</strong> duración del funnel fuera de rango → alerta pero <em>sigue siendo facturable</em><br>
+        · <strong>Múltiples completaciones:</strong> más de 1 evento de completion → descartado
       </div>
 
       <div id="statsSection" style="display:none">
@@ -223,9 +223,9 @@ tr:hover td{background:#faf9ff}
           <div class="filter-tabs" id="statusTabs">
             <button class="tab active" onclick="setFilter('all','status',this)">Todos</button>
             <button class="tab" onclick="setFilter('clean','status',this)">✅ Facturables</button>
+            <button class="tab" onclick="setFilter('clean_timing','status',this)">⚠️ Fact. c/ alerta timing</button>
             <button class="tab" onclick="setFilter('missing','status',this)">⚠ Pasos faltantes</button>
             <button class="tab" onclick="setFilter('geo','status',this)">📍 Alerta geo</button>
-            <button class="tab" onclick="setFilter('timing','status',this)">⏱ Timing inválido</button>
             <button class="tab" onclick="setFilter('dup','status',this)">🔁 Duplicados</button>
             <button class="tab" onclick="setFilter('excluded','status',this)">❌ Excluidos</button>
           </div>
@@ -242,7 +242,7 @@ tr:hover td{background:#faf9ff}
             <table>
               <thead><tr>
                 <th>AppsFlyer ID</th><th>Estado</th><th>Producto</th>
-                <th>Pasos registrados</th><th>País</th><th>Razón exclusión</th><th>af_content</th>
+                <th>Pasos registrados</th><th>País</th><th>Razón exclusión / Alerta</th><th>af_content</th>
               </tr></thead>
               <tbody id="tableBody"></tbody>
             </table>
@@ -556,7 +556,6 @@ function calcCredits() {
 function resetCredits() {
   ['clicks','reeng','reinst','iaes','sessions','events','keyev_raw'].forEach(id => { const el = document.getElementById('inp_' + id); if (el) el.value = ''; });
   ['res_iaes','res_sessions','res_keyev'].forEach(id => { document.getElementById(id).textContent = '—'; });
-  document.getElementById('creditsUploadZone').style.display = 'none'; // keep hidden on reset since file was already loaded
   document.getElementById('creditsUploadZone').style.display = 'block';
   document.getElementById('creditsFileInfo').style.display   = 'none';
   calcCredits();
@@ -571,12 +570,12 @@ const COMPLETED_CONTRATADO = 'apertura_cuenta_en_linea_no_cliente-app_completed_
 const ALL_STEPS = [...OPTIONAL_STEPS, STEP_6, COMPLETED_APROBADO, COMPLETED_CONTRATADO];
 const REQUIRED_CC = 'CO';
 
-// ── UPDATED VALIDATION CONSTANTS ──────────────────────
-const GEO_MIN_CITY_MIN       = 10;   // cambio de ciudad imposible si < 10 min
-const GEO_MIN_STATE_MIN      = 10;   // cambio de dpto imposible si < 10 min (sin cambios)
-const MAX_COMPLETIONS        = 2;    // más de 2 completaciones → duplicado
-const STEP1_TO_STEP6_MIN_MIN = 8;    // step1→step6 mínimo 8 min
-const STEP1_TO_STEP6_MAX_MIN = 60;   // step1→step6 máximo 60 min
+// ── VALIDATION CONSTANTS ──────────────────────────────
+const GEO_MIN_CITY_MIN       = 50;   // cambio de ciudad imposible si < 50 min
+const GEO_MIN_STATE_MIN      = 50;   // cambio de dpto imposible si < 50 min
+const MAX_COMPLETIONS        = 1;    // más de 1 completion → duplicado descartado
+const STEP1_TO_STEP6_MIN_MIN = 8;    // step1→completion mínimo 8 min  (solo alerta)
+const STEP1_TO_STEP6_MAX_MIN = 60;   // step1→completion máximo 60 min (solo alerta)
 
 let allResults   = [];
 let activeStatus  = 'all';
@@ -650,7 +649,7 @@ function analyze(rows) {
       const afContent = getAfContent(finalRow ? finalRow.value : '');
       const product   = classifyProduct(afContent);
 
-      // ── RULE 1: geo imposible (45 min umbral ciudad) ──
+      // ── RULE 1: geo imposible (< 50 min entre ciudades distintas) ──
       const geoIssues = [];
       for (let i = 1; i < evs.length; i++) {
         const prev = evs[i-1], curr = evs[i];
@@ -664,58 +663,50 @@ function analyze(rows) {
         }
       }
 
-      // ── RULE 2: timing (duración del funnel) ──
-      // Regla del cliente:
-      //   - Si tiene step_1 Rocket: medir step_1 → completion. Rango válido: 8–60 min.
-      //   - Si NO tiene step_1 Rocket (N=0 en el CSV): no aplicar regla de duración.
-      //     Razón: el cliente usa el primer step_1 de CUALQUIER fuente. Si no hay step_1
-      //     Rocket, el step_1 real está en otra fuente (no visible en este CSV) y la
-      //     duración real desde ese step_1 externo es válida. Aplicar la regla con solo
-      //     step_6 generaría falsos rechazos.
-      let timingIssue = '';
+      // ── RULE 2: timing → solo alerta, NO excluye ──
+      // Si tiene step_1 Rocket: medir step_1 → completion. Rango válido: 8–60 min.
+      // Si NO tiene step_1 Rocket: no aplicar (step_1 real está en otra fuente).
+      let timingAlert = '';
       const step1Event      = evs.find(e => e.event === STEP_1);
-      const step6Event      = evs.find(e => e.event === STEP_6);
       const completionEvent = evs.find(e => e.event === COMPLETED_CONTRATADO) || evs.find(e => e.event === COMPLETED_APROBADO);
 
       if (step1Event && completionEvent && step1Event.time && completionEvent.time) {
-        // Tiene step_1 Rocket → aplicar regla
         const diffMin = (completionEvent.time - step1Event.time) / 60000;
         const completionName = completionEvent.event.split('-app_')[1] || completionEvent.event;
         if (diffMin < STEP1_TO_STEP6_MIN_MIN) {
-          timingIssue = `Duración irreal: step_1→${completionName} = ${diffMin.toFixed(1)} min (mín. ${STEP1_TO_STEP6_MIN_MIN} min)`;
+          timingAlert = `⏱ Duración corta: step_1→${completionName} = ${diffMin.toFixed(1)} min (esperado ≥ ${STEP1_TO_STEP6_MIN_MIN} min)`;
         } else if (diffMin > STEP1_TO_STEP6_MAX_MIN) {
-          timingIssue = `Duración irreal: step_1→${completionName} = ${diffMin.toFixed(1)} min (máx. ${STEP1_TO_STEP6_MAX_MIN} min)`;
+          timingAlert = `⏱ Duración larga: step_1→${completionName} = ${diffMin.toFixed(1)} min (esperado ≤ ${STEP1_TO_STEP6_MAX_MIN} min)`;
         }
       }
-      // Si NO hay step_1 Rocket → no aplicar regla de duración (ver comentario arriba)
 
-      // ── RULE 3: duplicados ──
+      // ── RULE 3: duplicados → MAX 1 completion ──
       const completions        = evs.filter(e => e.event===COMPLETED_APROBADO||e.event===COMPLETED_CONTRATADO);
       const productCompletions = completions.length;
       const isDuplicate        = productCompletions > MAX_COMPLETIONS;
 
-      // ── STATUS PRIORITY: país → geo → timing → duplicado → missing steps ──
-      let status = '', exclusionReason = '';
+      // ── STATUS PRIORITY: país → geo → duplicado → missing steps → (timing = solo alerta) ──
+      let status = '', exclusionReason = '', alert = '';
       if (!validCC) {
         status = 'excluded'; exclusionReason = 'País no CO';
       } else if (geoIssues.length > 0) {
         status = 'geo'; exclusionReason = geoIssues[0];
-      } else if (timingIssue) {
-        status = 'timing'; exclusionReason = timingIssue;
       } else if (isDuplicate) {
         status = 'dup'; exclusionReason = `${productCompletions} completaciones (máx ${MAX_COMPLETIONS})`;
       } else if (missingRequired.length > 0) {
         status = 'missing'; exclusionReason = 'Falta: ' + missingRequired.map(s=>s.split('-app_')[1]||s).join(', ');
       } else {
-        status = 'clean';
+        // Facturable — puede tener alerta de timing
+        status = timingAlert ? 'clean_timing' : 'clean';
+        alert  = timingAlert;
       }
 
       return {
         id, status, country, registered, missingRequired,
         hasAprobado:   registered.includes(COMPLETED_APROBADO),
         hasContratado: registered.includes(COMPLETED_CONTRATADO),
-        product, afContent, geoIssues, timingIssue, isDuplicate,
-        productCompletions, exclusionReason
+        product, afContent, geoIssues, timingAlert, isDuplicate,
+        productCompletions, exclusionReason, alert
       };
     });
 
@@ -737,24 +728,27 @@ function classifyProduct(c) {
   return 'other';
 }
 
+function isFacturable(r) {
+  return r.status === 'clean' || r.status === 'clean_timing';
+}
+
 function renderUI() {
   document.getElementById('statsSection').style.display      = 'flex';
   document.getElementById('statsSection').style.flexDirection= 'column';
   document.getElementById('resultsSection').style.display    = 'block';
   document.getElementById('uploadZone').style.display        = 'none';
 
-  const total   = allResults.length;
-  const clean   = allResults.filter(r=>r.status==='clean').length;
-  const missing = allResults.filter(r=>r.status==='missing').length;
-  const geo     = allResults.filter(r=>r.status==='geo').length;
-  const timing  = allResults.filter(r=>r.status==='timing').length;
-  const dup     = allResults.filter(r=>r.status==='dup').length;
-  const excluded= allResults.filter(r=>r.status==='excluded').length;
-  const fact    = allResults.filter(r=>r.status==='clean');
+  const total    = allResults.length;
+  const clean    = allResults.filter(r=>isFacturable(r)).length;
+  const missing  = allResults.filter(r=>r.status==='missing').length;
+  const geo      = allResults.filter(r=>r.status==='geo').length;
+  const dup      = allResults.filter(r=>r.status==='dup').length;
+  const excluded = allResults.filter(r=>r.status==='excluded').length;
+  const fact     = allResults.filter(r=>isFacturable(r));
 
   document.getElementById('sTotal').textContent    = total;
   document.getElementById('sClean').textContent    = clean;
-  document.getElementById('sMissing').textContent  = missing + geo + timing + dup;
+  document.getElementById('sMissing').textContent  = missing + geo + dup;
   document.getElementById('sExcluded').textContent = excluded;
   document.getElementById('sPct').textContent      = total ? Math.round(clean/total*100)+'%' : '0%';
   document.getElementById('sLibreton').textContent = fact.filter(r=>r.product==='libreton').length;
@@ -778,23 +772,31 @@ function setFilter(val, type, btn) {
 
 function renderTable() {
   let data = allResults;
-  if (activeStatus  !== 'all') data = data.filter(r=>r.status===activeStatus);
+  // Para el filtro "Facturables" incluir ambos (clean y clean_timing)
+  if (activeStatus === 'clean') {
+    data = data.filter(r => isFacturable(r));
+  } else if (activeStatus !== 'all') {
+    data = data.filter(r=>r.status===activeStatus);
+  }
   if (activeProduct !== 'all') data = data.filter(r=>r.product===activeProduct);
 
   document.getElementById('tableBody').innerHTML = data.map(r => {
-    const sb = r.status==='clean'
-      ? `<span class="badge bv">✓ Facturable</span>`
-      : r.status==='missing'
-      ? `<span class="badge bw">⚠ Pasos faltantes</span>`
-      : r.status==='geo'
-      ? `<span class="badge bw">📍 Alerta geo</span>`
-      : r.status==='timing'
-      ? `<span class="badge bw">⏱ Timing inválido</span>`
-      : r.status==='dup'
-      ? `<span class="badge bw">🔁 Duplicado</span>`
-      : `<span class="badge bi">❌ Excluido</span>`;
+    let sb;
+    if (r.status === 'clean') {
+      sb = `<span class="badge bv">✓ Facturable</span>`;
+    } else if (r.status === 'clean_timing') {
+      sb = `<span class="badge bv">✓ Facturable</span> <span class="badge bw" style="margin-left:4px">⏱ Alerta timing</span>`;
+    } else if (r.status === 'missing') {
+      sb = `<span class="badge bw">⚠ Pasos faltantes</span>`;
+    } else if (r.status === 'geo') {
+      sb = `<span class="badge bi">📍 Geo imposible</span>`;
+    } else if (r.status === 'dup') {
+      sb = `<span class="badge bi">🔁 Duplicado</span>`;
+    } else {
+      sb = `<span class="badge bi">❌ Excluido</span>`;
+    }
 
-    const pb = r.status!=='clean' ? '—'
+    const pb = !isFacturable(r) ? '—'
       : r.product==='libreton' ? `<span class="badge bn">📘 Cuenta Digital</span>`
       : r.product==='nomina'   ? `<span class="badge bb">💼 Nómina</span>`
       :                          `<span class="badge bw">❓ Otro</span>`;
@@ -814,8 +816,13 @@ function renderTable() {
       ? `<span class="badge bv">${r.country}</span>`
       : `<span class="badge bi">${r.country||'—'}</span>`;
 
-    const reasonCell = r.exclusionReason
-      ? `<span style="font-size:11px;color:var(--rl-warn)">${esc(r.exclusionReason)}</span>`
+    // Mostrar alerta de timing en facturables, razón de exclusión en el resto
+    const noteText = r.status === 'clean_timing'
+      ? r.alert
+      : (r.exclusionReason || '');
+    const noteColor = r.status === 'clean_timing' ? 'var(--rl-warn)' : 'var(--rl-warn)';
+    const reasonCell = noteText
+      ? `<span style="font-size:11px;color:${noteColor}">${esc(noteText)}</span>`
       : `<span style="color:var(--rl-text-muted);font-size:11px">—</span>`;
 
     return `<tr>
@@ -824,7 +831,7 @@ function renderTable() {
       <td>${pb}</td>
       <td style="max-width:340px">${stepsHtml}</td>
       <td>${ccBadge}</td>
-      <td style="max-width:240px">${reasonCell}</td>
+      <td style="max-width:260px">${reasonCell}</td>
       <td style="font-size:11px;color:var(--rl-text-muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'—'}</td>
     </tr>`;
   }).join('') || `<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--rl-text-muted)">Sin resultados para este filtro</td></tr>`;
@@ -832,11 +839,19 @@ function renderTable() {
 
 function exportCSV(which) {
   let data = allResults;
-  if (which==='clean')    data = data.filter(r=>r.status==='clean');
-  if (which==='libreton') data = data.filter(r=>r.status==='clean'&&r.product==='libreton');
-  if (which==='nomina')   data = data.filter(r=>r.status==='clean'&&r.product==='nomina');
-  const rows = [['AppsFlyer ID','Estado','Producto','País','Pasos OK','Razón exclusión','af_content']];
-  data.forEach(r => rows.push([r.id, r.status, r.product, r.country, r.registered.length+'/'+ALL_STEPS.length, r.exclusionReason, r.afContent]));
+  if (which==='clean')    data = data.filter(r=>isFacturable(r));
+  if (which==='libreton') data = data.filter(r=>isFacturable(r)&&r.product==='libreton');
+  if (which==='nomina')   data = data.filter(r=>isFacturable(r)&&r.product==='nomina');
+  const rows = [['AppsFlyer ID','Estado','Producto','País','Pasos OK','Razón exclusión / Alerta','af_content']];
+  data.forEach(r => rows.push([
+    r.id,
+    r.status,
+    r.product,
+    r.country,
+    r.registered.length+'/'+ALL_STEPS.length,
+    r.status === 'clean_timing' ? r.alert : r.exclusionReason,
+    r.afContent
+  ]));
   const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a = Object.assign(document.createElement('a'), {
     href: URL.createObjectURL(new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'})),
