@@ -759,6 +759,7 @@ function analyze(rows) {
       isPrimary:(row['Is Primary Attribution']||'').toLowerCase().trim(),
       city:(row['City']||'').toLowerCase().trim(),
       state:(row['State']||'').toLowerCase().trim(),
+      rawTime: row['Event Time']||'',
       time:parseTime(row['Event Time']||'')
     });
   });
@@ -773,8 +774,9 @@ function analyze(rows) {
     const isPrimary = completionEv ? completionEv.isPrimary : '';
     const afContent = getAfContent(completionEv ? completionEv.value : '');
     const product   = classifyProduct(afContent);
-    const completionDate = completionEv && completionEv.time
-      ? new Date(completionEv.time).toISOString().slice(0,10) : '';
+    // Parse date directly from the raw Event Time string to avoid UTC offset shifting the date
+    const completionDate = completionEv && completionEv.rawTime
+      ? completionEv.rawTime.slice(0,10) : '';
     const completionCount = evs.filter(e=>COMPLETION_EVENTS.includes(e.event)).length;
     const hasStep6  = evs.some(e=>e.event===STEP_6);
     const hasStep1  = evs.some(e=>e.event===STEP_1);
