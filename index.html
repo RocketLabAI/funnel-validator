@@ -1,158 +1,155 @@
-]<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BBVA CO — Funnel Validator + Credits</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
 :root {
-  --rl-sidebar-bg:#14131a;--rl-sidebar-hover:#1e1d28;--rl-sidebar-active:#252336;
-  --rl-sidebar-text:#9997b3;--rl-sidebar-text-active:#ffffff;--rl-sidebar-section:#5a5878;
-  --rl-sidebar-width:220px;
-  --rl-content-bg:#f0eff5;--rl-card-bg:#ffffff;--rl-card-border:#e4e2ee;
-  --rl-card-shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
-  --rl-text-primary:#1a1927;--rl-text-secondary:#6b6887;--rl-text-muted:#9997b3;
-  --rl-header-bg:#ffffff;--rl-header-border:#e4e2ee;
-  --rl-accent-purple:#7c3aed;--rl-accent-purple-bg:#f5f3ff;
-  --rl-valid:#059669;--rl-valid-bg:#ecfdf5;
-  --rl-invalid:#dc2626;--rl-invalid-bg:#fef2f2;
-  --rl-warn:#d97706;--rl-warn-bg:#fffbeb;
+  --rl-black:#17191C;--rl-white:#FFFFFF;
+  --rl-violet:#7A53CA;--rl-blue:#6592FF;
+  --rl-gray-dk:#696A6B;--rl-gray-lt:#F5F5F7;
+  --rl-pink:#FF6C8E;--rl-teal:#72EAE1;
+  --rl-grad:linear-gradient(135deg,#7A53CA 0%,#6592FF 55%,#72EAE1 100%);
+  --rl-radius:10px;--rl-shadow:0 2px 12px rgba(23,25,28,0.08);
+  --valid:#059669;--valid-bg:#ecfdf5;
+  --invalid:#dc2626;--invalid-bg:#fef2f2;
+  --warn:#d97706;--warn-bg:#fffbeb;
+  --sidebar-bg:#14131a;--sidebar-hover:#1e1d28;--sidebar-active:#252336;
+  --sidebar-text:#9997b3;--sidebar-section:#5a5878;--sidebar-w:220px;
+  --card:#ffffff;--card-border:#e4e2ee;--card-shadow:0 1px 3px rgba(0,0,0,0.08);
   --font:'Inter',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:var(--font);min-height:100vh;display:flex}
+body{background:var(--rl-gray-lt);color:var(--rl-black);font-family:var(--font);min-height:100vh;display:flex}
 
-.sidebar{width:var(--rl-sidebar-width);background:var(--rl-sidebar-bg);height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100}
+.sidebar{width:var(--sidebar-w);background:var(--sidebar-bg);height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100}
 .sidebar-logo{padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px}
-.sidebar-logo-mark{width:28px;height:28px;background:var(--rl-accent-purple);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.sidebar-logo-text{color:#fff;font-size:14px;font-weight:600;letter-spacing:-0.2px}
-.sidebar-logo-sub{color:var(--rl-sidebar-text);font-size:10.5px;margin-top:1px}
-.sidebar-section{padding:16px 16px 6px;font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--rl-sidebar-section)}
-.sidebar-item{display:flex;align-items:center;gap:9px;padding:8px 16px;color:var(--rl-sidebar-text);font-size:12.5px;cursor:pointer;transition:background 0.1s,color 0.1s;border:none;background:none;width:100%;text-align:left}
-.sidebar-item:hover{background:var(--rl-sidebar-hover);color:#fff}
-.sidebar-item.active{background:var(--rl-sidebar-active);color:#fff;font-weight:500}
-.sidebar-item .si-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.sidebar-mark{width:28px;height:28px;background:#fff;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#17191C;flex-shrink:0}
+.sidebar-logo-text{color:#fff;font-size:14px;font-weight:700}
+.sidebar-logo-sub{color:var(--sidebar-text);font-size:10.5px;margin-top:1px}
+.sidebar-section{padding:16px 16px 6px;font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--sidebar-section)}
+.sidebar-item{display:flex;align-items:center;gap:9px;padding:8px 16px;color:var(--sidebar-text);font-size:12.5px;cursor:pointer;transition:background 0.1s,color 0.1s;border:none;background:none;width:100%;text-align:left}
+.sidebar-item:hover{background:var(--sidebar-hover);color:#fff}
+.sidebar-item.active{background:var(--sidebar-active);color:#fff;font-weight:500}
+.si-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
 
-.app-body{margin-left:var(--rl-sidebar-width);flex:1;display:flex;flex-direction:column;min-height:100vh}
-.topbar{background:var(--rl-header-bg);border-bottom:1px solid var(--rl-header-border);height:52px;display:flex;align-items:center;padding:0 24px;gap:8px;position:sticky;top:0;z-index:50;flex-shrink:0}
-.topbar-crumb{font-size:12px;color:var(--rl-text-muted)}
-.topbar-crumb-sep{color:var(--rl-text-muted);font-size:12px}
-.topbar-crumb-active{font-size:12px;color:var(--rl-text-primary);font-weight:500}
+.app-body{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.grad-bar{height:3px;background:var(--rl-grad)}
+.topbar{background:#fff;border-bottom:1px solid var(--card-border);height:52px;display:flex;align-items:center;padding:0 24px;gap:8px;position:sticky;top:0;z-index:50;flex-shrink:0}
 .topbar-sep{flex:1}
-.topbar-badge{font-size:11px;background:var(--rl-accent-purple-bg);color:var(--rl-accent-purple);border:1px solid #ddd6fe;padding:3px 10px;border-radius:4px;font-weight:500}
-.avatar{width:30px;height:30px;background:var(--rl-accent-purple);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+.topbar-badge{font-size:11px;padding:3px 10px;border-radius:4px;font-weight:500;background:#F7F3FF;color:var(--rl-violet);border:1px solid #ddd6fe}
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;background:var(--rl-violet)}
 
 .content{padding:24px;flex:1}
-.page{display:none}
-.page.active{display:block}
-.page-title{font-size:20px;font-weight:700;letter-spacing:-0.4px;color:var(--rl-text-primary)}
-.page-subtitle{font-size:12.5px;color:var(--rl-text-secondary);margin-top:3px}
+.page{display:none}.page.active{display:block}
+.page-title{font-size:20px;font-weight:800;letter-spacing:-0.4px}
+.page-subtitle{font-size:12.5px;color:var(--rl-gray-dk);margin-top:3px}
 .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
-
-.section-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.7px;color:var(--rl-text-muted);margin-bottom:8px;margin-top:20px}
+.section-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.7px;color:var(--rl-gray-dk);margin-bottom:8px;margin-top:20px}
 .section-label:first-child{margin-top:0}
 
-.card{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow)}
-
-/* Funnel steps */
-.funnel-steps{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-bottom:20px;background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden}
-.funnel-step{padding:14px 16px;border-right:1px solid var(--rl-card-border);position:relative}
+/* funnel */
+.funnel-steps{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-bottom:20px;background:var(--card);border:1px solid var(--card-border);border-radius:8px;box-shadow:var(--card-shadow);overflow:hidden}
+.funnel-step{padding:14px 16px;border-right:1px solid var(--card-border);position:relative}
 .funnel-step:last-child{border-right:none}
-.funnel-step-num{font-size:10px;font-weight:600;color:var(--rl-text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px}
+.funnel-step-num{font-size:10px;font-weight:600;color:var(--rl-gray-dk);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px}
 .funnel-step-value{font-size:22px;font-weight:700;letter-spacing:-0.5px;line-height:1}
-.funnel-step-label{font-size:10.5px;color:var(--rl-text-secondary);margin-top:3px}
-.funnel-step-excl{font-size:10px;color:var(--rl-invalid);margin-top:2px;font-weight:500}
-.funnel-step.step-start .funnel-step-value{color:var(--rl-text-primary)}
-.funnel-step.step-filter .funnel-step-value{color:var(--rl-warn)}
-.funnel-step.step-end .funnel-step-value{color:var(--rl-valid)}
-.funnel-arrow{position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:16px;height:16px;background:var(--rl-content-bg);border:1px solid var(--rl-card-border);border-radius:2px;z-index:2;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--rl-text-muted)}
+.funnel-step-label{font-size:10.5px;color:var(--rl-gray-dk);margin-top:3px}
+.funnel-step-excl{font-size:10px;color:var(--invalid);margin-top:2px;font-weight:500}
+.funnel-step.step-start .funnel-step-value{color:var(--rl-black)}
+.funnel-step.step-filter .funnel-step-value{color:var(--warn)}
+.funnel-step.step-end .funnel-step-value{color:var(--valid)}
+.funnel-arrow{position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:16px;height:16px;background:var(--rl-gray-lt);border:1px solid var(--card-border);border-radius:2px;z-index:2;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--rl-gray-dk)}
 
+/* kpi */
 .kpi-grid{display:grid;gap:12px;margin-bottom:20px}
-.kpi-grid-5{grid-template-columns:repeat(5,1fr)}
-.kpi-grid-4{grid-template-columns:repeat(4,1fr)}
 .kpi-grid-3{grid-template-columns:repeat(3,1fr)}
-.kpi-grid-2{grid-template-columns:repeat(2,1fr)}
-.kpi-card{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);padding:14px 16px;border-top:3px solid transparent}
-.kpi-card.accent-green{border-top-color:var(--rl-valid)}
-.kpi-card.accent-red{border-top-color:var(--rl-invalid)}
-.kpi-card.accent-amber{border-top-color:var(--rl-warn)}
-.kpi-card.accent-purple{border-top-color:var(--rl-accent-purple)}
-.kpi-card.accent-blue{border-top-color:#2563eb}
-.kpi-card.accent-gray{border-top-color:#e4e2ee}
-.kpi-label{font-size:10.5px;font-weight:600;color:var(--rl-text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px}
-.kpi-value{font-size:24px;font-weight:700;line-height:1;letter-spacing:-0.5px;color:var(--rl-text-primary)}
-.kpi-sub{font-size:11px;color:var(--rl-text-muted);margin-top:3px}
+.kpi-card{background:var(--card);border:1px solid var(--card-border);border-radius:8px;box-shadow:var(--card-shadow);padding:14px 16px;border-top:3px solid transparent}
+.kpi-card.ap{border-top-color:var(--rl-violet)}.kpi-card.ab{border-top-color:var(--rl-blue)}.kpi-card.aw{border-top-color:var(--warn)}
+.kpi-label{font-size:10.5px;font-weight:600;color:var(--rl-gray-dk);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px}
+.kpi-value{font-size:24px;font-weight:700;line-height:1;letter-spacing:-0.5px}
 
-.table-wrap{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden;margin-bottom:14px}
+/* table */
+.table-wrap{background:var(--card);border:1px solid var(--card-border);border-radius:8px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:14px}
 .table-scroll{overflow-x:auto;max-height:480px;overflow-y:auto}
 table{width:100%;border-collapse:collapse}
 thead{position:sticky;top:0;z-index:2}
-th{background:#f0eff5;padding:9px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--rl-text-muted);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--rl-card-border);white-space:nowrap}
-td{padding:9px 14px;border-bottom:1px solid #f5f3fb;font-size:12px;color:var(--rl-text-primary);vertical-align:middle}
+th{background:#f0eff5;padding:9px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--rl-gray-dk);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--card-border);white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid #f5f3fb;font-size:12px;color:var(--rl-black);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#faf9ff}
 
+/* badges */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap}
-.bv{background:var(--rl-valid-bg);color:var(--rl-valid)}
-.bw{background:var(--rl-warn-bg);color:var(--rl-warn)}
-.bi{background:var(--rl-invalid-bg);color:var(--rl-invalid)}
-.bp{background:var(--rl-accent-purple-bg);color:var(--rl-accent-purple)}
-.bb{background:#eff6ff;color:#2563eb}
-.bn{background:#e0e7ff;color:#3730a3}
+.bv{background:var(--valid-bg);color:var(--valid)}.bw{background:var(--warn-bg);color:var(--warn)}.bi{background:var(--invalid-bg);color:var(--invalid)}
+.bp{background:#F7F3FF;color:var(--rl-violet)}.bb{background:#eff6ff;color:#2563eb}.bn{background:#e0e7ff;color:#3730a3}
 
+/* buttons */
 .btn{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:opacity 0.15s}
-.btn:hover{opacity:0.88}
-.btn-primary{background:var(--rl-accent-purple);color:#fff}
-.btn-secondary{background:#fff;color:var(--rl-text-secondary);border:1px solid var(--rl-card-border)}
+.btn:hover{opacity:0.85}
+.btn-primary{background:var(--rl-violet);color:#fff}
+.btn-secondary{background:#fff;color:var(--rl-gray-dk);border:1px solid var(--card-border)}
 
+/* filters */
 .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
 .filter-tabs{display:flex;gap:3px;background:#f0eff5;border-radius:6px;padding:3px}
-.tab{padding:4px 11px;border-radius:4px;font-size:11.5px;font-weight:500;background:transparent;color:var(--rl-text-secondary);border:none;cursor:pointer;font-family:var(--font);transition:all 0.1s}
-.tab.active{background:#fff;color:var(--rl-text-primary);box-shadow:0 1px 2px rgba(0,0,0,0.08)}
-.filter-sep{width:1px;background:var(--rl-card-border);align-self:stretch;margin:0 4px}
+.tab{padding:4px 11px;border-radius:4px;font-size:11.5px;font-weight:500;background:transparent;color:var(--rl-gray-dk);border:none;cursor:pointer;font-family:var(--font);transition:all 0.1s}
+.tab.active{background:#fff;color:var(--rl-black);box-shadow:0 1px 2px rgba(0,0,0,0.08)}
+.filter-sep{width:1px;background:var(--card-border);align-self:stretch;margin:0 4px}
 
-.upload-zone{border:1.5px dashed var(--rl-card-border);border-radius:8px;padding:40px;text-align:center;cursor:pointer;background:#faf9ff;transition:all 0.18s}
-.upload-zone:hover,.upload-zone.drag-over{border-color:var(--rl-accent-purple);background:var(--rl-accent-purple-bg)}
-.upload-zone h2{font-size:15px;font-weight:600;margin-bottom:5px;color:var(--rl-text-primary)}
-.upload-zone p{font-size:12.5px;color:var(--rl-text-secondary)}
-.upload-hint{margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:monospace;color:var(--rl-text-muted);background:#fff;border:1px solid var(--rl-card-border);padding:5px 14px;border-radius:20px}
+/* upload */
+.upload-zone{border:1.5px dashed var(--card-border);border-radius:8px;padding:40px;text-align:center;cursor:pointer;background:#faf9ff;transition:all 0.18s}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--rl-violet);background:#F7F3FF}
+.upload-zone h2{font-size:15px;font-weight:600;margin-bottom:5px}
+.upload-zone p{font-size:12.5px;color:var(--rl-gray-dk)}
+.upload-hint{margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:monospace;color:var(--rl-gray-dk);background:#fff;border:1px solid var(--card-border);padding:5px 14px;border-radius:20px}
 
+/* msgs */
 .msg{padding:10px 14px;border-radius:6px;font-size:12.5px;margin-bottom:12px;display:none}
-.msg-error{background:var(--rl-invalid-bg);border:1px solid #fecaca;color:var(--rl-invalid)}
+.msg-error{background:var(--invalid-bg);border:1px solid #fecaca;color:var(--invalid)}
 .msg-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8}
 
-.criteria-info{background:#f0eff5;border:1px solid var(--rl-card-border);border-radius:6px;padding:10px 14px;font-size:11.5px;color:var(--rl-text-secondary);line-height:1.7;margin-bottom:16px}
-.criteria-info strong{color:var(--rl-text-primary)}
+.criteria-info{background:#f0eff5;border:1px solid var(--card-border);border-radius:6px;padding:10px 14px;font-size:11.5px;color:var(--rl-gray-dk);line-height:1.7;margin-bottom:16px}
+.criteria-info strong{color:var(--rl-black)}
 .export-row{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}
 
-/* Credits */
+/* ── CREDITS ── */
 .credits-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-.credits-group{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);padding:16px}
-.credits-group-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:var(--rl-text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.credits-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.credits-row:last-child{margin-bottom:0}
-.credits-label{font-size:12.5px;color:var(--rl-text-primary);flex:1;font-weight:500}
-.credits-sublabel{font-size:10.5px;color:var(--rl-text-muted);display:block;margin-top:1px;font-weight:400}
-.credits-input-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.credits-input{width:140px;padding:6px 10px;border-radius:6px;border:1px solid var(--rl-card-border);font-size:12.5px;font-family:monospace;color:var(--rl-text-primary);background:#fff;text-align:right}
-.credits-input:focus{outline:none;border-color:var(--rl-accent-purple);box-shadow:0 0 0 2px rgba(124,58,237,0.1)}
-.credits-input:disabled{background:#f5f3fb;color:var(--rl-text-muted);cursor:not-allowed}
-.credits-input.computed{background:#f5f3fb;color:var(--rl-text-secondary);cursor:default}
-.credits-result{width:90px;padding:6px 10px;border-radius:6px;border:1px solid var(--rl-card-border);font-size:12.5px;font-family:monospace;font-weight:700;text-align:right;background:#f5f3fb;color:var(--rl-accent-purple)}
-.credits-rate{font-size:10.5px;color:var(--rl-text-muted);white-space:nowrap;flex-shrink:0;min-width:120px}
-.credits-divider{height:1px;background:var(--rl-card-border);margin:10px 0}
-.credits-subrow{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding-left:14px;border-left:2px solid var(--rl-card-border)}
-.credits-total-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--rl-accent-purple-bg);border-radius:6px;margin-top:4px}
-.credits-total-label{font-size:13px;font-weight:600;color:var(--rl-accent-purple)}
-.credits-total-value{font-size:22px;font-weight:700;color:var(--rl-accent-purple);letter-spacing:-0.5px;font-family:monospace}
-.credits-warning{font-size:11px;color:var(--rl-invalid);background:var(--rl-invalid-bg);border:1px solid #fecaca;padding:5px 10px;border-radius:4px;margin-top:6px;display:none}
+.cred-group{background:var(--card);border:1px solid var(--card-border);border-radius:8px;box-shadow:var(--card-shadow);overflow:hidden}
+.cred-group-header{padding:11px 16px;border-bottom:1px solid var(--card-border);display:flex;align-items:center;gap:7px;background:#fafafa}
+.cred-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--rl-gray-dk)}
+.cred-group-body{padding:14px 16px}
+
+.rate-row{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f5f3fb}
+.rate-row:last-child{border-bottom:none}
+.rate-label{font-size:12.5px;font-weight:500;color:var(--rl-black)}
+.rate-sub{font-size:10.5px;color:var(--rl-gray-dk);margin-top:2px}
+.rate-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap;background:#F7F3FF;color:var(--rl-violet);border:1px solid #e9d5ff;margin-left:auto}
+.rate-tasa{font-size:10.5px;color:var(--rl-gray-dk);white-space:nowrap}
+.rate-input{width:130px;padding:6px 10px;border-radius:6px;border:1px solid var(--card-border);font-size:12.5px;font-family:monospace;color:var(--rl-black);background:#fff;text-align:right}
+.rate-input:focus{outline:none;border-color:var(--rl-violet);box-shadow:0 0 0 2px rgba(122,83,202,0.12)}
+.rate-input:disabled{background:#f5f3fb;color:var(--rl-gray-dk);cursor:not-allowed}
+.rate-result{width:84px;padding:6px 10px;border-radius:6px;border:1px solid var(--card-border);font-size:12.5px;font-family:monospace;font-weight:700;text-align:right;background:#F7F3FF;color:var(--rl-violet)}
+
+.credits-total-card{background:linear-gradient(135deg,#F7F3FF,#eef2ff);border:1px solid #ddd6fe;border-radius:8px;padding:16px 20px;margin-bottom:0}
+.credits-total-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--rl-violet);margin-bottom:6px}
+.credits-total-value{font-size:36px;font-weight:800;color:var(--rl-violet);letter-spacing:-1px;font-family:monospace;line-height:1}
+.credits-total-sub{font-size:11px;color:var(--rl-gray-dk);margin-top:5px}
+
+.ref-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px}
+.ref-table th{background:#f5f3fb;padding:7px 12px;text-align:left;font-weight:600;color:var(--rl-gray-dk);text-transform:uppercase;font-size:10px;letter-spacing:0.5px;border-bottom:1px solid var(--card-border)}
+.ref-table td{padding:7px 12px;border-bottom:1px solid #f5f3fb;color:var(--rl-black)}
+.ref-table tr:last-child td{border-bottom:none}
+.ref-table tr.hi td{background:#F7F3FF;font-weight:600}
+
+.file-bar{display:flex;align-items:center;justify-content:space-between;background:var(--valid-bg);border:1px solid #a7f3d0;border-radius:6px;padding:10px 14px;margin-bottom:16px}
 
 @media(max-width:900px){
-  .kpi-grid-5,.kpi-grid-4{grid-template-columns:repeat(2,1fr)}
   .funnel-steps{grid-template-columns:repeat(3,1fr)}
-  .credits-grid{grid-template-columns:1fr}
+  .credits-grid,.kpi-grid-3{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -160,7 +157,7 @@ tr:hover td{background:#faf9ff}
 
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <div class="sidebar-logo-mark">🚀</div>
+    <div class="sidebar-mark">R/</div>
     <div>
       <div class="sidebar-logo-text">RocketLab</div>
       <div class="sidebar-logo-sub">BBVA Colombia</div>
@@ -176,10 +173,11 @@ tr:hover td{background:#faf9ff}
 </aside>
 
 <div class="app-body">
+  <div class="grad-bar"></div>
   <div class="topbar">
-    <span class="topbar-crumb">BBVA CO</span>
-    <span class="topbar-crumb-sep">/</span>
-    <span class="topbar-crumb-active" id="topbarActive">Funnel Validator</span>
+    <span style="font-size:12px;color:var(--rl-gray-dk)">BBVA CO</span>
+    <span style="font-size:12px;color:var(--rl-gray-dk)"> / </span>
+    <span style="font-size:12px;font-weight:500" id="topbarActive">Funnel Validator</span>
     <div class="topbar-sep"></div>
     <span class="topbar-badge" id="topbarBadge">step_6 + completed_aprobado</span>
     <div class="avatar">RL</div>
@@ -206,11 +204,9 @@ tr:hover td{background:#faf9ff}
         &nbsp;2. <strong>País CO + Is Primary</strong> → excluye Non-CO y no-primary<br>
         &nbsp;3. <strong>Múltiples completions</strong> → más de 1 completion por AppsFlyer ID → excluido<br>
         &nbsp;4. <strong>Sin step_6</strong> → step_6 obligatorio, step_1 no obligatorio<br>
-        &nbsp;5. <strong>Salto geográfico &lt;50 min</strong> → cambio de ciudad entre eventos consecutivos en menos de 50 min → excluido<br>
-        <span style="color:var(--rl-text-muted)">Nota: la detección geo opera sobre los eventos in-app del CSV. Para detectar saltos click-city → event-city se requiere el export de clicks de AF.</span>
+        &nbsp;5. <strong>Salto geográfico &lt;50 min</strong> → cambio de ciudad entre eventos consecutivos en menos de 50 min → excluido
       </div>
 
-      <!-- FUNNEL WATERFALL (shown after load) -->
       <div id="funnelSection" style="display:none">
         <div class="section-label">Waterfall de filtros</div>
         <div class="funnel-steps">
@@ -224,28 +220,28 @@ tr:hover td{background:#faf9ff}
             <div class="funnel-step-num">Filtro 1</div>
             <div class="funnel-step-value" id="fS1">—</div>
             <div class="funnel-step-label">Tras excluir País/Primary</div>
-            <div class="funnel-step-excl" id="fE1">−0</div>
+            <div class="funnel-step-excl" id="fE1">—</div>
             <div class="funnel-arrow">›</div>
           </div>
           <div class="funnel-step step-filter">
             <div class="funnel-step-num">Filtro 2</div>
             <div class="funnel-step-value" id="fS2">—</div>
             <div class="funnel-step-label">Tras excluir múlt. completions</div>
-            <div class="funnel-step-excl" id="fE2">−0</div>
+            <div class="funnel-step-excl" id="fE2">—</div>
             <div class="funnel-arrow">›</div>
           </div>
           <div class="funnel-step step-filter">
             <div class="funnel-step-num">Filtro 3</div>
             <div class="funnel-step-value" id="fS3">—</div>
             <div class="funnel-step-label">Tras excluir sin step_6</div>
-            <div class="funnel-step-excl" id="fE3">−0</div>
+            <div class="funnel-step-excl" id="fE3">—</div>
             <div class="funnel-arrow">›</div>
           </div>
           <div class="funnel-step step-filter">
             <div class="funnel-step-num">Filtro 4</div>
             <div class="funnel-step-value" id="fS4">—</div>
             <div class="funnel-step-label">Tras excluir salto geo</div>
-            <div class="funnel-step-excl" id="fE4">−0</div>
+            <div class="funnel-step-excl" id="fE4">—</div>
             <div class="funnel-arrow">›</div>
           </div>
           <div class="funnel-step step-end">
@@ -256,10 +252,25 @@ tr:hover td{background:#faf9ff}
         </div>
 
         <div class="section-label">Por producto (solo facturables)</div>
-        <div class="kpi-grid kpi-grid-3" style="margin-bottom:20px">
-          <div class="kpi-card accent-purple"><div class="kpi-label">Libreton / Cuenta Digital</div><div class="kpi-value" style="color:var(--rl-accent-purple)" id="sLibreton">0</div></div>
-          <div class="kpi-card accent-blue"><div class="kpi-label">Nómina</div><div class="kpi-value" style="color:#2563eb" id="sNomina">0</div></div>
-          <div class="kpi-card accent-amber"><div class="kpi-label">Otro / Sin clasificar</div><div class="kpi-value" style="color:var(--rl-warn)" id="sOther">0</div></div>
+        <div class="kpi-grid kpi-grid-3">
+          <div class="kpi-card ap"><div class="kpi-label">Libreton / Cuenta Digital</div><div class="kpi-value" style="color:var(--rl-violet)" id="sLibreton">0</div></div>
+          <div class="kpi-card ab"><div class="kpi-label">Nómina</div><div class="kpi-value" style="color:var(--rl-blue)" id="sNomina">0</div></div>
+          <div class="kpi-card aw"><div class="kpi-label">Otro / Sin clasificar</div><div class="kpi-value" style="color:var(--warn)" id="sOther">0</div></div>
+        </div>
+
+        <div class="section-label">Altas válidas por día</div>
+        <div style="background:var(--card);border:1px solid var(--card-border);border-radius:8px;box-shadow:var(--card-shadow);padding:20px 20px 14px;margin-bottom:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+            <div style="font-size:12px;color:var(--rl-gray-dk)">Fecha del evento <code>completed_aprobado</code> · solo facturables</div>
+            <div style="display:flex;gap:10px;font-size:11px;color:var(--rl-gray-dk)">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--rl-violet);display:inline-block"></span>Libreton</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--rl-blue);display:inline-block"></span>Nómina</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--warn);display:inline-block"></span>Otro</span>
+            </div>
+          </div>
+          <div id="dailyChart" style="width:100%;overflow-x:auto">
+            <canvas id="dailyChartCanvas" style="display:block"></canvas>
+          </div>
         </div>
       </div>
 
@@ -268,7 +279,7 @@ tr:hover td{background:#faf9ff}
         <div style="font-size:32px;margin-bottom:10px">📂</div>
         <h2>Arrastrá el CSV de AF aquí</h2>
         <p>Raw data export de AppsFlyer (non-organic in-app events)</p>
-        <div class="upload-hint">AppsFlyer ID · Event Name · Event Time · City · Country Code · Is Primary Attribution · Event Value</div>
+        <div class="upload-hint">AppsFlyer ID · Event Name · Event Time · City · Country Code · Is Primary Attribution</div>
       </div>
 
       <div id="resultsSection" style="display:none;margin-top:4px">
@@ -293,15 +304,8 @@ tr:hover td{background:#faf9ff}
           <div class="table-scroll">
             <table>
               <thead><tr>
-                <th>AppsFlyer ID</th>
-                <th>Estado</th>
-                <th>Filtro aplicado</th>
-                <th>Producto</th>
-                <th>País</th>
-                <th>Completions</th>
-                <th>step_6</th>
-                <th>Detalle geo</th>
-                <th>af_content</th>
+                <th>AppsFlyer ID</th><th>Estado</th><th>Filtro aplicado</th><th>Producto</th>
+                <th>País</th><th>Completions</th><th>step_6</th><th>Detalle geo</th><th>af_content</th>
               </tr></thead>
               <tbody id="tableBody"></tbody>
             </table>
@@ -314,14 +318,31 @@ tr:hover td{background:#faf9ff}
           <button class="btn btn-primary"   onclick="exportCSV('clean')">Exportar Facturables</button>
         </div>
       </div>
-    </div><!-- /page-validator -->
+    </div>
 
-    <!-- ═══ CALCULADORA DE CRÉDITOS ═══ -->
+    <!-- ═══ CALCULADORA DE CRÉDITOS ═══
+         Fuente esperada: raw non-organic in-app events CSV (una fila = un IAE)
+         
+         Tasas (Capacity Credit Consumption Metrics — tabla oficial AF):
+           Impressions                  →   1 CC / 1,000,000
+           Clicks                       →   2 CC / 1,000,000
+           Non-Organic Installs & Re-attribution → 80 CC / 100,000  = 800 CC / 1,000,000
+           Re-engagements               →  10 CC / 100,000  = 100 CC / 1,000,000
+           In App Events                →   2 CC / 1,000,000
+           Data Transfer (Locker/Push/Pull API/DCR) → 2 CC / 1,000,000
+           Cost & Revenue               →  60 CC / $100,000
+
+         Extracción del CSV:
+           Re-attributions  = filas donde "Retargeting Conversion Type" == "re-attribution"
+           Re-engagements   = filas donde "Retargeting Conversion Type" == "re-engagement"
+           IAEs total       = total de filas (cada fila es 1 in-app event)
+           Clicks           = no están en este export → ingreso manual
+    ═══ -->
     <div class="page" id="page-credits">
       <div class="page-header">
         <div>
           <div class="page-title">Calculadora de Créditos</div>
-          <div class="page-subtitle">AppsFlyer MMP — BBVA Colombia</div>
+          <div class="page-subtitle">AppsFlyer Capacity Credits · BBVA Colombia · Raw IAE export</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
           <button class="btn btn-secondary" onclick="resetCredits()">Limpiar</button>
@@ -333,164 +354,217 @@ tr:hover td{background:#faf9ff}
       <div class="upload-zone" id="creditsUploadZone" style="margin-bottom:20px">
         <div style="font-size:32px;margin-bottom:10px">📊</div>
         <h2>Arrastrá el CSV de AppsFlyer aquí</h2>
-        <p>Reporte agregado exportado desde el dashboard (Aggregate Data)</p>
-        <div class="upload-hint">Clicks · Sessions · Conversions · Event counters</div>
+        <p>Raw data export · non-organic in-app events &nbsp;·&nbsp; una fila = un evento</p>
+        <div class="upload-hint">Retargeting Conversion Type · Event Name · AppsFlyer ID</div>
       </div>
 
-      <div id="creditsFileInfo" style="display:none;margin-bottom:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--rl-valid-bg);border:1px solid #a7f3d0;border-radius:6px;padding:10px 14px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:16px">✅</span>
-            <div>
-              <div style="font-size:12.5px;font-weight:600;color:var(--rl-valid)" id="creditsFileName">—</div>
-              <div style="font-size:11px;color:var(--rl-text-muted)" id="creditsFileRows">—</div>
-            </div>
+      <div id="creditsFileBar" style="display:none" class="file-bar">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:18px">✅</span>
+          <div>
+            <div style="font-size:12.5px;font-weight:600;color:var(--valid)" id="creditsFileName">—</div>
+            <div style="font-size:11px;color:var(--rl-gray-dk)" id="creditsFileSummary">—</div>
           </div>
-          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetCredits()">Cambiar archivo</button>
         </div>
+        <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetCredits()">Cambiar archivo</button>
       </div>
 
+      <!-- Rates reference -->
       <div class="criteria-info">
-        <strong>Regla de cálculo:</strong> créditos = cantidad × tasa / 1,000,000 &nbsp;·&nbsp;
-        <strong>Events</strong> = (Event counters) + Sessions &nbsp;·&nbsp;
-        <strong>Key Events</strong> = columnas terminadas en <code>_contratado</code> o <code>_finalizado</code>
+        <strong>Tasas oficiales — Capacity Credit Consumption Metrics:</strong>
+        <table class="ref-table">
+          <thead><tr><th>Tipo</th><th>Tasa</th><th>Origen en este CSV</th></tr></thead>
+          <tbody>
+            <tr><td>Impressions</td><td>1 CC / 1,000,000</td><td style="color:var(--rl-gray-dk);font-style:italic">no aplica en este export</td></tr>
+            <tr><td>Clicks</td><td><strong>2 CC / 1,000,000</strong></td><td>Ingreso manual (no en raw IAE export)</td></tr>
+            <tr class="hi"><td>Non-Organic Installs &amp; Re-attribution</td><td><strong>80 CC / 100,000</strong></td><td><code>Retargeting Conversion Type = re-attribution</code></td></tr>
+            <tr class="hi"><td>Re-engagements</td><td><strong>10 CC / 100,000</strong></td><td><code>Retargeting Conversion Type = re-engagement</code></td></tr>
+            <tr class="hi"><td>In App Events</td><td><strong>2 CC / 1,000,000</strong></td><td>Total de filas del CSV</td></tr>
+            <tr><td>Data Transfer (Locker / Push / Pull API / DCR)</td><td><strong>2 CC / 1,000,000</strong></td><td>Ingreso manual</td></tr>
+            <tr><td>Cost &amp; Revenue</td><td><strong>60 CC / $100,000</strong></td><td>Ingreso manual (USD medidos por AF)</td></tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="credits-grid">
-        <div class="credits-group">
-          <div class="credits-group-title">📊 Métricas de volumen</div>
-          <div class="credits-row">
-            <div class="credits-label">Clicks<span class="credits-sublabel">Máx. 30,000,000 · filas re-attribution</span></div>
-            <div class="credits-input-wrap">
-              <input class="credits-input" type="number" id="inp_clicks" min="0" max="30000000" placeholder="0" oninput="calcCredits()">
-              <span class="credits-rate">× 2 / 1M</span>
-              <div class="credits-result" id="res_clicks">0.00</div>
-            </div>
-          </div>
-          <div class="credits-warning" id="warn_clicks">⚠ Supera el máximo de 30,000,000 clicks</div>
-          <div class="credits-row">
-            <div class="credits-label">Re-engagements<span class="credits-sublabel">Conversions donde tipo = re-engagement</span></div>
-            <div class="credits-input-wrap">
-              <input class="credits-input" type="number" id="inp_reeng" min="0" placeholder="0" oninput="calcCredits()">
-              <span class="credits-rate">× 30 / 1M</span>
-              <div class="credits-result" id="res_reeng">0.00</div>
-            </div>
-          </div>
-          <div class="credits-row">
-            <div class="credits-label">Re-installs<span class="credits-sublabel">Conversions donde tipo = re-attribution</span></div>
-            <div class="credits-input-wrap">
-              <input class="credits-input" type="number" id="inp_reinst" min="0" placeholder="0" oninput="calcCredits()">
-              <span class="credits-rate">× 60 / 1M</span>
-              <div class="credits-result" id="res_reinst">0.00</div>
-            </div>
-          </div>
-          <div class="credits-divider"></div>
-          <div class="credits-row">
-            <div class="credits-label">Events (IAEs + Sessions)<span class="credits-sublabel">Calculado automáticamente abajo ↓</span></div>
-            <div class="credits-input-wrap">
-              <input class="credits-input computed" type="number" id="inp_events" min="0" placeholder="0" readonly tabindex="-1">
-              <span class="credits-rate">× 2 / 1M</span>
-              <div class="credits-result" id="res_events">0.00</div>
-            </div>
-          </div>
-          <div class="credits-subrow">
-            <div class="credits-label" style="font-size:12px;">Event Counters (IAEs)<span class="credits-sublabel">Suma de todos los (Event counter)</span></div>
-            <div class="credits-input-wrap">
-              <input class="credits-input" type="number" id="inp_iaes" min="0" placeholder="0" oninput="calcEventsTotal()">
-              <span class="credits-rate" style="min-width:120px;color:var(--rl-text-muted);font-size:10px;">componente</span>
-              <div class="credits-result" style="background:#f0eff5;color:var(--rl-text-secondary);font-size:11.5px;" id="res_iaes">—</div>
-            </div>
-          </div>
-          <div class="credits-subrow" style="margin-bottom:0">
-            <div class="credits-label" style="font-size:12px;">Sessions<span class="credits-sublabel">Columna Sessions del reporte</span></div>
-            <div class="credits-input-wrap">
-              <input class="credits-input" type="number" id="inp_sessions" min="0" placeholder="0" oninput="calcEventsTotal()">
-              <span class="credits-rate" style="min-width:120px;color:var(--rl-text-muted);font-size:10px;">componente</span>
-              <div class="credits-result" style="background:#f0eff5;color:var(--rl-text-secondary);font-size:11.5px;" id="res_sessions">—</div>
-            </div>
-          </div>
-          <div class="credits-divider"></div>
-          <div class="credits-row">
-            <div class="credits-label">Key Events<span class="credits-sublabel">_contratado + _finalizado (solo referencia)</span></div>
-            <div class="credits-input-wrap">
-              <input class="credits-input" type="number" id="inp_keyev_raw" min="0" placeholder="0" oninput="calcCredits()" style="background:#f5f3fb;color:var(--rl-text-muted)" readonly>
-              <span class="credits-rate" style="font-size:10px">no factura</span>
-              <div class="credits-result" id="res_keyev" style="font-size:11.5px">—</div>
-            </div>
-          </div>
-        </div>
 
-        <div style="display:flex;flex-direction:column;gap:16px">
-          <div class="credits-group">
-            <div class="credits-group-title">⏳ Pendientes de datos</div>
-            <div class="credits-row">
-              <div class="credits-label">Datalocker (incl Analytics)<span class="credits-sublabel">Sin datos disponibles aún</span></div>
-              <div class="credits-input-wrap">
-                <input class="credits-input" type="number" id="inp_dlock" min="0" placeholder="—" disabled>
-                <span class="credits-rate">× 1 / 1M</span>
-                <div class="credits-result" id="res_dlock" style="color:var(--rl-text-muted)">—</div>
-              </div>
+        <!-- LEFT -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+
+          <div class="cred-group">
+            <div class="cred-group-header">
+              <span>🔄</span>
+              <span class="cred-group-title">Non-Organic Installs &amp; Re-attribution</span>
+              <span class="rate-badge">80 CC / 100k</span>
             </div>
-            <div class="credits-row">
-              <div class="credits-label">Pull API (Aggregated & RAW)<span class="credits-sublabel">Sin datos disponibles aún</span></div>
-              <div class="credits-input-wrap">
-                <input class="credits-input" type="number" id="inp_api" min="0" placeholder="—" disabled>
-                <span class="credits-rate">× 10 / 1M</span>
-                <div class="credits-result" id="res_api" style="color:var(--rl-text-muted)">—</div>
+            <div class="cred-group-body">
+              <div class="rate-row">
+                <div>
+                  <div class="rate-label">Re-attributions</div>
+                  <div class="rate-sub">Filas con <code>Retargeting Conversion Type = re-attribution</code></div>
+                </div>
+                <span class="rate-tasa">× 800 / 1M</span>
+                <input class="rate-input" type="number" id="inp_reattr" min="0" placeholder="0" oninput="calcCredits()">
+                <div class="rate-result" id="res_reattr">0.0000</div>
               </div>
             </div>
           </div>
-          <div class="credits-group">
-            <div class="credits-group-title">📍 % Key Event / Clicks</div>
-            <div style="font-size:11.5px;color:var(--rl-text-secondary);margin-bottom:10px">Rango esperado: <strong>0.003% – 0.009%</strong></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-              <div style="font-size:28px;font-weight:700;font-family:monospace;letter-spacing:-1px" id="keyevPctDisplay">—</div>
-              <div id="keyevPctBadge" style="font-size:12px;padding:4px 10px;border-radius:4px;font-weight:600">—</div>
+
+          <div class="cred-group">
+            <div class="cred-group-header">
+              <span>🔁</span>
+              <span class="cred-group-title">Re-engagements</span>
+              <span class="rate-badge">10 CC / 100k</span>
             </div>
-            <div style="margin-top:8px;font-size:11px;color:var(--rl-text-muted)" id="keyevPctDetail">Cargá un CSV para ver el cálculo</div>
+            <div class="cred-group-body">
+              <div class="rate-row">
+                <div>
+                  <div class="rate-label">Re-engagements</div>
+                  <div class="rate-sub">Filas con <code>Retargeting Conversion Type = re-engagement</code></div>
+                </div>
+                <span class="rate-tasa">× 100 / 1M</span>
+                <input class="rate-input" type="number" id="inp_reeng" min="0" placeholder="0" oninput="calcCredits()">
+                <div class="rate-result" id="res_reeng">0.0000</div>
+              </div>
+            </div>
           </div>
-          <div class="credits-group" style="border-top:3px solid var(--rl-accent-purple)">
-            <div class="credits-group-title">💎 Total de créditos</div>
-            <div class="credits-total-row">
-              <div class="credits-total-label">Créditos consumidos</div>
-              <div class="credits-total-value" id="totalCredits">0.00</div>
+
+          <div class="cred-group">
+            <div class="cred-group-header">
+              <span>📱</span>
+              <span class="cred-group-title">In-App Events</span>
+              <span class="rate-badge">2 CC / 1M</span>
             </div>
-            <div style="margin-top:12px">
-              <div class="section-label" style="margin-top:0">Desglose</div>
-              <table style="width:100%;font-size:11.5px">
-                <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Clicks</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_clicks">0.00</td></tr>
-                <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Re-engagements</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_reeng">0.00</td></tr>
-                <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Re-installs</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_reinst">0.00</td></tr>
-                <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Events (IAEs + Sessions)</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_events">0.00</td></tr>
-                <tr><td style="padding:2px 0 2px 14px;color:var(--rl-text-muted);font-size:10.5px">↳ IAE counters</td><td style="text-align:right;font-family:monospace;font-size:10.5px;color:var(--rl-text-muted)" id="br_iaes">—</td></tr>
-                <tr><td style="padding:2px 0 3px 14px;color:var(--rl-text-muted);font-size:10.5px">↳ Sessions</td><td style="text-align:right;font-family:monospace;font-size:10.5px;color:var(--rl-text-muted)" id="br_sessions">—</td></tr>
-                <tr style="border-top:1px solid var(--rl-card-border)"><td style="padding:5px 0 2px;font-weight:600">Total</td><td style="text-align:right;font-family:monospace;font-weight:700;color:var(--rl-accent-purple)" id="br_total">0.00</td></tr>
+            <div class="cred-group-body">
+              <div class="rate-row">
+                <div>
+                  <div class="rate-label">Total IAEs</div>
+                  <div class="rate-sub">Total de filas del CSV · cada fila = 1 in-app event</div>
+                </div>
+                <span class="rate-tasa">× 2 / 1M</span>
+                <input class="rate-input" type="number" id="inp_iae" min="0" placeholder="0" oninput="calcCredits()">
+                <div class="rate-result" id="res_iae">0.0000</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cred-group">
+            <div class="cred-group-header">
+              <span>🖱️</span>
+              <span class="cred-group-title">Clicks</span>
+              <span class="rate-badge">2 CC / 1M</span>
+            </div>
+            <div class="cred-group-body">
+              <div class="rate-row">
+                <div>
+                  <div class="rate-label">Clicks</div>
+                  <div class="rate-sub">No incluido en raw IAE export — ingresar desde dashboard AF</div>
+                </div>
+                <span class="rate-tasa">× 2 / 1M</span>
+                <input class="rate-input" type="number" id="inp_clicks" min="0" placeholder="manual" oninput="calcCredits()">
+                <div class="rate-result" id="res_clicks">0.0000</div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /left -->
+
+        <!-- RIGHT -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+
+          <div class="cred-group">
+            <div class="cred-group-header">
+              <span>🗄️</span>
+              <span class="cred-group-title">Data Transfer</span>
+              <span class="rate-badge">2 CC / 1M</span>
+            </div>
+            <div class="cred-group-body">
+              <p style="font-size:11.5px;color:var(--rl-gray-dk);margin-bottom:10px">Data Locker · Push API · Pull API · DCR — ingresar total de rows enviados</p>
+              <div class="rate-row">
+                <div>
+                  <div class="rate-label">Rows / events transferidos</div>
+                  <div class="rate-sub">Suma de todos los servicios de Data Transfer</div>
+                </div>
+                <span class="rate-tasa">× 2 / 1M</span>
+                <input class="rate-input" type="number" id="inp_dtransfer" min="0" placeholder="manual" oninput="calcCredits()">
+                <div class="rate-result" id="res_dtransfer">0.0000</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cred-group">
+            <div class="cred-group-header">
+              <span>💰</span>
+              <span class="cred-group-title">Cost &amp; Revenue</span>
+              <span class="rate-badge">60 CC / $100k</span>
+            </div>
+            <div class="cred-group-body">
+              <div class="rate-row">
+                <div>
+                  <div class="rate-label">Cost &amp; Revenue medidos (USD)</div>
+                  <div class="rate-sub">Total en USD medido por AppsFlyer</div>
+                </div>
+                <span class="rate-tasa">60 / $100k</span>
+                <input class="rate-input" type="number" id="inp_costrev" min="0" placeholder="manual" oninput="calcCredits()">
+                <div class="rate-result" id="res_costrev">0.0000</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOTAL -->
+          <div class="credits-total-card">
+            <div class="credits-total-label">💎 Total Capacity Credits</div>
+            <div class="credits-total-value" id="totalCredits">0.0000</div>
+            <div class="credits-total-sub" id="totalCreditsSub">Cargá el CSV para auto-completar re-attr, re-eng e IAEs</div>
+          </div>
+
+          <!-- Breakdown -->
+          <div class="cred-group">
+            <div class="cred-group-header"><span>📋</span><span class="cred-group-title">Desglose</span></div>
+            <div class="cred-group-body" style="padding:8px 16px">
+              <table style="width:100%;font-size:12px;border-collapse:collapse">
+                <tr><td style="padding:5px 0;color:var(--rl-gray-dk)">Re-attribution &nbsp;<span style="font-size:10px;opacity:0.7">(×800/1M)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_reattr">0.0000</td></tr>
+                <tr><td style="padding:5px 0;color:var(--rl-gray-dk)">Re-engagement &nbsp;<span style="font-size:10px;opacity:0.7">(×100/1M)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_reeng">0.0000</td></tr>
+                <tr><td style="padding:5px 0;color:var(--rl-gray-dk)">In-App Events &nbsp;<span style="font-size:10px;opacity:0.7">(×2/1M)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_iae">0.0000</td></tr>
+                <tr><td style="padding:5px 0;color:var(--rl-gray-dk)">Clicks &nbsp;<span style="font-size:10px;opacity:0.7">(×2/1M)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_clicks">0.0000</td></tr>
+                <tr><td style="padding:5px 0;color:var(--rl-gray-dk)">Data Transfer &nbsp;<span style="font-size:10px;opacity:0.7">(×2/1M)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_dtransfer">0.0000</td></tr>
+                <tr><td style="padding:5px 0;color:var(--rl-gray-dk)">Cost &amp; Revenue &nbsp;<span style="font-size:10px;opacity:0.7">(×60/$100k)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_costrev">0.0000</td></tr>
+                <tr style="border-top:2px solid var(--rl-violet)">
+                  <td style="padding:7px 0 3px;font-weight:700;font-size:13px">Total CC</td>
+                  <td style="text-align:right;font-family:monospace;font-weight:800;color:var(--rl-violet);font-size:14px" id="br_total">0.0000</td>
+                </tr>
               </table>
             </div>
           </div>
-        </div>
+
+        </div><!-- /right -->
       </div>
-    </div><!-- /page-credits -->
+    </div>
 
   </div>
 </div>
 
 <script>
-// ─── NAVIGATION ────────────────────────────────────────────────────────────────
+// ─── NAVIGATION ───────────────────────────────────────────
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   btn.classList.add('active');
-  const names  = { validator: 'Funnel Validator', credits: 'Calculadora de Créditos' };
-  const badges = { validator: 'step_6 + completed_aprobado', credits: 'AppsFlyer Credits' };
+  const names  = {validator:'Funnel Validator', credits:'Calculadora de Créditos'};
+  const badges = {validator:'step_6 + completed_aprobado', credits:'Capacity Credits · IAE Raw Export'};
   document.getElementById('topbarActive').textContent = names[id];
   document.getElementById('topbarBadge').textContent  = badges[id];
 }
 
-// ─── CREDITS CALCULATOR ────────────────────────────────────────────────────────
-const RATES = { clicks: 2, reeng: 30, reinst: 60, events: 2 };
-const MAX_CLICKS = 30_000_000;
+// ─── CREDITS ──────────────────────────────────────────────
+// Tasas oficiales AF (Capacity Credit Consumption Metrics):
+//   Re-attribution:  80 CC / 100,000  →  equivale a 800 CC / 1,000,000
+//   Re-engagement:   10 CC / 100,000  →  equivale a 100 CC / 1,000,000
+//   In App Events:    2 CC / 1,000,000
+//   Clicks:           2 CC / 1,000,000
+//   Data Transfer:    2 CC / 1,000,000
+//   Cost & Revenue:  60 CC / $100,000  →  0.0006 CC / $1
 
 const csvCreditsInput   = document.getElementById('csvCreditsInput');
 const creditsUploadZone = document.getElementById('creditsUploadZone');
@@ -510,110 +584,120 @@ function processCreditsFile(file) {
   reader.onload = evt => {
     let text;
     const bytes = new Uint8Array(evt.target.result);
-    try { text = new TextDecoder('utf-8',{fatal:true}).decode(bytes); }
+    try { text = new TextDecoder('utf-8', {fatal:true}).decode(bytes); }
     catch(e) { text = new TextDecoder('iso-8859-1').decode(bytes); }
-    if (text.charCodeAt(0)===0xFEFF) text = text.slice(1);
-    const firstLine = text.split(/\r?\n/)[0]||'';
+    if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    const firstLine = text.split(/\r?\n/)[0] || '';
     const delim = (firstLine.match(/\t/g)||[]).length > (firstLine.match(/,/g)||[]).length ? '\t' : ',';
     Papa.parse(text, {
-      header:true, skipEmptyLines:true, delimiter:delim,
-      transformHeader:h=>h.trim(), transform:v=>(v||'').trim(),
-      complete: r => { if(!r.data||!r.data.length){alert('Archivo vacío.');return;} extractCreditsFromCSV(r.data, file.name); }
+      header: true, skipEmptyLines: true, delimiter: delim,
+      transformHeader: h => h.trim(), transform: v => (v||'').trim(),
+      complete: r => {
+        if (!r.data || !r.data.length) { alert('Archivo vacío.'); return; }
+        extractFromRawCSV(r.data, file.name);
+      }
     });
   };
   reader.readAsArrayBuffer(file);
 }
 
-function numVal(v){const n=parseFloat(String(v||'').replace(/,/g,'').trim());return isNaN(n)||n<0?0:n;}
+function extractFromRawCSV(rows, fileName) {
+  // Detect column key (case-insensitive)
+  const cols = Object.keys(rows[0] || {});
+  const findCol = (...names) => cols.find(c => names.some(n => c.toLowerCase() === n.toLowerCase())) || null;
+  const colConvType = findCol('Retargeting Conversion Type');
 
-function extractCreditsFromCSV(rows, fileName) {
-  const cols = Object.keys(rows[0]||{});
-  const totalClicks   = rows.filter(r=>(r['Conversion Type']||'').toLowerCase()==='re-attribution').reduce((s,r)=>s+numVal(r['Clicks']),0);
-  const totalReeng    = rows.filter(r=>(r['Conversion Type']||'').toLowerCase()==='re-engagement').reduce((s,r)=>s+numVal(r['Conversions']),0);
-  const totalReinst   = rows.filter(r=>(r['Conversion Type']||'').toLowerCase()==='re-attribution').reduce((s,r)=>s+numVal(r['Conversions']),0);
-  const totalSessions = rows.reduce((s,r)=>s+numVal(r['Sessions']),0);
-  const eventCols     = cols.filter(c=>c.includes('(Event counter)'));
-  const totalIAEs     = rows.reduce((s,r)=>s+eventCols.reduce((es,c)=>es+numVal(r[c]),0),0);
-  const totalEvents   = totalIAEs + totalSessions;
-  const keyCols       = eventCols.filter(c=>/_contratado|_finalizado/.test(c));
-  const totalKeyEvents= rows.reduce((s,r)=>s+keyCols.reduce((ks,c)=>ks+numVal(r[c]),0),0);
-  document.getElementById('inp_clicks').value    = Math.round(totalClicks);
-  document.getElementById('inp_reeng').value     = Math.round(totalReeng);
-  document.getElementById('inp_reinst').value    = Math.round(totalReinst);
-  document.getElementById('inp_iaes').value      = Math.round(totalIAEs);
-  document.getElementById('inp_sessions').value  = Math.round(totalSessions);
-  document.getElementById('inp_events').value    = Math.round(totalEvents);
-  document.getElementById('inp_keyev_raw').value = Math.round(totalKeyEvents);
-  document.getElementById('creditsUploadZone').style.display='none';
-  document.getElementById('creditsFileInfo').style.display='block';
-  document.getElementById('creditsFileName').textContent=fileName;
-  document.getElementById('creditsFileRows').textContent=`${rows.length} filas · ${eventCols.length} cols eventos · ${keyCols.length} key events · sessions: ${Math.round(totalSessions).toLocaleString('es-CO')}`;
-  calcCredits();
-}
+  let reattr = 0, reeng = 0;
+  rows.forEach(r => {
+    const t = colConvType ? (r[colConvType] || '').toLowerCase().trim() : '';
+    if (t === 're-attribution') reattr++;
+    else if (t === 're-engagement') reeng++;
+  });
 
-function calcEventsTotal() {
-  const iaes=parseFloat(document.getElementById('inp_iaes').value)||0;
-  const sessions=parseFloat(document.getElementById('inp_sessions').value)||0;
-  document.getElementById('inp_events').value=Math.round(iaes+sessions);
+  const totalIAE = rows.length;
+
+  document.getElementById('inp_reattr').value = reattr;
+  document.getElementById('inp_reeng').value  = reeng;
+  document.getElementById('inp_iae').value    = totalIAE;
+
+  creditsUploadZone.style.display = 'none';
+  document.getElementById('creditsFileBar').style.display = 'flex';
+  document.getElementById('creditsFileName').textContent = fileName;
+  document.getElementById('creditsFileSummary').textContent =
+    `${rows.length.toLocaleString('es-CO')} filas (IAEs) · ${reattr.toLocaleString('es-CO')} re-attributions · ${reeng.toLocaleString('es-CO')} re-engagements`;
+
   calcCredits();
 }
 
 function calcCredits() {
-  const get=id=>{const v=parseFloat(document.getElementById('inp_'+id).value);return isNaN(v)||v<0?0:v;};
-  const fmt=n=>n.toFixed(4), fmtN=n=>n.toLocaleString('es-CO');
-  const rawClicks=get('clicks'), clicks=Math.min(rawClicks,MAX_CLICKS);
-  const reeng=get('reeng'),reinst=get('reinst'),events=get('events');
-  const iaes=get('iaes'),sessions=get('sessions'),keyEvents=get('keyev_raw');
-  const r_clicks=clicks*RATES.clicks/1_000_000, r_reeng=reeng*RATES.reeng/1_000_000;
-  const r_reinst=reinst*RATES.reinst/1_000_000, r_events=events*RATES.events/1_000_000;
-  const total=r_clicks+r_reeng+r_reinst+r_events;
-  ['clicks','reeng','reinst','events'].forEach(k=>document.getElementById('res_'+k).textContent=fmt(eval('r_'+k)));
-  document.getElementById('res_iaes').textContent    =iaes    ?fmtN(Math.round(iaes))    :'—';
-  document.getElementById('res_sessions').textContent=sessions?fmtN(Math.round(sessions)):'—';
-  ['clicks','reeng','reinst','events'].forEach(k=>document.getElementById('br_'+k).textContent=fmt(eval('r_'+k)));
-  document.getElementById('br_iaes').textContent    =iaes    ?fmtN(Math.round(iaes))    :'—';
-  document.getElementById('br_sessions').textContent=sessions?fmtN(Math.round(sessions)):'—';
-  document.getElementById('br_total').textContent   =fmt(total);
-  document.getElementById('totalCredits').textContent=fmt(total);
-  document.getElementById('warn_clicks').style.display=rawClicks>MAX_CLICKS?'block':'none';
-  const pctEl=document.getElementById('keyevPctDisplay'),badgeEl=document.getElementById('keyevPctBadge'),detailEl=document.getElementById('keyevPctDetail'),resKeyEl=document.getElementById('res_keyev');
-  if(clicks>0&&keyEvents>0){
-    const pct=keyEvents/clicks*100,inRange=pct>=0.003&&pct<=0.009;
-    pctEl.textContent=pct.toFixed(4)+'%';pctEl.style.color=inRange?'var(--rl-valid)':'var(--rl-warn)';
-    badgeEl.textContent=inRange?'✓ En rango':'⚠ Fuera de rango';
-    badgeEl.style.background=inRange?'var(--rl-valid-bg)':'var(--rl-warn-bg)';
-    badgeEl.style.color=inRange?'var(--rl-valid)':'var(--rl-warn)';
-    detailEl.textContent=`${fmtN(Math.round(keyEvents))} key events / ${fmtN(Math.round(clicks))} clicks`;
-    resKeyEl.textContent=fmtN(Math.round(keyEvents));resKeyEl.style.color=inRange?'var(--rl-valid)':'var(--rl-warn)';
-  } else {
-    pctEl.textContent='—';pctEl.style.color='var(--rl-text-muted)';
-    badgeEl.textContent='—';badgeEl.style.background='#f0eff5';badgeEl.style.color='var(--rl-text-muted)';
-    detailEl.textContent='Cargá un CSV para ver el cálculo';resKeyEl.textContent='—';
-  }
+  const g   = id => { const v = parseFloat(document.getElementById('inp_'+id).value); return isNaN(v)||v<0 ? 0 : v; };
+  const fmt  = n => n.toFixed(4);
+  const fmtN = n => n.toLocaleString('es-CO');
+
+  const reattr    = g('reattr');
+  const reeng     = g('reeng');
+  const iae       = g('iae');
+  const clicks    = g('clicks');
+  const dtransfer = g('dtransfer');
+  const costrev   = g('costrev'); // USD
+
+  // 80 CC / 100k = 800 CC / 1M
+  const r_reattr    = reattr    * 800  / 1_000_000;
+  // 10 CC / 100k = 100 CC / 1M
+  const r_reeng     = reeng     * 100  / 1_000_000;
+  const r_iae       = iae       *   2  / 1_000_000;
+  const r_clicks    = clicks    *   2  / 1_000_000;
+  const r_dtransfer = dtransfer *   2  / 1_000_000;
+  // 60 CC / $100k = 0.0006 CC / $1
+  const r_costrev   = costrev   *  60  / 100_000;
+
+  const total = r_reattr + r_reeng + r_iae + r_clicks + r_dtransfer + r_costrev;
+
+  document.getElementById('res_reattr').textContent    = fmt(r_reattr);
+  document.getElementById('res_reeng').textContent     = fmt(r_reeng);
+  document.getElementById('res_iae').textContent       = fmt(r_iae);
+  document.getElementById('res_clicks').textContent    = fmt(r_clicks);
+  document.getElementById('res_dtransfer').textContent = fmt(r_dtransfer);
+  document.getElementById('res_costrev').textContent   = fmt(r_costrev);
+
+  document.getElementById('br_reattr').textContent    = fmt(r_reattr);
+  document.getElementById('br_reeng').textContent     = fmt(r_reeng);
+  document.getElementById('br_iae').textContent       = fmt(r_iae);
+  document.getElementById('br_clicks').textContent    = fmt(r_clicks);
+  document.getElementById('br_dtransfer').textContent = fmt(r_dtransfer);
+  document.getElementById('br_costrev').textContent   = fmt(r_costrev);
+  document.getElementById('br_total').textContent     = fmt(total);
+  document.getElementById('totalCredits').textContent = fmt(total);
+
+  const parts = [];
+  if (reattr)    parts.push(`${fmtN(reattr)} re-attr`);
+  if (reeng)     parts.push(`${fmtN(reeng)} re-eng`);
+  if (iae)       parts.push(`${fmtN(iae)} IAEs`);
+  if (clicks)    parts.push(`${fmtN(clicks)} clicks`);
+  if (dtransfer) parts.push(`${fmtN(dtransfer)} data rows`);
+  if (costrev)   parts.push(`$${fmtN(costrev)} C&R`);
+  document.getElementById('totalCreditsSub').textContent = parts.length
+    ? parts.join(' · ')
+    : 'Cargá el CSV o ingresá valores manualmente';
 }
 
 function resetCredits() {
-  ['clicks','reeng','reinst','iaes','sessions','events','keyev_raw'].forEach(id=>{const el=document.getElementById('inp_'+id);if(el)el.value='';});
-  ['res_iaes','res_sessions','res_keyev'].forEach(id=>{document.getElementById(id).textContent='—';});
-  document.getElementById('creditsUploadZone').style.display='block';
-  document.getElementById('creditsFileInfo').style.display='none';
+  ['reattr','reeng','iae','clicks','dtransfer','costrev'].forEach(id => {
+    const el = document.getElementById('inp_'+id); if(el) el.value = '';
+  });
+  creditsUploadZone.style.display = 'block';
+  document.getElementById('creditsFileBar').style.display = 'none';
   calcCredits();
 }
 
-// ─── FUNNEL VALIDATOR ─────────────────────────────────────────────────────────
-// Event names
+// ─── FUNNEL VALIDATOR ─────────────────────────────────────
 const STEP_1               = 'apertura_cuenta_en_linea_no_cliente-app_step_1';
 const STEP_6               = 'apertura_cuenta_en_linea_no_cliente-app_step_6';
 const COMPLETED_APROBADO   = 'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado';
 const COMPLETED_CONTRATADO = 'apertura_cuenta_en_linea_no_cliente-app_completed_contratado';
 const KNOWN_STEPS          = [STEP_1, STEP_6, COMPLETED_APROBADO, COMPLETED_CONTRATADO];
 const COMPLETION_EVENTS    = [COMPLETED_APROBADO, COMPLETED_CONTRATADO];
-
-const GEO_MIN_MIN = 50;  // < 50 min entre eventos con ciudad diferente → excluir
-
-// Filter statuses (in priority order)
-// excl_co → excl_dup → excl_step6 → excl_geo → clean
-const FILTER_ORDER = ['excl_co','excl_dup','excl_step6','excl_geo'];
+const GEO_MIN_MIN          = 50;
 
 let allResults   = [];
 let activeStatus  = 'all';
@@ -622,130 +706,102 @@ let activeProduct = 'all';
 const csvInput   = document.getElementById('csvInput');
 const uploadZone = document.getElementById('uploadZone');
 uploadZone.addEventListener('click',     () => csvInput.click());
-uploadZone.addEventListener('dragover',  e=>{e.preventDefault();uploadZone.classList.add('drag-over');});
-uploadZone.addEventListener('dragleave', e=>{e.preventDefault();uploadZone.classList.remove('drag-over');});
-uploadZone.addEventListener('drop',      e=>{e.preventDefault();uploadZone.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)processFile(f);});
-csvInput.addEventListener('change', e=>{if(e.target.files[0])processFile(e.target.files[0]);e.target.value='';});
+uploadZone.addEventListener('dragover',  e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); });
+uploadZone.addEventListener('drop',      e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) processFile(f); });
+csvInput.addEventListener('change', e => { if(e.target.files[0]) processFile(e.target.files[0]); e.target.value=''; });
 
 function processFile(file) {
-  showInfo('Leyendo '+file.name+' ('+Math.round(file.size/1024)+' KB)…');
-  const reader=new FileReader();
-  reader.onerror=()=>showError('No se pudo leer el archivo.');
-  reader.onload=evt=>{
+  showInfo('Leyendo ' + file.name + ' (' + Math.round(file.size/1024) + ' KB)…');
+  const reader = new FileReader();
+  reader.onerror = () => showError('No se pudo leer el archivo.');
+  reader.onload = evt => {
     let text;
-    const bytes=new Uint8Array(evt.target.result);
-    try{text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);}
-    catch(e){text=new TextDecoder('iso-8859-1').decode(bytes);}
-    if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
-    const first=text.split(/\r?\n/)[0]||'';
-    const delim=(first.match(/\t/g)||[]).length>(first.match(/,/g)||[]).length?'\t':',';
+    const bytes = new Uint8Array(evt.target.result);
+    try { text = new TextDecoder('utf-8', {fatal:true}).decode(bytes); }
+    catch(e) { text = new TextDecoder('iso-8859-1').decode(bytes); }
+    if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    const first = text.split(/\r?\n/)[0] || '';
+    const delim = (first.match(/\t/g)||[]).length > (first.match(/,/g)||[]).length ? '\t' : ',';
     showInfo('Parseando…');
-    Papa.parse(text,{
-      header:true,skipEmptyLines:true,delimiter:delim,
-      transformHeader:h=>h.trim(),transform:v=>(v||'').trim(),
-      complete:r=>{hideInfo();if(!r.data||!r.data.length){showError('Archivo vacío.');return;}analyze(r.data);},
+    Papa.parse(text, {
+      header:true, skipEmptyLines:true, delimiter:delim,
+      transformHeader:h=>h.trim(), transform:v=>(v||'').trim(),
+      complete:r=>{ hideInfo(); if(!r.data||!r.data.length){showError('Archivo vacío.');return;} analyze(r.data); },
       error:err=>showError('Error: '+(err.message||err))
     });
   };
   reader.readAsArrayBuffer(file);
 }
 
-function parseTime(s){
-  if(!s)return null;
-  const d=new Date(s.replace(' ','T'));
-  return isNaN(d.getTime())?null:d.getTime();
+function parseTime(s) {
+  if (!s) return null;
+  const d = new Date(s.replace(' ','T'));
+  return isNaN(d.getTime()) ? null : d.getTime();
 }
-function getAfContent(val){
-  try{return JSON.parse(val).af_content||'';}catch(e){return '';}
-}
-function classifyProduct(c){
-  c=(c||'').toLowerCase();
-  if(c.includes('libreton'))return 'libreton';
-  if(c.includes('nomina')||c.includes('nómina')||c.includes('pensional'))return 'nomina';
+function getAfContent(val) { try { return JSON.parse(val).af_content||''; } catch(e) { return ''; } }
+function classifyProduct(c) {
+  c = (c||'').toLowerCase();
+  if (c.includes('libreton')) return 'libreton';
+  if (c.includes('nomina')||c.includes('nómina')||c.includes('pensional')) return 'nomina';
   return 'other';
 }
 
 function analyze(rows) {
-  // ── Step 0: group by AppsFlyer ID ──
-  // Only keep IDs that have at least one completion event (aprobado or contratado)
   const byId = {};
   rows.forEach(row => {
-    const id    = row['AppsFlyer ID'];
-    const event = row['Event Name'];
+    const id=row['AppsFlyer ID'], event=row['Event Name'];
     if(!id||!event) return;
-    if(!byId[id]) byId[id] = [];
+    if(!byId[id]) byId[id]=[];
     byId[id].push({
-      event,
-      value:    row['Event Value']||'',
-      country: (row['Country Code']||'').toUpperCase().trim(),
+      event, value:row['Event Value']||'',
+      country:(row['Country Code']||'').toUpperCase().trim(),
       isPrimary:(row['Is Primary Attribution']||'').toLowerCase().trim(),
-      city:    (row['City']||'').toLowerCase().trim(),
-      state:   (row['State']||'').toLowerCase().trim(),
-      time:    parseTime(row['Event Time']||'')
+      city:(row['City']||'').toLowerCase().trim(),
+      state:(row['State']||'').toLowerCase().trim(),
+      time:parseTime(row['Event Time']||'')
     });
   });
 
-  // Only process IDs with at least one completion event
-  const completionIds = Object.keys(byId).filter(id =>
-    byId[id].some(e => COMPLETION_EVENTS.includes(e.event))
-  );
-
-  // ── Sequential filters ──
+  const completionIds = Object.keys(byId).filter(id => byId[id].some(e=>COMPLETION_EVENTS.includes(e.event)));
   const results = [];
 
   completionIds.forEach(id => {
     const evs = byId[id].sort((a,b)=>(a.time||0)-(b.time||0));
-
-    // Grab country + isPrimary from the COMPLETION event row
-    const completionEv = evs.find(e=>e.event===COMPLETED_CONTRATADO) || evs.find(e=>e.event===COMPLETED_APROBADO);
+    const completionEv = evs.find(e=>e.event===COMPLETED_CONTRATADO)||evs.find(e=>e.event===COMPLETED_APROBADO);
     const country   = completionEv ? completionEv.country   : '';
     const isPrimary = completionEv ? completionEv.isPrimary : '';
-
-    // af_content from completion row
-    const afContent = getAfContent(completionEv?completionEv.value:'');
+    const afContent = getAfContent(completionEv ? completionEv.value : '');
     const product   = classifyProduct(afContent);
-
-    // Count completions
+    const completionDate = completionEv && completionEv.time
+      ? new Date(completionEv.time).toISOString().slice(0,10) : '';
     const completionCount = evs.filter(e=>COMPLETION_EVENTS.includes(e.event)).length;
-    const hasStep6        = evs.some(e=>e.event===STEP_6);
-    const hasStep1        = evs.some(e=>e.event===STEP_1);
+    const hasStep6  = evs.some(e=>e.event===STEP_6);
+    const hasStep1  = evs.some(e=>e.event===STEP_1);
+    const registered= KNOWN_STEPS.filter(s=>evs.some(e=>e.event===s));
 
-    // Registered known steps
-    const registered = KNOWN_STEPS.filter(s=>evs.some(e=>e.event===s));
-
-    // ── FILTER 1: País CO + Is Primary Attribution ──
     const validCO      = country === 'CO';
-    const validPrimary = isPrimary === 'true' || isPrimary === '' || isPrimary === '1';
-    // (if column doesn't exist we treat as valid)
-    if(!validCO || !validPrimary) {
+    const validPrimary = isPrimary==='true'||isPrimary===''||isPrimary==='1';
+    if (!validCO||!validPrimary) {
       const reason = !validCO ? `País no CO (${country})` : 'No es primary attribution';
-      results.push({id, status:'excl_co', filter:'País/Primary', country, product, afContent, completionCount, hasStep6, hasStep1, registered, geoDetail:'', exclusionReason:reason});
+      results.push({id,status:'excl_co',filter:'País/Primary',country,product,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',exclusionReason:reason,completionDate});
       return;
     }
-
-    // ── FILTER 2: Múltiples completions ──
-    if(completionCount > 1) {
-      // Check geo for info even if excluded by dup
-      const geo = detectGeoJump(evs);
-      results.push({id, status:'excl_dup', filter:`Múltiples completions (${completionCount})`, country, product, afContent, completionCount, hasStep6, hasStep1, registered, geoDetail:geo.detail, exclusionReason:`${completionCount} completions`});
+    if (completionCount>1) {
+      const geo=detectGeoJump(evs);
+      results.push({id,status:'excl_dup',filter:`Múltiples completions (${completionCount})`,country,product,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:geo.detail,exclusionReason:`${completionCount} completions`,completionDate});
       return;
     }
-
-    // ── FILTER 3: Sin step_6 ──
-    if(!hasStep6) {
-      results.push({id, status:'excl_step6', filter:'Sin step_6 obligatorio', country, product, afContent, completionCount, hasStep6, hasStep1, registered, geoDetail:'', exclusionReason:'Falta step_6'});
+    if (!hasStep6) {
+      results.push({id,status:'excl_step6',filter:'Sin step_6 obligatorio',country,product,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',exclusionReason:'Falta step_6',completionDate});
       return;
     }
-
-    // ── FILTER 4: Salto geográfico < 50 min ──
-    const geo = detectGeoJump(evs);
-    if(geo.hasJump) {
-      results.push({id, status:'excl_geo', filter:'Salto geográfico <50 min', country, product, afContent, completionCount, hasStep6, hasStep1, registered, geoDetail:geo.detail, exclusionReason:geo.detail});
+    const geo=detectGeoJump(evs);
+    if (geo.hasJump) {
+      results.push({id,status:'excl_geo',filter:'Salto geográfico <50 min',country,product,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:geo.detail,exclusionReason:geo.detail,completionDate});
       return;
     }
-
-    // ── CLEAN / FACTURABLE ──
-    results.push({id, status:'clean', filter:'—', country, product, afContent, completionCount, hasStep6, hasStep1, registered, geoDetail:'', exclusionReason:''});
+    results.push({id,status:'clean',filter:'—',country,product,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',exclusionReason:'',completionDate});
   });
 
   allResults = results;
@@ -753,138 +809,185 @@ function analyze(rows) {
 }
 
 function detectGeoJump(evs) {
-  // Check all consecutive pairs of events
-  for(let i=1;i<evs.length;i++) {
-    const prev=evs[i-1], curr=evs[i];
-    if(!prev.time||!curr.time) continue;
+  for (let i=1;i<evs.length;i++) {
+    const prev=evs[i-1],curr=evs[i];
+    if (!prev.time||!curr.time) continue;
     const diffMin=(curr.time-prev.time)/60000;
-    if(diffMin<0) continue;
-    if(prev.city&&curr.city&&prev.city!==curr.city&&diffMin<GEO_MIN_MIN) {
-      const prevEvtShort = prev.event.split('-app_')[1]||prev.event;
-      const currEvtShort = curr.event.split('-app_')[1]||curr.event;
-      return {
-        hasJump:true,
-        detail:`${prev.city}→${curr.city} en ${diffMin.toFixed(1)} min (${prevEvtShort}→${currEvtShort})`
-      };
+    if (diffMin<0) continue;
+    if (prev.city&&curr.city&&prev.city!==curr.city&&diffMin<GEO_MIN_MIN) {
+      const ps=prev.event.split('-app_')[1]||prev.event;
+      const cs=curr.event.split('-app_')[1]||curr.event;
+      return {hasJump:true, detail:`${prev.city}→${curr.city} en ${diffMin.toFixed(1)} min (${ps}→${cs})`};
     }
   }
-  return {hasJump:false, detail:''};
+  return {hasJump:false,detail:''};
 }
 
 function renderUI(totalBase) {
-  // Waterfall counts (sequential — each filter applied on the remaining pool)
-  const s0 = totalBase;
-  const excluded_co   = allResults.filter(r=>r.status==='excl_co').length;
-  const excluded_dup  = allResults.filter(r=>r.status==='excl_dup').length;
-  const excluded_step6= allResults.filter(r=>r.status==='excl_step6').length;
-  const excluded_geo  = allResults.filter(r=>r.status==='excl_geo').length;
-  const clean         = allResults.filter(r=>r.status==='clean').length;
-  const s1 = s0 - excluded_co;
-  const s2 = s1 - excluded_dup;
-  const s3 = s2 - excluded_step6;
-  const s4 = s3 - excluded_geo; // = clean
-
-  document.getElementById('fS0').textContent = s0;
-  document.getElementById('fS1').textContent = s1; document.getElementById('fE1').textContent = excluded_co   ? `−${excluded_co}`   : '—';
-  document.getElementById('fS2').textContent = s2; document.getElementById('fE2').textContent = excluded_dup  ? `−${excluded_dup}`  : '—';
-  document.getElementById('fS3').textContent = s3; document.getElementById('fE3').textContent = excluded_step6? `−${excluded_step6}`: '—';
-  document.getElementById('fS4').textContent = s4; document.getElementById('fE4').textContent = excluded_geo  ? `−${excluded_geo}`  : '—';
-  document.getElementById('fValid').textContent = clean;
-
-  const fact = allResults.filter(r=>r.status==='clean');
-  document.getElementById('sLibreton').textContent = fact.filter(r=>r.product==='libreton').length;
-  document.getElementById('sNomina').textContent   = fact.filter(r=>r.product==='nomina').length;
-  document.getElementById('sOther').textContent    = fact.filter(r=>r.product==='other').length;
-
-  document.getElementById('funnelSection').style.display  = 'block';
-  document.getElementById('resultsSection').style.display = 'block';
-  document.getElementById('uploadZone').style.display     = 'none';
-
+  const s0=totalBase;
+  const exc_co=allResults.filter(r=>r.status==='excl_co').length;
+  const exc_dup=allResults.filter(r=>r.status==='excl_dup').length;
+  const exc_s6=allResults.filter(r=>r.status==='excl_step6').length;
+  const exc_geo=allResults.filter(r=>r.status==='excl_geo').length;
+  const clean=allResults.filter(r=>r.status==='clean').length;
+  const s1=s0-exc_co,s2=s1-exc_dup,s3=s2-exc_s6,s4=s3-exc_geo;
+  document.getElementById('fS0').textContent=s0;
+  document.getElementById('fS1').textContent=s1; document.getElementById('fE1').textContent=exc_co ?`−${exc_co}`:'—';
+  document.getElementById('fS2').textContent=s2; document.getElementById('fE2').textContent=exc_dup?`−${exc_dup}`:'—';
+  document.getElementById('fS3').textContent=s3; document.getElementById('fE3').textContent=exc_s6 ?`−${exc_s6}`:'—';
+  document.getElementById('fS4').textContent=s4; document.getElementById('fE4').textContent=exc_geo?`−${exc_geo}`:'—';
+  document.getElementById('fValid').textContent=clean;
+  const fact=allResults.filter(r=>r.status==='clean');
+  document.getElementById('sLibreton').textContent=fact.filter(r=>r.product==='libreton').length;
+  document.getElementById('sNomina').textContent=fact.filter(r=>r.product==='nomina').length;
+  document.getElementById('sOther').textContent=fact.filter(r=>r.product==='other').length;
+  document.getElementById('funnelSection').style.display='block';
+  document.getElementById('resultsSection').style.display='block';
+  document.getElementById('uploadZone').style.display='none';
+  renderChart();
   renderTable();
 }
 
 function setFilter(val,type,btn) {
   if(type==='status'){activeStatus=val;document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));}
   else{activeProduct=val;document.querySelectorAll('#productTabs .tab').forEach(t=>t.classList.remove('active'));}
-  btn.classList.add('active');
-  renderTable();
+  btn.classList.add('active');renderTable();
 }
 
 function renderTable() {
-  let data = allResults;
+  let data=allResults;
   if(activeStatus!=='all') data=data.filter(r=>r.status===activeStatus);
   if(activeProduct!=='all') data=data.filter(r=>r.product===activeProduct);
-
-  document.getElementById('tableBody').innerHTML = data.map(r=>{
-    // Status badge
-    const sb = r.status==='clean'
-      ? `<span class="badge bv">✅ Facturable</span>`
-      : r.status==='excl_co'
-      ? `<span class="badge bi">🌐 País/Primary</span>`
-      : r.status==='excl_dup'
-      ? `<span class="badge bi">🔁 Múlt. completions</span>`
-      : r.status==='excl_step6'
-      ? `<span class="badge bw">⚠ Sin step_6</span>`
-      : `<span class="badge bi">📍 Salto geo</span>`;
-
-    // Filter badge (which filter caught it)
-    const fb = r.filter==='—' ? `<span style="color:var(--rl-text-muted);font-size:11px">—</span>`
-      : `<span style="font-size:11px;color:var(--rl-invalid)">${esc(r.filter)}</span>`;
-
-    // Product
-    const pb = r.status!=='clean' ? '<span style="color:var(--rl-text-muted);font-size:11px">—</span>'
-      : r.product==='libreton' ? `<span class="badge bn">📘 Libreton</span>`
-      : r.product==='nomina'   ? `<span class="badge bb">💼 Nómina</span>`
-      :                          `<span class="badge bw">❓ Otro</span>`;
-
-    // Country
-    const ccBadge = r.country==='CO'
-      ? `<span class="badge bv">${r.country}</span>`
-      : `<span class="badge bi">${r.country||'—'}</span>`;
-
-    // Completions
-    const compBadge = r.completionCount===1
-      ? `<span style="font-size:12px;color:var(--rl-text-secondary)">1</span>`
-      : `<span class="badge bi">${r.completionCount}</span>`;
-
-    // step_6
-    const s6Badge = r.hasStep6
-      ? `<span class="badge bv">✓</span>`
-      : `<span class="badge bi">✗</span>`;
-
-    // Geo detail
-    const geoCell = r.geoDetail
-      ? `<span style="font-size:11px;color:var(--rl-invalid)">${esc(r.geoDetail)}</span>`
-      : `<span style="color:var(--rl-text-muted);font-size:11px">—</span>`;
-
-    return `<tr>
-      <td style="font-family:monospace;font-size:11px;font-weight:600">${esc(r.id)}</td>
-      <td>${sb}</td>
-      <td>${fb}</td>
-      <td>${pb}</td>
-      <td>${ccBadge}</td>
-      <td style="text-align:center">${compBadge}</td>
-      <td style="text-align:center">${s6Badge}</td>
-      <td style="max-width:260px">${geoCell}</td>
-      <td style="font-size:11px;color:var(--rl-text-muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'—'}</td>
-    </tr>`;
-  }).join('') || `<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--rl-text-muted)">Sin resultados para este filtro</td></tr>`;
+  document.getElementById('tableBody').innerHTML=data.map(r=>{
+    const sb=r.status==='clean'?`<span class="badge bv">✅ Facturable</span>`
+      :r.status==='excl_co'?`<span class="badge bi">🌐 País/Primary</span>`
+      :r.status==='excl_dup'?`<span class="badge bi">🔁 Múlt. completions</span>`
+      :r.status==='excl_step6'?`<span class="badge bw">⚠ Sin step_6</span>`
+      :`<span class="badge bi">📍 Salto geo</span>`;
+    const fb=r.filter==='—'?`<span style="color:var(--rl-gray-dk);font-size:11px">—</span>`:`<span style="font-size:11px;color:var(--invalid)">${esc(r.filter)}</span>`;
+    const pb=r.status!=='clean'?'<span style="color:var(--rl-gray-dk);font-size:11px">—</span>'
+      :r.product==='libreton'?`<span class="badge bn">📘 Libreton</span>`
+      :r.product==='nomina'?`<span class="badge bb">💼 Nómina</span>`
+      :`<span class="badge bw">❓ Otro</span>`;
+    const cc=r.country==='CO'?`<span class="badge bv">${r.country}</span>`:`<span class="badge bi">${r.country||'—'}</span>`;
+    const comp=r.completionCount===1?`<span style="font-size:12px;color:var(--rl-gray-dk)">1</span>`:`<span class="badge bi">${r.completionCount}</span>`;
+    const s6=r.hasStep6?`<span class="badge bv">✓</span>`:`<span class="badge bi">✗</span>`;
+    const geo=r.geoDetail?`<span style="font-size:11px;color:var(--invalid)">${esc(r.geoDetail)}</span>`:`<span style="color:var(--rl-gray-dk);font-size:11px">—</span>`;
+    return `<tr><td style="font-family:monospace;font-size:11px;font-weight:600">${esc(r.id)}</td><td>${sb}</td><td>${fb}</td><td>${pb}</td><td>${cc}</td><td style="text-align:center">${comp}</td><td style="text-align:center">${s6}</td><td style="max-width:260px">${geo}</td><td style="font-size:11px;color:var(--rl-gray-dk);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'—'}</td></tr>`;
+  }).join('')||`<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--rl-gray-dk)">Sin resultados para este filtro</td></tr>`;
 }
 
 function exportCSV(which) {
-  let data = allResults;
-  if(which==='clean')    data=data.filter(r=>r.status==='clean');
+  let data=allResults;
+  if(which==='clean') data=data.filter(r=>r.status==='clean');
   if(which==='libreton') data=data.filter(r=>r.status==='clean'&&r.product==='libreton');
-  if(which==='nomina')   data=data.filter(r=>r.status==='clean'&&r.product==='nomina');
+  if(which==='nomina') data=data.filter(r=>r.status==='clean'&&r.product==='nomina');
   const rows=[['AppsFlyer ID','Estado','Filtro aplicado','Producto','País','Completions','Tiene step_6','Detalle geo','af_content']];
   data.forEach(r=>rows.push([r.id,r.status,r.filter,r.product,r.country,r.completionCount,r.hasStep6?'Sí':'No',r.geoDetail,r.afContent]));
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=Object.assign(document.createElement('a'),{
-    href:URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'})),
-    download:`bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'})),download:`bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`});
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+}
+
+function renderChart() {
+  const clean = allResults.filter(r => r.status === 'clean' && r.completionDate);
+
+  // Build sorted date list
+  const dateSet = new Set(clean.map(r => r.completionDate));
+  const dates = Array.from(dateSet).sort();
+
+  // Per-day per-product counts
+  const byDay = {};
+  dates.forEach(d => { byDay[d] = {libreton:0, nomina:0, other:0, total:0}; });
+  clean.forEach(r => {
+    if (!byDay[r.completionDate]) return;
+    byDay[r.completionDate][r.product]++;
+    byDay[r.completionDate].total++;
   });
-  document.body.appendChild(a);a.click();
-  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+
+  const totals    = dates.map(d => byDay[d].total);
+  const libData   = dates.map(d => byDay[d].libreton);
+  const nomData   = dates.map(d => byDay[d].nomina);
+  const otherData = dates.map(d => byDay[d].other);
+  const maxVal    = Math.max(...totals, 1);
+
+  // Format date labels as "DD/MM"
+  const labels = dates.map(d => {
+    const [y,m,day] = d.split('-');
+    return `${day}/${m}`;
+  });
+
+  const BAR_W   = Math.max(36, Math.min(64, Math.floor(700 / Math.max(dates.length, 1))));
+  const GAP     = Math.max(6, Math.round(BAR_W * 0.28));
+  const PAD_L   = 36;
+  const PAD_R   = 12;
+  const PAD_T   = 20;
+  const PAD_B   = 40;
+  const CHART_H = 180;
+  const totalW  = PAD_L + dates.length * (BAR_W + GAP) - GAP + PAD_R;
+
+  const C = {
+    libreton : '#7A53CA',
+    nomina   : '#6592FF',
+    other    : '#d97706',
+    gridLine : '#e4e2ee',
+    labelDk  : '#696A6B',
+    totalLbl : '#17191C',
+  };
+
+  // Y-axis ticks (0, max/2, max)
+  const ticks = [0, Math.ceil(maxVal/2), maxVal];
+
+  let svgParts = [`<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${CHART_H + PAD_T + PAD_B}" style="font-family:'Inter',sans-serif;display:block">`];
+
+  // Grid lines + Y labels
+  ticks.forEach(tick => {
+    const y = PAD_T + CHART_H - Math.round((tick / maxVal) * CHART_H);
+    svgParts.push(`<line x1="${PAD_L}" y1="${y}" x2="${totalW - PAD_R}" y2="${y}" stroke="${C.gridLine}" stroke-width="1"/>`);
+    svgParts.push(`<text x="${PAD_L - 5}" y="${y + 4}" text-anchor="end" font-size="9" fill="${C.labelDk}">${tick}</text>`);
+  });
+
+  // Bars (stacked: libreton bottom, nomina middle, other top)
+  dates.forEach((d, i) => {
+    const x    = PAD_L + i * (BAR_W + GAP);
+    const lib  = byDay[d].libreton;
+    const nom  = byDay[d].nomina;
+    const oth  = byDay[d].other;
+    const tot  = byDay[d].total;
+
+    const hLib = Math.round((lib  / maxVal) * CHART_H);
+    const hNom = Math.round((nom  / maxVal) * CHART_H);
+    const hOth = Math.round((oth  / maxVal) * CHART_H);
+
+    let yOff = PAD_T + CHART_H;
+
+    const seg = (h, color) => {
+      if (h <= 0) return '';
+      yOff -= h;
+      return `<rect x="${x}" y="${yOff}" width="${BAR_W}" height="${h}" fill="${color}" rx="2"/>`;
+    };
+
+    svgParts.push(seg(hLib, C.libreton));
+    svgParts.push(seg(hNom, C.nomina));
+    svgParts.push(seg(hOth, C.other));
+
+    // Total label above bar
+    if (tot > 0) {
+      const topY = PAD_T + CHART_H - Math.round((tot / maxVal) * CHART_H) - 4;
+      svgParts.push(`<text x="${x + BAR_W/2}" y="${topY}" text-anchor="middle" font-size="10" font-weight="700" fill="${C.totalLbl}">${tot}</text>`);
+    }
+
+    // X label
+    const xLabelY = PAD_T + CHART_H + 16;
+    svgParts.push(`<text x="${x + BAR_W/2}" y="${xLabelY}" text-anchor="middle" font-size="10" fill="${C.labelDk}">${labels[i]}</text>`);
+  });
+
+  svgParts.push('</svg>');
+
+  const canvas = document.getElementById('dailyChartCanvas');
+  // Replace canvas with inline SVG div
+  const container = document.getElementById('dailyChart');
+  container.innerHTML = svgParts.join('');
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
