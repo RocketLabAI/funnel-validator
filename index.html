@@ -279,7 +279,7 @@ tr:hover td{background:#faf9ff}
         <div style="font-size:32px;margin-bottom:10px">📂</div>
         <h2>Arrastrá el CSV de AF aquí</h2>
         <p>Raw data export de AppsFlyer (non-organic in-app events)</p>
-        <div class="upload-hint">AppsFlyer ID · Event Name · Event Time · City · Country Code · Is Primary Attribution</div>
+        <div class="upload-hint">AppsFlyer ID · Event Name · Event Time · City · Country Code · Is Primary Attribution · Media Source</div>
       </div>
 
       <div id="resultsSection" style="display:none;margin-top:4px">
@@ -305,7 +305,7 @@ tr:hover td{background:#faf9ff}
             <table>
               <thead><tr>
                 <th>AppsFlyer ID</th><th>Estado</th><th>Filtro aplicado</th><th>Producto</th>
-                <th>País</th><th>Completions</th><th>step_6</th><th>Detalle geo</th><th>af_content</th>
+                <th>País</th><th>Media Source</th><th>Completions</th><th>step_6</th><th>Detalle geo</th><th>af_content</th>
               </tr></thead>
               <tbody id="tableBody"></tbody>
             </table>
@@ -320,24 +320,7 @@ tr:hover td{background:#faf9ff}
       </div>
     </div>
 
-    <!-- ═══ CALCULADORA DE CRÉDITOS ═══
-         Fuente esperada: raw non-organic in-app events CSV (una fila = un IAE)
-         
-         Tasas (Capacity Credit Consumption Metrics — tabla oficial AF):
-           Impressions                  →   1 CC / 1,000,000
-           Clicks                       →   2 CC / 1,000,000
-           Non-Organic Installs & Re-attribution → 80 CC / 100,000  = 800 CC / 1,000,000
-           Re-engagements               →  10 CC / 100,000  = 100 CC / 1,000,000
-           In App Events                →   2 CC / 1,000,000
-           Data Transfer (Locker/Push/Pull API/DCR) → 2 CC / 1,000,000
-           Cost & Revenue               →  60 CC / $100,000
-
-         Extracción del CSV:
-           Re-attributions  = filas donde "Retargeting Conversion Type" == "re-attribution"
-           Re-engagements   = filas donde "Retargeting Conversion Type" == "re-engagement"
-           IAEs total       = total de filas (cada fila es 1 in-app event)
-           Clicks           = no están en este export → ingreso manual
-    ═══ -->
+    <!-- ═══ CALCULADORA DE CRÉDITOS ═══ -->
     <div class="page" id="page-credits">
       <div class="page-header">
         <div>
@@ -369,7 +352,6 @@ tr:hover td{background:#faf9ff}
         <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetCredits()">Cambiar archivo</button>
       </div>
 
-      <!-- Rates reference -->
       <div class="criteria-info">
         <strong>Tasas oficiales — Capacity Credit Consumption Metrics:</strong>
         <table class="ref-table">
@@ -387,10 +369,7 @@ tr:hover td{background:#faf9ff}
       </div>
 
       <div class="credits-grid">
-
-        <!-- LEFT -->
         <div style="display:flex;flex-direction:column;gap:14px">
-
           <div class="cred-group">
             <div class="cred-group-header">
               <span>🔄</span>
@@ -466,12 +445,9 @@ tr:hover td{background:#faf9ff}
               </div>
             </div>
           </div>
+        </div>
 
-        </div><!-- /left -->
-
-        <!-- RIGHT -->
         <div style="display:flex;flex-direction:column;gap:14px">
-
           <div class="cred-group">
             <div class="cred-group-header">
               <span>🗄️</span>
@@ -511,14 +487,12 @@ tr:hover td{background:#faf9ff}
             </div>
           </div>
 
-          <!-- TOTAL -->
           <div class="credits-total-card">
             <div class="credits-total-label">💎 Total Capacity Credits</div>
             <div class="credits-total-value" id="totalCredits">0.0000</div>
             <div class="credits-total-sub" id="totalCreditsSub">Cargá el CSV para auto-completar re-attr, re-eng e IAEs</div>
           </div>
 
-          <!-- Breakdown -->
           <div class="cred-group">
             <div class="cred-group-header"><span>📋</span><span class="cred-group-title">Desglose</span></div>
             <div class="cred-group-body" style="padding:8px 16px">
@@ -536,8 +510,7 @@ tr:hover td{background:#faf9ff}
               </table>
             </div>
           </div>
-
-        </div><!-- /right -->
+        </div>
       </div>
     </div>
 
@@ -558,14 +531,6 @@ function showPage(id, btn) {
 }
 
 // ─── CREDITS ──────────────────────────────────────────────
-// Tasas oficiales AF (Capacity Credit Consumption Metrics):
-//   Re-attribution:  80 CC / 100,000  →  equivale a 800 CC / 1,000,000
-//   Re-engagement:   10 CC / 100,000  →  equivale a 100 CC / 1,000,000
-//   In App Events:    2 CC / 1,000,000
-//   Clicks:           2 CC / 1,000,000
-//   Data Transfer:    2 CC / 1,000,000
-//   Cost & Revenue:  60 CC / $100,000  →  0.0006 CC / $1
-
 const csvCreditsInput   = document.getElementById('csvCreditsInput');
 const creditsUploadZone = document.getElementById('creditsUploadZone');
 
@@ -602,7 +567,6 @@ function processCreditsFile(file) {
 }
 
 function extractFromRawCSV(rows, fileName) {
-  // Detect column key (case-insensitive)
   const cols = Object.keys(rows[0] || {});
   const findCol = (...names) => cols.find(c => names.some(n => c.toLowerCase() === n.toLowerCase())) || null;
   const colConvType = findCol('Retargeting Conversion Type');
@@ -639,16 +603,13 @@ function calcCredits() {
   const iae       = g('iae');
   const clicks    = g('clicks');
   const dtransfer = g('dtransfer');
-  const costrev   = g('costrev'); // USD
+  const costrev   = g('costrev');
 
-  // 80 CC / 100k = 800 CC / 1M
   const r_reattr    = reattr    * 800  / 1_000_000;
-  // 10 CC / 100k = 100 CC / 1M
   const r_reeng     = reeng     * 100  / 1_000_000;
   const r_iae       = iae       *   2  / 1_000_000;
   const r_clicks    = clicks    *   2  / 1_000_000;
   const r_dtransfer = dtransfer *   2  / 1_000_000;
-  // 60 CC / $100k = 0.0006 CC / $1
   const r_costrev   = costrev   *  60  / 100_000;
 
   const total = r_reattr + r_reeng + r_iae + r_clicks + r_dtransfer + r_costrev;
@@ -754,13 +715,15 @@ function analyze(rows) {
     if(!id||!event) return;
     if(!byId[id]) byId[id]=[];
     byId[id].push({
-      event, value:row['Event Value']||'',
-      country:(row['Country Code']||'').toUpperCase().trim(),
-      isPrimary:(row['Is Primary Attribution']||'').toLowerCase().trim(),
-      city:(row['City']||'').toLowerCase().trim(),
-      state:(row['State']||'').toLowerCase().trim(),
-      rawTime: row['Event Time']||'',
-      time:parseTime(row['Event Time']||'')
+      event,
+      value:       row['Event Value']||'',
+      mediaSource: row['Media Source']||'',          // ← Media Source
+      country:    (row['Country Code']||'').toUpperCase().trim(),
+      isPrimary:  (row['Is Primary Attribution']||'').toLowerCase().trim(),
+      city:       (row['City']||'').toLowerCase().trim(),
+      state:      (row['State']||'').toLowerCase().trim(),
+      rawTime:     row['Event Time']||'',
+      time:        parseTime(row['Event Time']||'')
     });
   });
 
@@ -769,14 +732,13 @@ function analyze(rows) {
 
   completionIds.forEach(id => {
     const evs = byId[id].sort((a,b)=>(a.time||0)-(b.time||0));
-    const completionEv = evs.find(e=>e.event===COMPLETED_CONTRATADO)||evs.find(e=>e.event===COMPLETED_APROBADO);
-    const country   = completionEv ? completionEv.country   : '';
-    const isPrimary = completionEv ? completionEv.isPrimary : '';
-    const afContent = getAfContent(completionEv ? completionEv.value : '');
-    const product   = classifyProduct(afContent);
-    // Parse date directly from the raw Event Time string to avoid UTC offset shifting the date
-    const completionDate = completionEv && completionEv.rawTime
-      ? completionEv.rawTime.slice(0,10) : '';
+    const completionEv  = evs.find(e=>e.event===COMPLETED_CONTRATADO)||evs.find(e=>e.event===COMPLETED_APROBADO);
+    const country       = completionEv ? completionEv.country    : '';
+    const isPrimary     = completionEv ? completionEv.isPrimary  : '';
+    const afContent     = getAfContent(completionEv ? completionEv.value : '');
+    const mediaSource   = completionEv ? (completionEv.mediaSource || '') : ''; // ← Media Source
+    const product       = classifyProduct(afContent);
+    const completionDate = completionEv && completionEv.rawTime ? completionEv.rawTime.slice(0,10) : '';
     const completionCount = evs.filter(e=>COMPLETION_EVENTS.includes(e.event)).length;
     const hasStep6  = evs.some(e=>e.event===STEP_6);
     const hasStep1  = evs.some(e=>e.event===STEP_1);
@@ -784,26 +746,27 @@ function analyze(rows) {
 
     const validCO      = country === 'CO';
     const validPrimary = isPrimary==='true'||isPrimary===''||isPrimary==='1';
+
     if (!validCO||!validPrimary) {
       const reason = !validCO ? `País no CO (${country})` : 'No es primary attribution';
-      results.push({id,status:'excl_co',filter:'País/Primary',country,product,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',exclusionReason:reason,completionDate});
+      results.push({id,status:'excl_co',filter:'País/Primary',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',exclusionReason:reason,completionDate});
       return;
     }
     if (completionCount>1) {
       const geo=detectGeoJump(evs);
-      results.push({id,status:'excl_dup',filter:`Múltiples completions (${completionCount})`,country,product,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:geo.detail,exclusionReason:`${completionCount} completions`,completionDate});
+      results.push({id,status:'excl_dup',filter:`Múltiples completions (${completionCount})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:geo.detail,exclusionReason:`${completionCount} completions`,completionDate});
       return;
     }
     if (!hasStep6) {
-      results.push({id,status:'excl_step6',filter:'Sin step_6 obligatorio',country,product,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',exclusionReason:'Falta step_6',completionDate});
+      results.push({id,status:'excl_step6',filter:'Sin step_6 obligatorio',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',exclusionReason:'Falta step_6',completionDate});
       return;
     }
     const geo=detectGeoJump(evs);
     if (geo.hasJump) {
-      results.push({id,status:'excl_geo',filter:'Salto geográfico <50 min',country,product,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:geo.detail,exclusionReason:geo.detail,completionDate});
+      results.push({id,status:'excl_geo',filter:'Salto geográfico <50 min',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:geo.detail,exclusionReason:geo.detail,completionDate});
       return;
     }
-    results.push({id,status:'clean',filter:'—',country,product,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',exclusionReason:'',completionDate});
+    results.push({id,status:'clean',filter:'—',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',exclusionReason:'',completionDate});
   });
 
   allResults = results;
@@ -872,20 +835,24 @@ function renderTable() {
       :r.product==='nomina'?`<span class="badge bb">💼 Nómina</span>`
       :`<span class="badge bw">❓ Otro</span>`;
     const cc=r.country==='CO'?`<span class="badge bv">${r.country}</span>`:`<span class="badge bi">${r.country||'—'}</span>`;
+    const ms=`<span style="font-size:11px;color:var(--rl-black)">${esc(r.mediaSource||'—')}</span>`; // ← Media Source cell
     const comp=r.completionCount===1?`<span style="font-size:12px;color:var(--rl-gray-dk)">1</span>`:`<span class="badge bi">${r.completionCount}</span>`;
     const s6=r.hasStep6?`<span class="badge bv">✓</span>`:`<span class="badge bi">✗</span>`;
     const geo=r.geoDetail?`<span style="font-size:11px;color:var(--invalid)">${esc(r.geoDetail)}</span>`:`<span style="color:var(--rl-gray-dk);font-size:11px">—</span>`;
-    return `<tr><td style="font-family:monospace;font-size:11px;font-weight:600">${esc(r.id)}</td><td>${sb}</td><td>${fb}</td><td>${pb}</td><td>${cc}</td><td style="text-align:center">${comp}</td><td style="text-align:center">${s6}</td><td style="max-width:260px">${geo}</td><td style="font-size:11px;color:var(--rl-gray-dk);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'—'}</td></tr>`;
-  }).join('')||`<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--rl-gray-dk)">Sin resultados para este filtro</td></tr>`;
+    return `<tr><td style="font-family:monospace;font-size:11px;font-weight:600">${esc(r.id)}</td><td>${sb}</td><td>${fb}</td><td>${pb}</td><td>${cc}</td><td>${ms}</td><td style="text-align:center">${comp}</td><td style="text-align:center">${s6}</td><td style="max-width:260px">${geo}</td><td style="font-size:11px;color:var(--rl-gray-dk);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'—'}</td></tr>`;
+  }).join('')||`<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--rl-gray-dk)">Sin resultados para este filtro</td></tr>`;
 }
 
 function exportCSV(which) {
   let data=allResults;
-  if(which==='clean') data=data.filter(r=>r.status==='clean');
+  if(which==='clean')    data=data.filter(r=>r.status==='clean');
   if(which==='libreton') data=data.filter(r=>r.status==='clean'&&r.product==='libreton');
-  if(which==='nomina') data=data.filter(r=>r.status==='clean'&&r.product==='nomina');
-  const rows=[['AppsFlyer ID','Estado','Filtro aplicado','Producto','País','Completions','Tiene step_6','Detalle geo','af_content']];
-  data.forEach(r=>rows.push([r.id,r.status,r.filter,r.product,r.country,r.completionCount,r.hasStep6?'Sí':'No',r.geoDetail,r.afContent]));
+  if(which==='nomina')   data=data.filter(r=>r.status==='clean'&&r.product==='nomina');
+
+  // ← Media Source added to header and each row
+  const rows=[['AppsFlyer ID','Estado','Filtro aplicado','Producto','País','Media Source','Completions','Tiene step_6','Detalle geo','af_content']];
+  data.forEach(r=>rows.push([r.id,r.status,r.filter,r.product,r.country,r.mediaSource||'',r.completionCount,r.hasStep6?'Sí':'No',r.geoDetail,r.afContent]));
+
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'})),download:`bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`});
   document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
@@ -893,12 +860,8 @@ function exportCSV(which) {
 
 function renderChart() {
   const clean = allResults.filter(r => r.status === 'clean' && r.completionDate);
-
-  // Build sorted date list
   const dateSet = new Set(clean.map(r => r.completionDate));
   const dates = Array.from(dateSet).sort();
-
-  // Per-day per-product counts
   const byDay = {};
   dates.forEach(d => { byDay[d] = {libreton:0, nomina:0, other:0, total:0}; });
   clean.forEach(r => {
@@ -906,19 +869,12 @@ function renderChart() {
     byDay[r.completionDate][r.product]++;
     byDay[r.completionDate].total++;
   });
-
   const totals    = dates.map(d => byDay[d].total);
   const libData   = dates.map(d => byDay[d].libreton);
   const nomData   = dates.map(d => byDay[d].nomina);
   const otherData = dates.map(d => byDay[d].other);
   const maxVal    = Math.max(...totals, 1);
-
-  // Format date labels as "DD/MM"
-  const labels = dates.map(d => {
-    const [y,m,day] = d.split('-');
-    return `${day}/${m}`;
-  });
-
+  const labels = dates.map(d => { const [y,m,day] = d.split('-'); return `${day}/${m}`; });
   const BAR_W   = Math.max(36, Math.min(64, Math.floor(700 / Math.max(dates.length, 1))));
   const GAP     = Math.max(6, Math.round(BAR_W * 0.28));
   const PAD_L   = 36;
@@ -927,69 +883,41 @@ function renderChart() {
   const PAD_B   = 40;
   const CHART_H = 180;
   const totalW  = PAD_L + dates.length * (BAR_W + GAP) - GAP + PAD_R;
-
-  const C = {
-    libreton : '#7A53CA',
-    nomina   : '#6592FF',
-    other    : '#d97706',
-    gridLine : '#e4e2ee',
-    labelDk  : '#696A6B',
-    totalLbl : '#17191C',
-  };
-
-  // Y-axis ticks (0, max/2, max)
+  const C = { libreton:'#7A53CA', nomina:'#6592FF', other:'#d97706', gridLine:'#e4e2ee', labelDk:'#696A6B', totalLbl:'#17191C' };
   const ticks = [0, Math.ceil(maxVal/2), maxVal];
-
   let svgParts = [`<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${CHART_H + PAD_T + PAD_B}" style="font-family:'Inter',sans-serif;display:block">`];
-
-  // Grid lines + Y labels
   ticks.forEach(tick => {
     const y = PAD_T + CHART_H - Math.round((tick / maxVal) * CHART_H);
     svgParts.push(`<line x1="${PAD_L}" y1="${y}" x2="${totalW - PAD_R}" y2="${y}" stroke="${C.gridLine}" stroke-width="1"/>`);
     svgParts.push(`<text x="${PAD_L - 5}" y="${y + 4}" text-anchor="end" font-size="9" fill="${C.labelDk}">${tick}</text>`);
   });
-
-  // Bars (stacked: libreton bottom, nomina middle, other top)
   dates.forEach((d, i) => {
-    const x    = PAD_L + i * (BAR_W + GAP);
-    const lib  = byDay[d].libreton;
-    const nom  = byDay[d].nomina;
-    const oth  = byDay[d].other;
-    const tot  = byDay[d].total;
-
-    const hLib = Math.round((lib  / maxVal) * CHART_H);
-    const hNom = Math.round((nom  / maxVal) * CHART_H);
-    const hOth = Math.round((oth  / maxVal) * CHART_H);
-
+    const x   = PAD_L + i * (BAR_W + GAP);
+    const lib = byDay[d].libreton;
+    const nom = byDay[d].nomina;
+    const oth = byDay[d].other;
+    const tot = byDay[d].total;
+    const hLib = Math.round((lib / maxVal) * CHART_H);
+    const hNom = Math.round((nom / maxVal) * CHART_H);
+    const hOth = Math.round((oth / maxVal) * CHART_H);
     let yOff = PAD_T + CHART_H;
-
     const seg = (h, color) => {
       if (h <= 0) return '';
       yOff -= h;
       return `<rect x="${x}" y="${yOff}" width="${BAR_W}" height="${h}" fill="${color}" rx="2"/>`;
     };
-
     svgParts.push(seg(hLib, C.libreton));
     svgParts.push(seg(hNom, C.nomina));
     svgParts.push(seg(hOth, C.other));
-
-    // Total label above bar
     if (tot > 0) {
       const topY = PAD_T + CHART_H - Math.round((tot / maxVal) * CHART_H) - 4;
       svgParts.push(`<text x="${x + BAR_W/2}" y="${topY}" text-anchor="middle" font-size="10" font-weight="700" fill="${C.totalLbl}">${tot}</text>`);
     }
-
-    // X label
     const xLabelY = PAD_T + CHART_H + 16;
     svgParts.push(`<text x="${x + BAR_W/2}" y="${xLabelY}" text-anchor="middle" font-size="10" fill="${C.labelDk}">${labels[i]}</text>`);
   });
-
   svgParts.push('</svg>');
-
-  const canvas = document.getElementById('dailyChartCanvas');
-  // Replace canvas with inline SVG div
-  const container = document.getElementById('dailyChart');
-  container.innerHTML = svgParts.join('');
+  document.getElementById('dailyChart').innerHTML = svgParts.join('');
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
