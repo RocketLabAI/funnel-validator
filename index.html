@@ -612,9 +612,7 @@ function processCreditsCSV(file) {
     const colSessions = findCol('sessions');
     const sessions = colSessions ? rows.reduce((s,r) => s + numVal(r[colSessions]), 0) : 0;
 
-    // IAEs: apertura_cuenta_en_linea_no_cliente (Event counter)
-    const iaeCols = cols.filter(c => c.includes('apertura_cuenta_en_linea_no_cliente') && c.includes('(Event counter)'));
-    const iae = iaeCols.reduce((total, col) => total + rows.reduce((s,r) => s + numVal(r[col]), 0), 0);
+
 
     // Period from Date column
     const colDate = findCol('date');
@@ -632,14 +630,13 @@ function processCreditsCSV(file) {
     setAutoVal('reeng',    reeng,    true);
     setAutoVal('clicks',   clicks,   true);
     setAutoVal('sessions', sessions, true);
-    setAutoVal('iae',      iae,      true);
 
     // File bar
     creditsUploadZone.style.display = 'none';
     document.getElementById('creditsFileBar').style.display = 'flex';
     document.getElementById('creditsFileName').textContent = file.name;
     document.getElementById('creditsFileSummary').textContent =
-      `${rows.length} filas · ${Math.round(reattr).toLocaleString('es-CO')} re-attr · ${Math.round(reeng).toLocaleString('es-CO')} re-eng · ${Math.round(iae).toLocaleString('es-CO')} IAEs`;
+      `${rows.length} filas · ${Math.round(reattr).toLocaleString('es-CO')} re-attr · ${Math.round(reeng).toLocaleString('es-CO')} re-eng`;
 
     calcCredits();
   });
