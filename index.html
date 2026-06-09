@@ -352,9 +352,8 @@ tr:hover td{background:#faf9ff}
         <table class="ref-table">
           <thead><tr><th>Tipo</th><th>Tasa</th><th>Fuente</th></tr></thead>
           <tbody>
-            <tr class="hi"><td>Impressions</td><td><strong>1 CC / 1,000,000</strong></td><td>Ingreso manual</td></tr>
             <tr class="hi"><td>Clicks</td><td><strong>2 CC / 1,000,000</strong></td><td>CSV — columna <code>Clicks</code></td></tr>
-            <tr class="hi"><td>Installs / Re-attributions</td><td><strong>80 CC / 100,000</strong></td><td>CSV — <code>Conversions</code> donde <code>Conversion Type = re-attribution</code> · Installs manual</td></tr>
+            <tr class="hi"><td>Re-attributions</td><td><strong>80 CC / 100,000</strong></td><td>CSV — <code>Conversions</code> donde <code>Conversion Type = re-attribution</code></td></tr>
             <tr class="hi"><td>Re-engagements</td><td><strong>10 CC / 100,000</strong></td><td>CSV — <code>Conversions</code> donde <code>Conversion Type = re-engagement</code></td></tr>
             <tr class="hi"><td>In-App Events (IAEs)</td><td><strong>2 CC / 1,000,000</strong></td><td>CSV — columnas <code>apertura_cuenta_en_linea_no_cliente (Event counter)</code></td></tr>
             <tr class="hi"><td>Sessions</td><td><strong>2 CC / 1,000,000</strong></td><td>CSV — columna <code>Sessions</code></td></tr>
@@ -421,23 +420,6 @@ tr:hover td{background:#faf9ff}
             </div>
           </div>
 
-          <!-- Installs -->
-          <div class="metric-block">
-            <div class="metric-block-header">
-              <span>📥</span><span class="metric-block-title">Installs (UA)</span>
-              <span class="rate-badge">80 CC / 100k</span>
-            </div>
-            <div class="metric-row">
-              <div>
-                <div class="metric-label">Installs</div>
-                <div class="metric-sub">No disponible en este CSV — ingresar desde dashboard AF</div>
-              </div>
-              <span class="src-badge src-manual" id="src_installs">manual</span>
-              <input class="metric-input" type="number" id="inp_installs" min="0" placeholder="manual" oninput="calcCredits()">
-              <div class="metric-cc" id="res_installs">0.0000</div>
-            </div>
-          </div>
-
           <!-- IAEs -->
           <div class="metric-block">
             <div class="metric-block-header">
@@ -488,23 +470,6 @@ tr:hover td{background:#faf9ff}
               <div class="metric-cc" id="res_sessions">0.0000</div>
             </div>
           </div>
-
-          <!-- Impressions (manual) -->
-          <div class="metric-block">
-            <div class="metric-block-header">
-              <span>👁️</span><span class="metric-block-title">Impressions</span>
-              <span class="rate-badge">1 CC / 1M</span>
-            </div>
-            <div class="metric-row">
-              <div>
-                <div class="metric-label">Impressions</div>
-                <div class="metric-sub">No disponible en este CSV — ingresar desde dashboard AF</div>
-              </div>
-              <span class="src-badge src-manual">manual</span>
-              <input class="metric-input" type="number" id="inp_impressions" min="0" placeholder="manual" oninput="calcCredits()">
-              <div class="metric-cc" id="res_impressions">0.0000</div>
-            </div>
-          </div>
         </div>
 
         <!-- Columna derecha: total + desglose -->
@@ -520,11 +485,9 @@ tr:hover td{background:#faf9ff}
             <div class="breakdown-body">
               <div class="br-row"><span class="br-label">Re-attr <span class="br-rate">×800/1M</span></span><span class="br-val" id="br_reattr">0.0000</span></div>
               <div class="br-row"><span class="br-label">Re-eng <span class="br-rate">×100/1M</span></span><span class="br-val" id="br_reeng">0.0000</span></div>
-              <div class="br-row"><span class="br-label">Installs <span class="br-rate">×800/1M</span></span><span class="br-val" id="br_installs">0.0000</span></div>
               <div class="br-row"><span class="br-label">IAEs <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_iae">0.0000</span></div>
               <div class="br-row"><span class="br-label">Clicks <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_clicks">0.0000</span></div>
               <div class="br-row"><span class="br-label">Sessions <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_sessions">0.0000</span></div>
-              <div class="br-row"><span class="br-label">Impressions <span class="br-rate">×1/1M</span></span><span class="br-val" id="br_impressions">0.0000</span></div>
               <div class="br-total-row"><span class="br-total-label">Total CC</span><span class="br-total-val" id="br_total">0.0000</span></div>
             </div>
           </div>
@@ -694,7 +657,7 @@ function setAutoVal(id, val, isAuto) {
 }
 
 function resetCredits() {
-  ['reattr','reeng','installs','iae','clicks','sessions','impressions'].forEach(id => {
+  ['reattr','reeng','iae','clicks','sessions'].forEach(id => {
     const inp = document.getElementById('inp_' + id);
     const src = document.getElementById('src_' + id);
     if (inp) inp.value = '';
@@ -716,24 +679,20 @@ function calcCredits() {
 
   const reattr      = g('reattr');
   const reeng       = g('reeng');
-  const installs    = g('installs');
   const iae         = g('iae');
   const clicks      = g('clicks');
   const sessions    = g('sessions');
-  const impressions = g('impressions');
 
   const r_reattr      = reattr      * 800 / 1_000_000;
   const r_reeng       = reeng       * 100 / 1_000_000;
-  const r_installs    = installs    * 800 / 1_000_000;
   const r_iae         = iae         *   2 / 1_000_000;
   const r_clicks      = clicks      *   2 / 1_000_000;
   const r_sessions    = sessions    *   2 / 1_000_000;
-  const r_impressions = impressions *   1 / 1_000_000;
 
-  const total = r_reattr + r_reeng + r_installs + r_iae + r_clicks + r_sessions + r_impressions;
+  const total = r_reattr + r_reeng + r_iae + r_clicks + r_sessions;
 
-  [['reattr',r_reattr],['reeng',r_reeng],['installs',r_installs],['iae',r_iae],
-   ['clicks',r_clicks],['sessions',r_sessions],['impressions',r_impressions]].forEach(([id,val]) => {
+  [['reattr',r_reattr],['reeng',r_reeng],['iae',r_iae],
+   ['clicks',r_clicks],['sessions',r_sessions]].forEach(([id,val]) => {
     const res = document.getElementById('res_' + id);
     const br  = document.getElementById('br_'  + id);
     if (res) res.textContent = fmt(val);
@@ -747,11 +706,9 @@ function calcCredits() {
   const parts = [];
   if (reattr)      parts.push(`${fmtN(reattr)} re-attr`);
   if (reeng)       parts.push(`${fmtN(reeng)} re-eng`);
-  if (installs)    parts.push(`${fmtN(installs)} installs`);
   if (iae)         parts.push(`${fmtN(iae)} IAEs`);
   if (clicks)      parts.push(`${fmtN(clicks)} clicks`);
   if (sessions)    parts.push(`${fmtN(sessions)} sessions`);
-  if (impressions) parts.push(`${fmtN(impressions)} impressions`);
   document.getElementById('totalCreditsSub').textContent = parts.length
     ? parts.join(' · ')
     : 'Cargá el CSV o ingresá valores manualmente';
