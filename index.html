@@ -24,7 +24,6 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:var(--font);min-height:100vh;display:flex}
 
-/* ── SIDEBAR ── */
 .sidebar{width:var(--rl-sidebar-width);background:var(--rl-sidebar-bg);height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100}
 .sidebar-logo{padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px}
 .sidebar-mark{width:28px;height:28px;background:#fff;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#17191C;flex-shrink:0}
@@ -36,7 +35,6 @@ body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:va
 .sidebar-item.active{background:var(--rl-sidebar-active);color:#fff;font-weight:500}
 .si-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
 
-/* ── APP BODY ── */
 .app-body{margin-left:var(--rl-sidebar-width);flex:1;display:flex;flex-direction:column;min-height:100vh}
 .grad-bar{height:3px;background:var(--rl-grad)}
 .topbar{background:#fff;border-bottom:1px solid var(--rl-card-border);height:52px;display:flex;align-items:center;padding:0 24px;gap:8px;position:sticky;top:0;z-index:50;flex-shrink:0}
@@ -50,11 +48,8 @@ body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:va
 .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
 .section-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.7px;color:var(--rl-text-muted);margin-bottom:8px;margin-top:20px}
 .section-label:first-child{margin-top:0}
-
-/* ── CARDS ── */
 .card{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow)}
 
-/* ── KPI GRID ── */
 .kpi-grid{display:grid;gap:12px;margin-bottom:20px}
 .kpi-grid-3{grid-template-columns:repeat(3,1fr)}
 .kpi-card{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);padding:14px 16px;border-top:3px solid transparent}
@@ -62,7 +57,6 @@ body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:va
 .kpi-label{font-size:10.5px;font-weight:600;color:var(--rl-text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px}
 .kpi-value{font-size:24px;font-weight:700;line-height:1;letter-spacing:-0.5px}
 
-/* ── FUNNEL ── */
 .funnel-steps{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-bottom:20px;background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden}
 .funnel-step{padding:14px 16px;border-right:1px solid var(--rl-card-border);position:relative}
 .funnel-step:last-child{border-right:none}
@@ -75,7 +69,6 @@ body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:va
 .funnel-step.step-end .funnel-step-value{color:var(--valid)}
 .funnel-arrow{position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:16px;height:16px;background:var(--rl-content-bg);border:1px solid var(--rl-card-border);border-radius:2px;z-index:2;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--rl-text-muted)}
 
-/* ── TABLE ── */
 .table-wrap{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden;margin-bottom:14px}
 .table-scroll{overflow-x:auto;max-height:480px;overflow-y:auto}
 table{width:100%;border-collapse:collapse}
@@ -85,32 +78,27 @@ td{padding:9px 14px;border-bottom:1px solid #f5f3fb;font-size:12px;color:var(--r
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#faf9ff}
 
-/* ── BADGES ── */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap}
 .bv{background:var(--valid-bg);color:var(--valid)}.bw{background:var(--warn-bg);color:var(--warn)}.bi{background:var(--invalid-bg);color:var(--invalid)}
 .bp{background:var(--rl-accent-bg);color:var(--rl-accent)}.bb{background:var(--rl-blue-bg);color:var(--rl-blue)}.bn{background:#e0e7ff;color:#3730a3}
 
-/* ── BUTTONS ── */
 .btn{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:opacity 0.15s}
 .btn:hover{opacity:0.85}
 .btn-primary{background:var(--rl-accent);color:#fff}
 .btn-secondary{background:#fff;color:var(--rl-text-secondary);border:1px solid var(--rl-card-border)}
 
-/* ── FILTERS ── */
 .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
 .filter-tabs{display:flex;gap:3px;background:#f0eff5;border-radius:6px;padding:3px}
 .tab{padding:4px 11px;border-radius:4px;font-size:11.5px;font-weight:500;background:transparent;color:var(--rl-text-secondary);border:none;cursor:pointer;font-family:var(--font);transition:all 0.1s}
 .tab.active{background:#fff;color:var(--rl-text-primary);box-shadow:0 1px 2px rgba(0,0,0,0.08)}
 .filter-sep{width:1px;background:var(--rl-card-border);align-self:stretch;margin:0 4px}
 
-/* ── UPLOAD ── */
-.upload-zone{border:1.5px dashed var(--rl-card-border);border-radius:8px;padding:32px;text-align:center;cursor:pointer;background:#faf9ff;transition:all 0.18s}
+.upload-zone{border:1.5px dashed var(--rl-card-border);border-radius:8px;padding:36px;text-align:center;cursor:pointer;background:#faf9ff;transition:all 0.18s}
 .upload-zone:hover,.upload-zone.drag-over{border-color:var(--rl-accent);background:var(--rl-accent-bg)}
 .upload-zone h2{font-size:15px;font-weight:600;margin-bottom:5px}
 .upload-zone p{font-size:12.5px;color:var(--rl-text-secondary)}
 .upload-hint{margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:monospace;color:var(--rl-text-muted);background:#fff;border:1px solid var(--rl-card-border);padding:5px 14px;border-radius:20px}
 
-/* ── MSGS ── */
 .msg{padding:10px 14px;border-radius:6px;font-size:12.5px;margin-bottom:12px;display:none}
 .msg-error{background:var(--invalid-bg);border:1px solid #fecaca;color:var(--invalid)}
 .msg-info{background:var(--rl-blue-bg);border:1px solid #bfdbfe;color:var(--rl-blue)}
@@ -119,41 +107,48 @@ tr:hover td{background:#faf9ff}
 .criteria-info strong{color:var(--rl-text-primary)}
 .export-row{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}
 
-/* ── FILE BAR ── */
-.file-bar{display:flex;align-items:center;justify-content:space-between;background:var(--valid-bg);border:1px solid #a7f3d0;border-radius:6px;padding:10px 14px;margin-bottom:12px}
-.file-bar-info{display:flex;align-items:center;gap:10px}
-.file-bar-name{font-size:12.5px;font-weight:600;color:var(--valid)}
-.file-bar-sub{font-size:11px;color:var(--rl-text-secondary)}
+.file-bar{display:flex;align-items:center;justify-content:space-between;background:var(--valid-bg);border:1px solid #a7f3d0;border-radius:6px;padding:10px 14px;margin-bottom:16px}
 
 /* ── CREDITS ── */
-.credits-section{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-.cred-group{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden}
-.cred-group-header{padding:11px 16px;border-bottom:1px solid var(--rl-card-border);display:flex;align-items:center;gap:7px;background:#fafafa}
-.cred-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--rl-text-muted)}
-.cred-group-body{padding:14px 16px}
-.rate-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap;background:var(--rl-accent-bg);color:var(--rl-accent);border:1px solid #e9d5ff;margin-left:auto}
+.credits-layout{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
 
-.metric-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f5f3fb}
+.period-bar{display:flex;align-items:center;gap:10px;border-radius:6px;padding:10px 14px;margin-bottom:16px;font-size:12px}
+.period-bar.has-period{background:var(--rl-accent-bg);border:1px solid #ddd6fe}
+.period-bar.has-period strong{color:var(--rl-accent)}
+.period-bar.no-period{background:var(--warn-bg);border:1px solid #fde68a}
+.period-bar.no-period strong{color:var(--warn)}
+
+.metric-block{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden;margin-bottom:12px}
+.metric-block-header{padding:10px 16px;border-bottom:1px solid var(--rl-card-border);display:flex;align-items:center;gap:8px;background:#fafafa}
+.metric-block-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--rl-text-muted);flex:1}
+.rate-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--rl-accent-bg);color:var(--rl-accent);border:1px solid #e9d5ff;white-space:nowrap}
+.metric-row{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid #f5f3fb}
 .metric-row:last-child{border-bottom:none}
-.metric-label{font-size:12.5px;font-weight:500;color:var(--rl-text-primary)}
+.metric-label{font-size:12.5px;font-weight:500}
 .metric-sub{font-size:10.5px;color:var(--rl-text-muted);margin-top:2px}
-.metric-source{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;white-space:nowrap}
+.src-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap}
 .src-auto{background:#dcfce7;color:#166534}
 .src-manual{background:#fef9c3;color:#854d0e}
-.metric-value{font-size:14px;font-weight:700;font-family:monospace;color:var(--rl-text-primary);text-align:right;min-width:80px}
 .metric-input{width:120px;padding:6px 10px;border-radius:6px;border:1px solid var(--rl-card-border);font-size:12.5px;font-family:monospace;color:var(--rl-text-primary);background:#fff;text-align:right}
 .metric-input:focus{outline:none;border-color:var(--rl-accent);box-shadow:0 0 0 2px rgba(124,58,237,0.1)}
-.metric-cc{width:80px;padding:6px 10px;border-radius:6px;border:1px solid var(--rl-card-border);font-size:12.5px;font-family:monospace;font-weight:700;text-align:right;background:var(--rl-accent-bg);color:var(--rl-accent)}
+.metric-cc{width:80px;padding:6px 10px;border-radius:6px;border:1px solid #ddd6fe;font-size:12.5px;font-family:monospace;font-weight:700;text-align:right;background:var(--rl-accent-bg);color:var(--rl-accent)}
 
-.period-bar{display:flex;align-items:center;gap:10px;background:var(--rl-accent-bg);border:1px solid #ddd6fe;border-radius:6px;padding:9px 14px;margin-bottom:16px;font-size:12px}
-.period-bar strong{color:var(--rl-accent);font-size:12px}
-.period-missing{background:var(--warn-bg);border-color:#fde68a}
-.period-missing strong{color:var(--warn)}
+.total-card{background:linear-gradient(135deg,#f5f3ff,#eef2ff);border:1px solid #ddd6fe;border-radius:8px;padding:20px;margin-bottom:12px}
+.total-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--rl-accent);margin-bottom:8px}
+.total-value{font-size:40px;font-weight:800;color:var(--rl-accent);letter-spacing:-1.5px;font-family:monospace;line-height:1}
+.total-sub{font-size:11px;color:var(--rl-text-muted);margin-top:6px;line-height:1.5}
 
-.total-card{background:linear-gradient(135deg,#f5f3ff,#eef2ff);border:1px solid #ddd6fe;border-radius:8px;padding:18px 20px;margin-bottom:16px}
-.total-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--rl-accent);margin-bottom:6px}
-.total-value{font-size:36px;font-weight:800;color:var(--rl-accent);letter-spacing:-1px;font-family:monospace;line-height:1}
-.total-sub{font-size:11px;color:var(--rl-text-muted);margin-top:5px}
+.breakdown-card{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden}
+.breakdown-header{padding:10px 16px;border-bottom:1px solid var(--rl-card-border);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--rl-text-muted);background:#fafafa}
+.breakdown-body{padding:4px 16px 8px}
+.br-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f5f3fb;font-size:12px}
+.br-row:last-child{border-bottom:none}
+.br-label{color:var(--rl-text-secondary)}
+.br-rate{font-size:10px;color:var(--rl-text-muted);margin-left:4px}
+.br-val{font-family:monospace;font-weight:600;color:var(--rl-text-primary)}
+.br-total-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0 4px;border-top:2px solid var(--rl-accent);margin-top:4px}
+.br-total-label{font-size:13px;font-weight:700}
+.br-total-val{font-family:monospace;font-weight:800;color:var(--rl-accent);font-size:15px}
 
 .ref-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px}
 .ref-table th{background:#f5f3fb;padding:7px 12px;text-align:left;font-weight:600;color:var(--rl-text-muted);text-transform:uppercase;font-size:10px;letter-spacing:0.5px;border-bottom:1px solid var(--rl-card-border)}
@@ -161,11 +156,9 @@ tr:hover td{background:#faf9ff}
 .ref-table tr:last-child td{border-bottom:none}
 .ref-table tr.hi td{background:var(--rl-accent-bg);font-weight:600}
 
-.upload-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-
 @media(max-width:960px){
-  .funnel-steps,.credits-section,.kpi-grid-3,.upload-pair{grid-template-columns:1fr}
   .funnel-steps{grid-template-columns:repeat(3,1fr)}
+  .kpi-grid-3,.credits-layout{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -345,271 +338,201 @@ tr:hover td{background:#faf9ff}
       </div>
 
       <!-- Período -->
-      <div id="periodBar" class="period-bar period-missing">
+      <div id="periodBar" class="period-bar no-period">
         <span>📅</span>
         <div>
           <strong id="periodText">Sin período definido</strong>
-          <span id="periodSub" style="font-size:11px;color:var(--rl-text-muted);margin-left:8px">Cargá el CSV del Funnel Validator (paso 1) para auto-detectar el período</span>
+          <span id="periodSub" style="font-size:11px;color:var(--rl-text-muted);margin-left:8px">Cargá el CSV para auto-detectar el período de análisis</span>
         </div>
       </div>
 
-      <!-- Referencia de tasas -->
+      <!-- Tasas de referencia -->
       <div class="criteria-info" style="margin-bottom:16px">
         <strong>Tasas oficiales — Capacity Credit Consumption Metrics:</strong>
         <table class="ref-table">
           <thead><tr><th>Tipo</th><th>Tasa</th><th>Fuente</th></tr></thead>
           <tbody>
-            <tr class="hi"><td>Impressions</td><td><strong>1 CC / 1,000,000</strong></td><td>Daily Report CSV (manual si no disponible)</td></tr>
-            <tr class="hi"><td>Clicks</td><td><strong>2 CC / 1,000,000</strong></td><td>Partners Report CSV</td></tr>
-            <tr class="hi"><td>Installs / Re-attributions</td><td><strong>80 CC / 100,000</strong></td><td>Partners Report CSV</td></tr>
-            <tr class="hi"><td>Re-engagements</td><td><strong>10 CC / 100,000</strong></td><td>Partners Report CSV</td></tr>
-            <tr class="hi"><td>In-App Events (IAEs)</td><td><strong>2 CC / 1,000,000</strong></td><td>Partners Report CSV (apertura_cuenta eventos)</td></tr>
-            <tr class="hi"><td>Sessions</td><td><strong>2 CC / 1,000,000</strong></td><td>Partners Report CSV</td></tr>
+            <tr class="hi"><td>Impressions</td><td><strong>1 CC / 1,000,000</strong></td><td>Ingreso manual</td></tr>
+            <tr class="hi"><td>Clicks</td><td><strong>2 CC / 1,000,000</strong></td><td>CSV — columna <code>Clicks</code></td></tr>
+            <tr class="hi"><td>Installs / Re-attributions</td><td><strong>80 CC / 100,000</strong></td><td>CSV — <code>Conversions</code> donde <code>Conversion Type = re-attribution</code> · Installs manual</td></tr>
+            <tr class="hi"><td>Re-engagements</td><td><strong>10 CC / 100,000</strong></td><td>CSV — <code>Conversions</code> donde <code>Conversion Type = re-engagement</code></td></tr>
+            <tr class="hi"><td>In-App Events (IAEs)</td><td><strong>2 CC / 1,000,000</strong></td><td>CSV — columnas <code>apertura_cuenta_en_linea_no_cliente (Event counter)</code></td></tr>
+            <tr class="hi"><td>Sessions</td><td><strong>2 CC / 1,000,000</strong></td><td>CSV — columna <code>Sessions</code></td></tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Upload pair -->
-      <div class="upload-pair">
-        <!-- CSV 1: Partners Report -->
-        <div>
-          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:var(--rl-text-muted);margin-bottom:8px">
-            📊 CSV 1 — Partners Report <span style="color:var(--invalid)">*</span>
-          </div>
-          <div id="partnersFileBar" style="display:none" class="file-bar">
-            <div class="file-bar-info">
-              <span style="font-size:18px">✅</span>
-              <div>
-                <div class="file-bar-name" id="partnersFileName">—</div>
-                <div class="file-bar-sub" id="partnersFileSummary">—</div>
-              </div>
-            </div>
-            <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetPartners()">Cambiar</button>
-          </div>
-          <div class="upload-zone" id="partnersUploadZone" style="padding:24px" onclick="document.getElementById('csvPartnersInput').click()">
-            <input type="file" id="csvPartnersInput" accept=".csv,.tsv,.txt" style="display:none">
-            <div style="font-size:24px;margin-bottom:8px">📈</div>
-            <h2 style="font-size:13px">partners-report-reattr</h2>
-            <p style="font-size:11.5px">Re-attr · Re-eng · Clicks · Sessions · IAEs</p>
-            <div class="upload-hint" style="font-size:10px">Conversion Type · Conversions · Clicks · Sessions · Event counters</div>
+      <!-- Upload único -->
+      <div id="creditsFileBar" style="display:none" class="file-bar">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:18px">✅</span>
+          <div>
+            <div style="font-size:12.5px;font-weight:600;color:var(--valid)" id="creditsFileName">—</div>
+            <div style="font-size:11px;color:var(--rl-text-muted)" id="creditsFileSummary">—</div>
           </div>
         </div>
-
-        <!-- CSV 2: Daily Report -->
-        <div>
-          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:var(--rl-text-muted);margin-bottom:8px">
-            📅 CSV 2 — Daily Report <span style="color:var(--rl-text-muted)">(opcional)</span>
-          </div>
-          <div id="dailyFileBar" style="display:none" class="file-bar">
-            <div class="file-bar-info">
-              <span style="font-size:18px">✅</span>
-              <div>
-                <div class="file-bar-name" id="dailyFileName">—</div>
-                <div class="file-bar-sub" id="dailyFileSummary">—</div>
-              </div>
-            </div>
-            <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetDaily()">Cambiar</button>
-          </div>
-          <div class="upload-zone" id="dailyUploadZone" style="padding:24px" onclick="document.getElementById('csvDailyInput').click()">
-            <input type="file" id="csvDailyInput" accept=".csv,.tsv,.txt" style="display:none">
-            <div style="font-size:24px;margin-bottom:8px">📋</div>
-            <h2 style="font-size:13px">daily-report</h2>
-            <p style="font-size:11.5px">Impressions · Installs · Período</p>
-            <div class="upload-hint" style="font-size:10px">Date · Impressions · Installs</div>
-          </div>
-        </div>
+        <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetCredits()">Cambiar archivo</button>
       </div>
 
-      <!-- Métricas + Total -->
-      <div class="credits-section">
+      <div class="upload-zone" id="creditsUploadZone" style="margin-bottom:20px" onclick="document.getElementById('csvCreditsInput').click()">
+        <input type="file" id="csvCreditsInput" accept=".csv,.tsv,.txt" style="display:none">
+        <div style="font-size:32px;margin-bottom:10px">📊</div>
+        <h2>Arrastrá el CSV aquí</h2>
+        <p>partners-report · separado por coma o punto y coma</p>
+        <div class="upload-hint">Date · Clicks · Conversions · Conversion Type · Sessions · apertura_cuenta Event counters</div>
+      </div>
+
+      <!-- Layout métricas + total -->
+      <div class="credits-layout">
 
         <!-- Columna izquierda: métricas -->
-        <div style="display:flex;flex-direction:column;gap:14px">
-
-          <div class="cred-group">
-            <div class="cred-group-header">
-              <span>🔄</span><span class="cred-group-title">Installs &amp; Re-attributions</span>
+        <div>
+          <!-- Re-attributions -->
+          <div class="metric-block">
+            <div class="metric-block-header">
+              <span>🔄</span><span class="metric-block-title">Re-attributions</span>
               <span class="rate-badge">80 CC / 100k</span>
             </div>
-            <div class="cred-group-body">
-              <div class="metric-row">
-                <div>
-                  <div class="metric-label">Re-attributions</div>
-                  <div class="metric-sub"><code>Conversion Type = re-attribution</code> en Partners Report</div>
-                </div>
-                <span class="metric-source src-auto" id="src_reattr">manual</span>
-                <div style="display:flex;gap:6px;align-items:center">
-                  <input class="metric-input" type="number" id="inp_reattr" min="0" placeholder="0" oninput="calcCredits()">
-                  <div class="metric-cc" id="res_reattr">0.0000</div>
-                </div>
+            <div class="metric-row">
+              <div>
+                <div class="metric-label">Re-attributions</div>
+                <div class="metric-sub">Suma de <code>Conversions</code> donde <code>Conversion Type = re-attribution</code></div>
               </div>
+              <span class="src-badge src-manual" id="src_reattr">manual</span>
+              <input class="metric-input" type="number" id="inp_reattr" min="0" placeholder="0" oninput="calcCredits()">
+              <div class="metric-cc" id="res_reattr">0.0000</div>
             </div>
           </div>
 
-          <div class="cred-group">
-            <div class="cred-group-header">
-              <span>🔁</span><span class="cred-group-title">Re-engagements</span>
+          <!-- Re-engagements -->
+          <div class="metric-block">
+            <div class="metric-block-header">
+              <span>🔁</span><span class="metric-block-title">Re-engagements</span>
               <span class="rate-badge">10 CC / 100k</span>
             </div>
-            <div class="cred-group-body">
-              <div class="metric-row">
-                <div>
-                  <div class="metric-label">Re-engagements</div>
-                  <div class="metric-sub"><code>Conversion Type = re-engagement</code> en Partners Report</div>
-                </div>
-                <span class="metric-source src-auto" id="src_reeng">manual</span>
-                <div style="display:flex;gap:6px;align-items:center">
-                  <input class="metric-input" type="number" id="inp_reeng" min="0" placeholder="0" oninput="calcCredits()">
-                  <div class="metric-cc" id="res_reeng">0.0000</div>
-                </div>
+            <div class="metric-row">
+              <div>
+                <div class="metric-label">Re-engagements</div>
+                <div class="metric-sub">Suma de <code>Conversions</code> donde <code>Conversion Type = re-engagement</code></div>
               </div>
+              <span class="src-badge src-manual" id="src_reeng">manual</span>
+              <input class="metric-input" type="number" id="inp_reeng" min="0" placeholder="0" oninput="calcCredits()">
+              <div class="metric-cc" id="res_reeng">0.0000</div>
             </div>
           </div>
 
-          <div class="cred-group">
-            <div class="cred-group-header">
-              <span>📱</span><span class="cred-group-title">In-App Events (IAEs)</span>
-              <span class="rate-badge">2 CC / 1M</span>
-            </div>
-            <div class="cred-group-body">
-              <div class="metric-row">
-                <div>
-                  <div class="metric-label">IAEs apertura_cuenta_en_linea_no_cliente</div>
-                  <div class="metric-sub">Suma de columnas <code>(Event counter)</code> del evento principal</div>
-                </div>
-                <span class="metric-source src-auto" id="src_iae">manual</span>
-                <div style="display:flex;gap:6px;align-items:center">
-                  <input class="metric-input" type="number" id="inp_iae" min="0" placeholder="0" oninput="calcCredits()">
-                  <div class="metric-cc" id="res_iae">0.0000</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="cred-group">
-            <div class="cred-group-header">
-              <span>🖱️</span><span class="cred-group-title">Clicks</span>
-              <span class="rate-badge">2 CC / 1M</span>
-            </div>
-            <div class="cred-group-body">
-              <div class="metric-row">
-                <div>
-                  <div class="metric-label">Clicks</div>
-                  <div class="metric-sub">Columna <code>Clicks</code> en Partners Report</div>
-                </div>
-                <span class="metric-source src-auto" id="src_clicks">manual</span>
-                <div style="display:flex;gap:6px;align-items:center">
-                  <input class="metric-input" type="number" id="inp_clicks" min="0" placeholder="0" oninput="calcCredits()">
-                  <div class="metric-cc" id="res_clicks">0.0000</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="cred-group">
-            <div class="cred-group-header">
-              <span>📲</span><span class="cred-group-title">Sessions</span>
-              <span class="rate-badge">2 CC / 1M</span>
-            </div>
-            <div class="cred-group-body">
-              <div class="metric-row">
-                <div>
-                  <div class="metric-label">Sessions</div>
-                  <div class="metric-sub">Columna <code>Sessions</code> en Partners Report</div>
-                </div>
-                <span class="metric-source src-auto" id="src_sessions">manual</span>
-                <div style="display:flex;gap:6px;align-items:center">
-                  <input class="metric-input" type="number" id="inp_sessions" min="0" placeholder="0" oninput="calcCredits()">
-                  <div class="metric-cc" id="res_sessions">0.0000</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="cred-group">
-            <div class="cred-group-header">
-              <span>📊</span><span class="cred-group-title">Impressions</span>
-              <span class="rate-badge">1 CC / 1M</span>
-            </div>
-            <div class="cred-group-body">
-              <div class="metric-row">
-                <div>
-                  <div class="metric-label">Impressions</div>
-                  <div class="metric-sub">Columna <code>Impressions</code> en Daily Report (o manual)</div>
-                </div>
-                <span class="metric-source src-manual" id="src_impressions">manual</span>
-                <div style="display:flex;gap:6px;align-items:center">
-                  <input class="metric-input" type="number" id="inp_impressions" min="0" placeholder="manual" oninput="calcCredits()">
-                  <div class="metric-cc" id="res_impressions">0.0000</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="cred-group">
-            <div class="cred-group-header">
-              <span>📥</span><span class="cred-group-title">Installs</span>
+          <!-- Installs -->
+          <div class="metric-block">
+            <div class="metric-block-header">
+              <span>📥</span><span class="metric-block-title">Installs (UA)</span>
               <span class="rate-badge">80 CC / 100k</span>
             </div>
-            <div class="cred-group-body">
-              <div class="metric-row">
-                <div>
-                  <div class="metric-label">Installs (UA)</div>
-                  <div class="metric-sub">Columna <code>Installs</code> en Daily Report (o manual)</div>
-                </div>
-                <span class="metric-source src-manual" id="src_installs">manual</span>
-                <div style="display:flex;gap:6px;align-items:center">
-                  <input class="metric-input" type="number" id="inp_installs" min="0" placeholder="manual" oninput="calcCredits()">
-                  <div class="metric-cc" id="res_installs">0.0000</div>
-                </div>
+            <div class="metric-row">
+              <div>
+                <div class="metric-label">Installs</div>
+                <div class="metric-sub">No disponible en este CSV — ingresar desde dashboard AF</div>
               </div>
+              <span class="src-badge src-manual" id="src_installs">manual</span>
+              <input class="metric-input" type="number" id="inp_installs" min="0" placeholder="manual" oninput="calcCredits()">
+              <div class="metric-cc" id="res_installs">0.0000</div>
             </div>
           </div>
 
+          <!-- IAEs -->
+          <div class="metric-block">
+            <div class="metric-block-header">
+              <span>📱</span><span class="metric-block-title">In-App Events (IAEs)</span>
+              <span class="rate-badge">2 CC / 1M</span>
+            </div>
+            <div class="metric-row">
+              <div>
+                <div class="metric-label">IAEs apertura_cuenta_en_linea_no_cliente</div>
+                <div class="metric-sub">Suma de todas las columnas <code>(Event counter)</code> del evento principal</div>
+              </div>
+              <span class="src-badge src-manual" id="src_iae">manual</span>
+              <input class="metric-input" type="number" id="inp_iae" min="0" placeholder="0" oninput="calcCredits()">
+              <div class="metric-cc" id="res_iae">0.0000</div>
+            </div>
+          </div>
+
+          <!-- Clicks -->
+          <div class="metric-block">
+            <div class="metric-block-header">
+              <span>🖱️</span><span class="metric-block-title">Clicks</span>
+              <span class="rate-badge">2 CC / 1M</span>
+            </div>
+            <div class="metric-row">
+              <div>
+                <div class="metric-label">Clicks</div>
+                <div class="metric-sub">Columna <code>Clicks</code> del CSV</div>
+              </div>
+              <span class="src-badge src-manual" id="src_clicks">manual</span>
+              <input class="metric-input" type="number" id="inp_clicks" min="0" placeholder="0" oninput="calcCredits()">
+              <div class="metric-cc" id="res_clicks">0.0000</div>
+            </div>
+          </div>
+
+          <!-- Sessions -->
+          <div class="metric-block">
+            <div class="metric-block-header">
+              <span>📲</span><span class="metric-block-title">Sessions</span>
+              <span class="rate-badge">2 CC / 1M</span>
+            </div>
+            <div class="metric-row">
+              <div>
+                <div class="metric-label">Sessions</div>
+                <div class="metric-sub">Columna <code>Sessions</code> del CSV</div>
+              </div>
+              <span class="src-badge src-manual" id="src_sessions">manual</span>
+              <input class="metric-input" type="number" id="inp_sessions" min="0" placeholder="0" oninput="calcCredits()">
+              <div class="metric-cc" id="res_sessions">0.0000</div>
+            </div>
+          </div>
+
+          <!-- Impressions (manual) -->
+          <div class="metric-block">
+            <div class="metric-block-header">
+              <span>👁️</span><span class="metric-block-title">Impressions</span>
+              <span class="rate-badge">1 CC / 1M</span>
+            </div>
+            <div class="metric-row">
+              <div>
+                <div class="metric-label">Impressions</div>
+                <div class="metric-sub">No disponible en este CSV — ingresar desde dashboard AF</div>
+              </div>
+              <span class="src-badge src-manual">manual</span>
+              <input class="metric-input" type="number" id="inp_impressions" min="0" placeholder="manual" oninput="calcCredits()">
+              <div class="metric-cc" id="res_impressions">0.0000</div>
+            </div>
+          </div>
         </div>
 
         <!-- Columna derecha: total + desglose -->
-        <div style="display:flex;flex-direction:column;gap:14px">
-
+        <div>
           <div class="total-card">
             <div class="total-label">💎 Total Capacity Credits</div>
             <div class="total-value" id="totalCredits">0.0000</div>
-            <div class="total-sub" id="totalCreditsSub">Cargá el Partners Report para auto-completar</div>
+            <div class="total-sub" id="totalCreditsSub">Cargá el CSV o ingresá valores manualmente</div>
           </div>
 
-          <div class="cred-group">
-            <div class="cred-group-header"><span>📋</span><span class="cred-group-title">Desglose</span></div>
-            <div class="cred-group-body" style="padding:8px 16px">
-              <table style="width:100%;font-size:12px;border-collapse:collapse">
-                <tr><td style="padding:6px 0;color:var(--rl-text-muted)">Re-attributions <span style="font-size:10px;opacity:0.6">(×800/1M)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_reattr">0.0000</td></tr>
-                <tr><td style="padding:6px 0;color:var(--rl-text-muted)">Re-engagements <span style="font-size:10px;opacity:0.6">(×100/1M)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_reeng">0.0000</td></tr>
-                <tr><td style="padding:6px 0;color:var(--rl-text-muted)">IAEs <span style="font-size:10px;opacity:0.6">(×2/1M)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_iae">0.0000</td></tr>
-                <tr><td style="padding:6px 0;color:var(--rl-text-muted)">Clicks <span style="font-size:10px;opacity:0.6">(×2/1M)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_clicks">0.0000</td></tr>
-                <tr><td style="padding:6px 0;color:var(--rl-text-muted)">Sessions <span style="font-size:10px;opacity:0.6">(×2/1M)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_sessions">0.0000</td></tr>
-                <tr><td style="padding:6px 0;color:var(--rl-text-muted)">Impressions <span style="font-size:10px;opacity:0.6">(×1/1M)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_impressions">0.0000</td></tr>
-                <tr><td style="padding:6px 0;color:var(--rl-text-muted)">Installs <span style="font-size:10px;opacity:0.6">(×800/1M)</span></td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_installs">0.0000</td></tr>
-                <tr style="border-top:2px solid var(--rl-accent)">
-                  <td style="padding:8px 0 3px;font-weight:700;font-size:13px">Total CC</td>
-                  <td style="text-align:right;font-family:monospace;font-weight:800;color:var(--rl-accent);font-size:14px" id="br_total">0.0000</td>
-                </tr>
-              </table>
+          <div class="breakdown-card">
+            <div class="breakdown-header">📋 Desglose</div>
+            <div class="breakdown-body">
+              <div class="br-row"><span class="br-label">Re-attr <span class="br-rate">×800/1M</span></span><span class="br-val" id="br_reattr">0.0000</span></div>
+              <div class="br-row"><span class="br-label">Re-eng <span class="br-rate">×100/1M</span></span><span class="br-val" id="br_reeng">0.0000</span></div>
+              <div class="br-row"><span class="br-label">Installs <span class="br-rate">×800/1M</span></span><span class="br-val" id="br_installs">0.0000</span></div>
+              <div class="br-row"><span class="br-label">IAEs <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_iae">0.0000</span></div>
+              <div class="br-row"><span class="br-label">Clicks <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_clicks">0.0000</span></div>
+              <div class="br-row"><span class="br-label">Sessions <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_sessions">0.0000</span></div>
+              <div class="br-row"><span class="br-label">Impressions <span class="br-rate">×1/1M</span></span><span class="br-val" id="br_impressions">0.0000</span></div>
+              <div class="br-total-row"><span class="br-total-label">Total CC</span><span class="br-total-val" id="br_total">0.0000</span></div>
             </div>
           </div>
 
-          <div class="cred-group">
-            <div class="cred-group-header"><span>ℹ️</span><span class="cred-group-title">Leyenda de fuentes</span></div>
-            <div class="cred-group-body" style="display:flex;flex-direction:column;gap:8px;padding:12px 16px">
-              <div style="display:flex;align-items:center;gap:8px;font-size:12px">
-                <span class="metric-source src-auto">auto CSV</span>
-                <span style="color:var(--rl-text-secondary)">Valor extraído automáticamente del CSV cargado</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;font-size:12px">
-                <span class="metric-source src-manual">manual</span>
-                <span style="color:var(--rl-text-secondary)">No disponible en CSV — ingresar a mano</span>
-              </div>
-            </div>
+          <div style="margin-top:12px;padding:10px 14px;background:#f5f3fb;border-radius:6px;font-size:11px;color:var(--rl-text-muted)">
+            <span class="src-badge src-auto" style="margin-right:6px">auto CSV</span> Extraído automáticamente<br style="margin-bottom:4px">
+            <span class="src-badge src-manual" style="margin-right:6px;margin-top:6px;display:inline-block">manual</span> Ingresar a mano
           </div>
-
         </div>
       </div>
     </div>
@@ -618,9 +541,9 @@ tr:hover td{background:#faf9ff}
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 // NAVIGATION
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
@@ -632,29 +555,29 @@ function showPage(id, btn) {
   document.getElementById('topbarBadge').textContent  = badges[id];
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 // SHARED STATE
-// ═══════════════════════════════════════════════════════════
-let funnelPeriod = { min: null, max: null };  // set after funnel CSV loaded
+// ═══════════════════════════════════════════════
+let funnelPeriod = { min: null, max: null };
 
 function updatePeriodBar() {
   const bar  = document.getElementById('periodBar');
   const text = document.getElementById('periodText');
   const sub  = document.getElementById('periodSub');
   if (funnelPeriod.min && funnelPeriod.max) {
-    bar.classList.remove('period-missing');
+    bar.className = 'period-bar has-period';
     text.textContent = `Período: ${funnelPeriod.min} → ${funnelPeriod.max}`;
-    sub.textContent  = 'Extraído del CSV del Funnel Validator (Event Time de eventos válidos)';
+    sub.textContent  = 'Extraído de la columna Date del CSV cargado';
   } else {
-    bar.classList.add('period-missing');
+    bar.className = 'period-bar no-period';
     text.textContent = 'Sin período definido';
-    sub.textContent  = 'Cargá el CSV del Funnel Validator (paso 1) para auto-detectar el período';
+    sub.textContent  = 'Cargá el CSV para auto-detectar el período de análisis';
   }
 }
 
-// ═══════════════════════════════════════════════════════════
-// CSV PARSER HELPER
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// CSV PARSER
+// ═══════════════════════════════════════════════
 function parseCSVFile(file, onComplete) {
   const reader = new FileReader();
   reader.onerror = () => alert('No se pudo leer el archivo.');
@@ -665,7 +588,11 @@ function parseCSVFile(file, onComplete) {
     catch(e) { text = new TextDecoder('iso-8859-1').decode(bytes); }
     if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
     const firstLine = text.split(/\r?\n/)[0] || '';
-    const delim = (firstLine.match(/\t/g)||[]).length > (firstLine.match(/,/g)||[]).length ? '\t' : ',';
+    // Detect delimiter: tab > semicolon > comma
+    const tabs   = (firstLine.match(/\t/g)||[]).length;
+    const semis  = (firstLine.match(/;/g)||[]).length;
+    const commas = (firstLine.match(/,/g)||[]).length;
+    const delim  = tabs > semis && tabs > commas ? '\t' : semis > commas ? ';' : ',';
     Papa.parse(text, {
       header: true, skipEmptyLines: true, delimiter: delim,
       transformHeader: h => h.trim(), transform: v => (v||'').trim(),
@@ -679,114 +606,56 @@ function parseCSVFile(file, onComplete) {
 }
 
 function numVal(v) {
-  const n = parseFloat((v||'').toString().replace(/,/g, ''));
+  if (v === null || v === undefined) return 0;
+  const n = parseFloat(String(v).replace(/,/g,'').replace('N/A',''));
   return isNaN(n) ? 0 : n;
 }
 
-// ═══════════════════════════════════════════════════════════
-// CREDITS — PARTNERS REPORT CSV
-// ═══════════════════════════════════════════════════════════
-const csvPartnersInput   = document.getElementById('csvPartnersInput');
-const partnersUploadZone = document.getElementById('partnersUploadZone');
+// ═══════════════════════════════════════════════
+// CREDITS — CSV UPLOAD
+// ═══════════════════════════════════════════════
+const csvCreditsInput   = document.getElementById('csvCreditsInput');
+const creditsUploadZone = document.getElementById('creditsUploadZone');
 
-csvPartnersInput.addEventListener('change', e => { if(e.target.files[0]) processPartnersFile(e.target.files[0]); e.target.value=''; });
-partnersUploadZone.addEventListener('dragover',  e => { e.preventDefault(); partnersUploadZone.classList.add('drag-over'); });
-partnersUploadZone.addEventListener('dragleave', () => partnersUploadZone.classList.remove('drag-over'));
-partnersUploadZone.addEventListener('drop', e => {
-  e.preventDefault(); partnersUploadZone.classList.remove('drag-over');
-  const f = e.dataTransfer.files[0]; if(f) processPartnersFile(f);
+csvCreditsInput.addEventListener('change', e => { if(e.target.files[0]) processCreditsCSV(e.target.files[0]); e.target.value=''; });
+creditsUploadZone.addEventListener('dragover',  e => { e.preventDefault(); creditsUploadZone.classList.add('drag-over'); });
+creditsUploadZone.addEventListener('dragleave', () => creditsUploadZone.classList.remove('drag-over'));
+creditsUploadZone.addEventListener('drop', e => {
+  e.preventDefault(); creditsUploadZone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0]; if(f) processCreditsCSV(f);
 });
 
-function processPartnersFile(file) {
+function processCreditsCSV(file) {
   parseCSVFile(file, rows => {
     const cols = Object.keys(rows[0] || {});
+    const findCol = (...names) => cols.find(c => names.some(n => c.toLowerCase().trim() === n.toLowerCase())) || null;
 
-    // Re-attr / Re-eng from Conversions + Conversion Type
-    const colConv     = cols.find(c => c.toLowerCase() === 'conversions');
-    const colConvType = cols.find(c => c.toLowerCase() === 'conversion type');
+    // Conversion Type + Conversions
+    const colConv     = findCol('conversions');
+    const colConvType = findCol('conversion type');
     let reattr = 0, reeng = 0;
     rows.forEach(r => {
       const t = colConvType ? (r[colConvType]||'').toLowerCase().trim() : '';
       const v = colConv ? numVal(r[colConv]) : 0;
-      if (t === 're-attribution') reattr += v;
-      else if (t === 're-engagement') reeng += v;
+      if      (t === 're-attribution') reattr += v;
+      else if (t === 're-engagement')  reeng  += v;
     });
 
     // Clicks
-    const colClicks = cols.find(c => c.toLowerCase() === 'clicks');
-    const clicks = colClicks ? rows.reduce((s,r) => s + numVal(r[colClicks]), 0) : null;
+    const colClicks = findCol('clicks');
+    const clicks = colClicks ? rows.reduce((s,r) => s + numVal(r[colClicks]), 0) : 0;
 
     // Sessions
-    const colSessions = cols.find(c => c.toLowerCase() === 'sessions');
-    const sessions = colSessions ? rows.reduce((s,r) => s + numVal(r[colSessions]), 0) : null;
+    const colSessions = findCol('sessions');
+    const sessions = colSessions ? rows.reduce((s,r) => s + numVal(r[colSessions]), 0) : 0;
 
-    // IAEs: sum all (Event counter) cols that contain apertura_cuenta_en_linea_no_cliente
+    // IAEs: apertura_cuenta_en_linea_no_cliente (Event counter)
     const iaeCols = cols.filter(c => c.includes('apertura_cuenta_en_linea_no_cliente') && c.includes('(Event counter)'));
-    const iae = iaeCols.length > 0
-      ? iaeCols.reduce((total, col) => total + rows.reduce((s,r) => s + numVal(r[col]), 0), 0)
-      : null;
+    const iae = iaeCols.reduce((total, col) => total + rows.reduce((s,r) => s + numVal(r[col]), 0), 0);
 
-    // Set values
-    setAutoVal('reattr',   reattr,   true);
-    setAutoVal('reeng',    reeng,    true);
-    if (clicks   !== null) setAutoVal('clicks',   clicks,   true);
-    if (sessions !== null) setAutoVal('sessions', sessions, true);
-    if (iae      !== null) setAutoVal('iae',      iae,      true);
-
-    // File bar
-    partnersUploadZone.style.display = 'none';
-    document.getElementById('partnersFileBar').style.display = 'flex';
-    document.getElementById('partnersFileName').textContent = file.name;
-    document.getElementById('partnersFileSummary').textContent =
-      `${rows.length} filas · ${Math.round(reattr).toLocaleString('es-CO')} re-attr · ${Math.round(reeng).toLocaleString('es-CO')} re-eng` +
-      (iae !== null ? ` · ${Math.round(iae).toLocaleString('es-CO')} IAEs` : '');
-
-    calcCredits();
-  });
-}
-
-function resetPartners() {
-  partnersUploadZone.style.display = 'block';
-  document.getElementById('partnersFileBar').style.display = 'none';
-  ['reattr','reeng','clicks','sessions','iae'].forEach(id => clearAutoVal(id));
-  calcCredits();
-}
-
-// ═══════════════════════════════════════════════════════════
-// CREDITS — DAILY REPORT CSV
-// ═══════════════════════════════════════════════════════════
-const csvDailyInput   = document.getElementById('csvDailyInput');
-const dailyUploadZone = document.getElementById('dailyUploadZone');
-
-csvDailyInput.addEventListener('change', e => { if(e.target.files[0]) processDailyFile(e.target.files[0]); e.target.value=''; });
-dailyUploadZone.addEventListener('dragover',  e => { e.preventDefault(); dailyUploadZone.classList.add('drag-over'); });
-dailyUploadZone.addEventListener('dragleave', () => dailyUploadZone.classList.remove('drag-over'));
-dailyUploadZone.addEventListener('drop', e => {
-  e.preventDefault(); dailyUploadZone.classList.remove('drag-over');
-  const f = e.dataTransfer.files[0]; if(f) processDailyFile(f);
-});
-
-function processDailyFile(file) {
-  parseCSVFile(file, rows => {
-    const cols = Object.keys(rows[0] || {});
-
-    // Impressions
-    const colImp = cols.find(c => c.toLowerCase() === 'impressions');
-    if (colImp) {
-      const imp = rows.reduce((s,r) => s + numVal(r[colImp]), 0);
-      setAutoVal('impressions', imp, true);
-    }
-
-    // Installs
-    const colIns = cols.find(c => c.toLowerCase() === 'installs');
-    if (colIns) {
-      const ins = rows.reduce((s,r) => s + numVal(r[colIns]), 0);
-      setAutoVal('installs', ins, true);
-    }
-
-    // Period from Date column (if funnel period not set)
-    const colDate = cols.find(c => c.toLowerCase() === 'date');
-    if (colDate && !funnelPeriod.min) {
+    // Period from Date column
+    const colDate = findCol('date');
+    if (colDate) {
       const dates = rows.map(r => r[colDate]).filter(Boolean).sort();
       if (dates.length) {
         funnelPeriod.min = dates[0];
@@ -795,27 +664,24 @@ function processDailyFile(file) {
       }
     }
 
+    // Set auto values
+    setAutoVal('reattr',   reattr,   true);
+    setAutoVal('reeng',    reeng,    true);
+    setAutoVal('clicks',   clicks,   true);
+    setAutoVal('sessions', sessions, true);
+    setAutoVal('iae',      iae,      true);
+
     // File bar
-    dailyUploadZone.style.display = 'none';
-    document.getElementById('dailyFileBar').style.display = 'flex';
-    document.getElementById('dailyFileName').textContent = file.name;
-    document.getElementById('dailyFileSummary').textContent =
-      `${rows.length} filas` + (colImp ? ` · Impressions OK` : '') + (colIns ? ` · Installs OK` : '');
+    creditsUploadZone.style.display = 'none';
+    document.getElementById('creditsFileBar').style.display = 'flex';
+    document.getElementById('creditsFileName').textContent = file.name;
+    document.getElementById('creditsFileSummary').textContent =
+      `${rows.length} filas · ${Math.round(reattr).toLocaleString('es-CO')} re-attr · ${Math.round(reeng).toLocaleString('es-CO')} re-eng · ${Math.round(iae).toLocaleString('es-CO')} IAEs`;
 
     calcCredits();
   });
 }
 
-function resetDaily() {
-  dailyUploadZone.style.display = 'block';
-  document.getElementById('dailyFileBar').style.display = 'none';
-  ['impressions','installs'].forEach(id => clearAutoVal(id));
-  calcCredits();
-}
-
-// ═══════════════════════════════════════════════════════════
-// CREDITS — AUTO / MANUAL SOURCE HELPERS
-// ═══════════════════════════════════════════════════════════
 function setAutoVal(id, val, isAuto) {
   const inp = document.getElementById('inp_' + id);
   const src = document.getElementById('src_' + id);
@@ -823,77 +689,77 @@ function setAutoVal(id, val, isAuto) {
   inp.value = Math.round(val);
   if (src) {
     src.textContent = isAuto ? 'auto CSV' : 'manual';
-    src.className   = 'metric-source ' + (isAuto ? 'src-auto' : 'src-manual');
+    src.className   = 'src-badge ' + (isAuto ? 'src-auto' : 'src-manual');
   }
 }
 
-function clearAutoVal(id) {
-  const inp = document.getElementById('inp_' + id);
-  const src = document.getElementById('src_' + id);
-  if (inp) inp.value = '';
-  if (src) { src.textContent = 'manual'; src.className = 'metric-source src-manual'; }
+function resetCredits() {
+  ['reattr','reeng','installs','iae','clicks','sessions','impressions'].forEach(id => {
+    const inp = document.getElementById('inp_' + id);
+    const src = document.getElementById('src_' + id);
+    if (inp) inp.value = '';
+    if (src) { src.textContent = 'manual'; src.className = 'src-badge src-manual'; }
+  });
+  creditsUploadZone.style.display = 'block';
+  document.getElementById('creditsFileBar').style.display = 'none';
+  funnelPeriod = { min: null, max: null };
+  updatePeriodBar();
+  calcCredits();
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 // CREDITS — CALCULATE
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function calcCredits() {
   const g   = id => { const v = parseFloat(document.getElementById('inp_'+id).value); return isNaN(v)||v<0 ? 0 : v; };
   const fmt = n => n.toFixed(4);
 
-  const reattr     = g('reattr');
-  const reeng      = g('reeng');
-  const iae        = g('iae');
-  const clicks     = g('clicks');
-  const sessions   = g('sessions');
-  const impressions= g('impressions');
-  const installs   = g('installs');
+  const reattr      = g('reattr');
+  const reeng       = g('reeng');
+  const installs    = g('installs');
+  const iae         = g('iae');
+  const clicks      = g('clicks');
+  const sessions    = g('sessions');
+  const impressions = g('impressions');
 
-  const r_reattr     = reattr      * 800 / 1_000_000;
-  const r_reeng      = reeng       * 100 / 1_000_000;
-  const r_iae        = iae         *   2 / 1_000_000;
-  const r_clicks     = clicks      *   2 / 1_000_000;
-  const r_sessions   = sessions    *   2 / 1_000_000;
-  const r_impressions= impressions *   1 / 1_000_000;
-  const r_installs   = installs    * 800 / 1_000_000;
+  const r_reattr      = reattr      * 800 / 1_000_000;
+  const r_reeng       = reeng       * 100 / 1_000_000;
+  const r_installs    = installs    * 800 / 1_000_000;
+  const r_iae         = iae         *   2 / 1_000_000;
+  const r_clicks      = clicks      *   2 / 1_000_000;
+  const r_sessions    = sessions    *   2 / 1_000_000;
+  const r_impressions = impressions *   1 / 1_000_000;
 
-  const total = r_reattr + r_reeng + r_iae + r_clicks + r_sessions + r_impressions + r_installs;
+  const total = r_reattr + r_reeng + r_installs + r_iae + r_clicks + r_sessions + r_impressions;
 
-  const pairs = [
-    ['reattr',r_reattr],['reeng',r_reeng],['iae',r_iae],
-    ['clicks',r_clicks],['sessions',r_sessions],['impressions',r_impressions],['installs',r_installs]
-  ];
-  pairs.forEach(([id,val]) => {
-    document.getElementById('res_' + id).textContent = fmt(val);
-    document.getElementById('br_'  + id).textContent = fmt(val);
+  [['reattr',r_reattr],['reeng',r_reeng],['installs',r_installs],['iae',r_iae],
+   ['clicks',r_clicks],['sessions',r_sessions],['impressions',r_impressions]].forEach(([id,val]) => {
+    const res = document.getElementById('res_' + id);
+    const br  = document.getElementById('br_'  + id);
+    if (res) res.textContent = fmt(val);
+    if (br)  br.textContent  = fmt(val);
   });
-  document.getElementById('br_total').textContent    = fmt(total);
-  document.getElementById('totalCredits').textContent= fmt(total);
 
-  const fmtN = n => n.toLocaleString('es-CO');
+  document.getElementById('br_total').textContent     = fmt(total);
+  document.getElementById('totalCredits').textContent = fmt(total);
+
+  const fmtN = n => Math.round(n).toLocaleString('es-CO');
   const parts = [];
-  if (reattr)      parts.push(`${fmtN(Math.round(reattr))} re-attr`);
-  if (reeng)       parts.push(`${fmtN(Math.round(reeng))} re-eng`);
-  if (iae)         parts.push(`${fmtN(Math.round(iae))} IAEs`);
-  if (clicks)      parts.push(`${fmtN(Math.round(clicks))} clicks`);
-  if (sessions)    parts.push(`${fmtN(Math.round(sessions))} sessions`);
-  if (impressions) parts.push(`${fmtN(Math.round(impressions))} impressions`);
-  if (installs)    parts.push(`${fmtN(Math.round(installs))} installs`);
+  if (reattr)      parts.push(`${fmtN(reattr)} re-attr`);
+  if (reeng)       parts.push(`${fmtN(reeng)} re-eng`);
+  if (installs)    parts.push(`${fmtN(installs)} installs`);
+  if (iae)         parts.push(`${fmtN(iae)} IAEs`);
+  if (clicks)      parts.push(`${fmtN(clicks)} clicks`);
+  if (sessions)    parts.push(`${fmtN(sessions)} sessions`);
+  if (impressions) parts.push(`${fmtN(impressions)} impressions`);
   document.getElementById('totalCreditsSub').textContent = parts.length
     ? parts.join(' · ')
-    : 'Cargá el Partners Report o ingresá valores manualmente';
+    : 'Cargá el CSV o ingresá valores manualmente';
 }
 
-function resetCredits() {
-  ['reattr','reeng','iae','clicks','sessions','impressions','installs'].forEach(id => clearAutoVal(id));
-  resetPartners();
-  resetDaily();
-  calcCredits();
-}
-
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 // FUNNEL VALIDATOR
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 const STEP_6               = 'apertura_cuenta_en_linea_no_cliente-app_step_6';
 const STEP_1               = 'apertura_cuenta_en_linea_no_cliente-app_step_1';
 const COMPLETED_APROBADO   = 'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado';
@@ -971,32 +837,31 @@ function analyze(rows) {
     const validPrimary = isPrimary==='true'||isPrimary===''||isPrimary==='1';
 
     if (!validCO||!validPrimary) {
-      results.push({id,status:'excl_co',filter:'País/Primary',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',exclusionReason:!validCO?`País no CO (${country})`:'No es primary attribution',completionDate});
+      results.push({id,status:'excl_co',filter:'País/Primary',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',completionDate});
       return;
     }
     if (completionCount>1) {
       const geo=detectGeoJump(evs);
-      results.push({id,status:'excl_dup',filter:`Múltiples completions (${completionCount})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:geo.detail,exclusionReason:`${completionCount} completions`,completionDate});
+      results.push({id,status:'excl_dup',filter:`Múltiples completions (${completionCount})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:geo.detail,completionDate});
       return;
     }
     if (!hasStep6) {
-      results.push({id,status:'excl_step6',filter:'Sin step_6 obligatorio',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',exclusionReason:'Falta step_6',completionDate});
+      results.push({id,status:'excl_step6',filter:'Sin step_6 obligatorio',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',completionDate});
       return;
     }
     const geo=detectGeoJump(evs);
     if (geo.hasJump) {
-      results.push({id,status:'excl_geo',filter:'Salto geográfico <50 min',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:geo.detail,exclusionReason:geo.detail,completionDate});
+      results.push({id,status:'excl_geo',filter:'Salto geográfico <50 min',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:geo.detail,completionDate});
       return;
     }
     if (completionDate) validDates.push(completionDate);
-    results.push({id,status:'clean',filter:'—',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',exclusionReason:'',completionDate});
+    results.push({id,status:'clean',filter:'—',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',completionDate});
   });
 
-  // Set period from valid events
   if (validDates.length) {
     const sorted = validDates.slice().sort();
     funnelPeriod.min = sorted[0];
-    funnelPeriod.max = sorted[sorted.length - 1];
+    funnelPeriod.max = sorted[sorted.length-1];
     updatePeriodBar();
   }
 
@@ -1090,32 +955,28 @@ function renderChart() {
   const dateSet = new Set(clean.map(r => r.completionDate));
   const dates = Array.from(dateSet).sort();
   const byDay = {};
-  dates.forEach(d => { byDay[d] = {libreton:0, nomina:0, other:0, total:0}; });
-  clean.forEach(r => {
-    if (!byDay[r.completionDate]) return;
-    byDay[r.completionDate][r.product]++;
-    byDay[r.completionDate].total++;
-  });
+  dates.forEach(d => { byDay[d] = {libreton:0,nomina:0,other:0,total:0}; });
+  clean.forEach(r => { if(!byDay[r.completionDate]) return; byDay[r.completionDate][r.product]++; byDay[r.completionDate].total++; });
   const totals = dates.map(d => byDay[d].total);
   const maxVal = Math.max(...totals, 1);
   const labels = dates.map(d => { const [y,m,day]=d.split('-'); return `${day}/${m}`; });
-  const BAR_W = Math.max(36, Math.min(64, Math.floor(700/Math.max(dates.length,1))));
+  const BAR_W=Math.max(36,Math.min(64,Math.floor(700/Math.max(dates.length,1))));
   const GAP=Math.max(6,Math.round(BAR_W*0.28)),PAD_L=36,PAD_R=12,PAD_T=20,PAD_B=40,CHART_H=180;
   const totalW=PAD_L+dates.length*(BAR_W+GAP)-GAP+PAD_R;
   const C={libreton:'#7c3aed',nomina:'#2563eb',other:'#d97706',gridLine:'#e4e2ee',labelDk:'#9997b3',totalLbl:'#1a1927'};
   const ticks=[0,Math.ceil(maxVal/2),maxVal];
   let svg=[`<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${CHART_H+PAD_T+PAD_B}" style="font-family:'Inter',sans-serif;display:block">`];
-  ticks.forEach(tick => {
+  ticks.forEach(tick=>{
     const y=PAD_T+CHART_H-Math.round((tick/maxVal)*CHART_H);
     svg.push(`<line x1="${PAD_L}" y1="${y}" x2="${totalW-PAD_R}" y2="${y}" stroke="${C.gridLine}" stroke-width="1"/>`);
     svg.push(`<text x="${PAD_L-5}" y="${y+4}" text-anchor="end" font-size="9" fill="${C.labelDk}">${tick}</text>`);
   });
-  dates.forEach((d,i) => {
+  dates.forEach((d,i)=>{
     const x=PAD_L+i*(BAR_W+GAP);
     const {libreton:lib,nomina:nom,other:oth,total:tot}=byDay[d];
     const hLib=Math.round((lib/maxVal)*CHART_H),hNom=Math.round((nom/maxVal)*CHART_H),hOth=Math.round((oth/maxVal)*CHART_H);
     let yOff=PAD_T+CHART_H;
-    const seg=(h,color)=>{ if(h<=0)return ''; yOff-=h; return `<rect x="${x}" y="${yOff}" width="${BAR_W}" height="${h}" fill="${color}" rx="2"/>`; };
+    const seg=(h,color)=>{if(h<=0)return '';yOff-=h;return `<rect x="${x}" y="${yOff}" width="${BAR_W}" height="${h}" fill="${color}" rx="2"/>`;};
     svg.push(seg(hLib,C.libreton));svg.push(seg(hNom,C.nomina));svg.push(seg(hOth,C.other));
     if(tot>0) svg.push(`<text x="${x+BAR_W/2}" y="${PAD_T+CHART_H-Math.round((tot/maxVal)*CHART_H)-4}" text-anchor="middle" font-size="10" font-weight="700" fill="${C.totalLbl}">${tot}</text>`);
     svg.push(`<text x="${x+BAR_W/2}" y="${PAD_T+CHART_H+16}" text-anchor="middle" font-size="10" fill="${C.labelDk}">${labels[i]}</text>`);
