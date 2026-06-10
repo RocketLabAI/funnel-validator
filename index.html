@@ -3,319 +3,380 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BBVA CO — Funnel Validator + Credits</title>
+<title>BBVA CO — Validator + Credits</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
 :root {
-  --rl-sidebar-bg:#14131a;--rl-sidebar-hover:#1e1d28;--rl-sidebar-active:#252336;
-  --rl-sidebar-text:#9997b3;--rl-sidebar-section:#5a5878;--rl-sidebar-width:220px;
-  --rl-content-bg:#f0eff5;--rl-card-bg:#ffffff;--rl-card-border:#e4e2ee;
-  --rl-card-shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
-  --rl-text-primary:#1a1927;--rl-text-secondary:#6b6887;--rl-text-muted:#9997b3;
-  --rl-accent:#7c3aed;--rl-accent-bg:#f5f3ff;
-  --rl-blue:#2563eb;--rl-blue-bg:#eff6ff;
-  --valid:#059669;--valid-bg:#ecfdf5;
-  --invalid:#dc2626;--invalid-bg:#fef2f2;
-  --warn:#d97706;--warn-bg:#fffbeb;
-  --rl-grad:linear-gradient(135deg,#7A53CA 0%,#6592FF 55%,#72EAE1 100%);
-  --font:'Inter',sans-serif;
+  --sb:#14131a;--sb-h:#1e1d28;--sb-a:#252336;--sb-t:#9997b3;--sb-s:#5a5878;--sb-w:220px;
+  --bg:#f0eff5;--card:#fff;--border:#e4e2ee;--shadow:0 1px 3px rgba(0,0,0,.08);
+  --tx:#1a1927;--tx2:#6b6887;--txm:#9997b3;
+  --ac:#7c3aed;--ac-bg:#f5f3ff;
+  --bl:#2563eb;--bl-bg:#eff6ff;
+  --ok:#059669;--ok-bg:#ecfdf5;
+  --er:#dc2626;--er-bg:#fef2f2;
+  --wn:#d97706;--wn-bg:#fffbeb;
+  --grad:linear-gradient(135deg,#7A53CA 0%,#6592FF 55%,#72EAE1 100%);
+  --f:'Inter',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:var(--font);min-height:100vh;display:flex}
+body{background:var(--bg);color:var(--tx);font-family:var(--f);min-height:100vh;display:flex}
 
-.sidebar{width:var(--rl-sidebar-width);background:var(--rl-sidebar-bg);height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100}
-.sidebar-logo{padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px}
-.sidebar-mark{width:28px;height:28px;background:#fff;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#17191C;flex-shrink:0}
-.sidebar-logo-text{color:#fff;font-size:14px;font-weight:700}
-.sidebar-logo-sub{color:var(--rl-sidebar-text);font-size:10.5px;margin-top:1px}
-.sidebar-section{padding:16px 16px 6px;font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--rl-sidebar-section)}
-.sidebar-item{display:flex;align-items:center;gap:9px;padding:8px 16px;color:var(--rl-sidebar-text);font-size:12.5px;cursor:pointer;transition:background 0.1s,color 0.1s;border:none;background:none;width:100%;text-align:left}
-.sidebar-item:hover{background:var(--rl-sidebar-hover);color:#fff}
-.sidebar-item.active{background:var(--rl-sidebar-active);color:#fff;font-weight:500}
-.si-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+/* SIDEBAR */
+.sb{width:var(--sb-w);background:var(--sb);height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100}
+.sb-logo{padding:16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px}
+.sb-mark{width:28px;height:28px;background:#fff;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#17191C;flex-shrink:0}
+.sb-lt{color:#fff;font-size:14px;font-weight:700}
+.sb-ls{color:var(--sb-t);font-size:10.5px;margin-top:1px}
+.sb-sec{padding:16px 16px 6px;font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--sb-s)}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 16px;color:var(--sb-t);font-size:12.5px;cursor:pointer;transition:background .1s,color .1s;border:none;background:none;width:100%;text-align:left}
+.sb-item:hover{background:var(--sb-h);color:#fff}
+.sb-item.active{background:var(--sb-a);color:#fff;font-weight:500}
+.si{font-size:14px;width:18px;text-align:center;flex-shrink:0}
 
-.app-body{margin-left:var(--rl-sidebar-width);flex:1;display:flex;flex-direction:column;min-height:100vh}
-.grad-bar{height:3px;background:var(--rl-grad)}
-.topbar{background:#fff;border-bottom:1px solid var(--rl-card-border);height:52px;display:flex;align-items:center;padding:0 24px;gap:8px;position:sticky;top:0;z-index:50;flex-shrink:0}
+/* APP */
+.app{margin-left:var(--sb-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.grad-bar{height:3px;background:var(--grad)}
+.topbar{background:#fff;border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 24px;gap:8px;position:sticky;top:0;z-index:50}
 .topbar-sep{flex:1}
-.topbar-badge{font-size:11px;padding:3px 10px;border-radius:4px;font-weight:500;background:var(--rl-accent-bg);color:var(--rl-accent);border:1px solid #ddd6fe}
-.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;background:var(--rl-accent)}
+.tb-badge{font-size:11px;padding:3px 10px;border-radius:4px;font-weight:500;background:var(--ac-bg);color:var(--ac);border:1px solid #ddd6fe}
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;background:var(--ac)}
 .content{padding:24px;flex:1}
 .page{display:none}.page.active{display:block}
-.page-title{font-size:20px;font-weight:700;letter-spacing:-0.4px}
-.page-subtitle{font-size:12.5px;color:var(--rl-text-secondary);margin-top:3px}
-.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
-.section-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.7px;color:var(--rl-text-muted);margin-bottom:8px;margin-top:20px}
-.section-label:first-child{margin-top:0}
-.card{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow)}
+.pg-title{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.pg-sub{font-size:12.5px;color:var(--tx2);margin-top:3px}
+.pg-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.sec-lbl{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--txm);margin-bottom:8px;margin-top:20px}
+.sec-lbl:first-child{margin-top:0}
 
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow)}
 .kpi-grid{display:grid;gap:12px;margin-bottom:20px}
 .kpi-grid-3{grid-template-columns:repeat(3,1fr)}
-.kpi-card{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);padding:14px 16px;border-top:3px solid transparent}
-.kpi-card.ap{border-top-color:var(--rl-accent)}.kpi-card.ab{border-top-color:var(--rl-blue)}.kpi-card.aw{border-top-color:var(--warn)}
-.kpi-label{font-size:10.5px;font-weight:600;color:var(--rl-text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px}
-.kpi-value{font-size:24px;font-weight:700;line-height:1;letter-spacing:-0.5px}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);padding:14px 16px;border-top:3px solid transparent}
+.kpi-card.ap{border-top-color:var(--ac)}.kpi-card.ab{border-top-color:var(--bl)}.kpi-card.aw{border-top-color:var(--wn)}
+.kpi-lbl{font-size:10.5px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.kpi-val{font-size:24px;font-weight:700;line-height:1;letter-spacing:-.5px}
 
-.funnel-steps{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-bottom:20px;background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden}
-.funnel-step{padding:14px 16px;border-right:1px solid var(--rl-card-border);position:relative}
-.funnel-step:last-child{border-right:none}
-.funnel-step-num{font-size:10px;font-weight:600;color:var(--rl-text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px}
-.funnel-step-value{font-size:22px;font-weight:700;letter-spacing:-0.5px;line-height:1}
-.funnel-step-label{font-size:10.5px;color:var(--rl-text-muted);margin-top:3px}
-.funnel-step-excl{font-size:10px;color:var(--invalid);margin-top:2px;font-weight:500}
-.funnel-step.step-start .funnel-step-value{color:var(--rl-text-primary)}
-.funnel-step.step-filter .funnel-step-value{color:var(--warn)}
-.funnel-step.step-end .funnel-step-value{color:var(--valid)}
-.funnel-arrow{position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:16px;height:16px;background:var(--rl-content-bg);border:1px solid var(--rl-card-border);border-radius:2px;z-index:2;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--rl-text-muted)}
+/* FUNNEL */
+.funnel{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-bottom:20px;background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);overflow:hidden}
+.fs{padding:14px 16px;border-right:1px solid var(--border);position:relative}
+.fs:last-child{border-right:none}
+.fs-n{font-size:10px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px}
+.fs-v{font-size:22px;font-weight:700;letter-spacing:-.5px;line-height:1}
+.fs-l{font-size:10.5px;color:var(--txm);margin-top:3px}
+.fs-x{font-size:10px;color:var(--er);margin-top:2px;font-weight:500}
+.fs.s0 .fs-v{color:var(--tx)}.fs.sf .fs-v{color:var(--wn)}.fs.se .fs-v{color:var(--ok)}
+.fa{position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:16px;height:16px;background:var(--bg);border:1px solid var(--border);border-radius:2px;z-index:2;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--txm)}
 
-.table-wrap{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden;margin-bottom:14px}
-.table-scroll{overflow-x:auto;max-height:480px;overflow-y:auto}
+/* TABLE */
+.tw{background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+.ts{overflow-x:auto;max-height:480px;overflow-y:auto}
 table{width:100%;border-collapse:collapse}
 thead{position:sticky;top:0;z-index:2}
-th{background:#f0eff5;padding:9px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--rl-text-muted);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--rl-card-border);white-space:nowrap}
-td{padding:9px 14px;border-bottom:1px solid #f5f3fb;font-size:12px;color:var(--rl-text-primary);vertical-align:middle}
+th{background:#f0eff5;padding:9px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid #f5f3fb;font-size:12px;vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#faf9ff}
 
+/* BADGES */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap}
-.bv{background:var(--valid-bg);color:var(--valid)}.bw{background:var(--warn-bg);color:var(--warn)}.bi{background:var(--invalid-bg);color:var(--invalid)}
-.bp{background:var(--rl-accent-bg);color:var(--rl-accent)}.bb{background:var(--rl-blue-bg);color:var(--rl-blue)}.bn{background:#e0e7ff;color:#3730a3}
+.bv{background:var(--ok-bg);color:var(--ok)}.bw{background:var(--wn-bg);color:var(--wn)}.bi{background:var(--er-bg);color:var(--er)}
+.bp{background:var(--ac-bg);color:var(--ac)}.bb{background:var(--bl-bg);color:var(--bl)}.bn{background:#e0e7ff;color:#3730a3}
 
-.btn{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:opacity 0.15s}
-.btn:hover{opacity:0.85}
-.btn-primary{background:var(--rl-accent);color:#fff}
-.btn-secondary{background:#fff;color:var(--rl-text-secondary);border:1px solid var(--rl-card-border)}
+/* BTNS */
+.btn{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--f);transition:opacity .15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{opacity:.85}
+.btn-primary{background:var(--ac);color:#fff}
+.btn-secondary{background:#fff;color:var(--tx2);border:1px solid var(--border)}
+.btn-success{background:var(--ok);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
 
+/* FILTERS */
 .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.filter-tabs{display:flex;gap:3px;background:#f0eff5;border-radius:6px;padding:3px}
-.tab{padding:4px 11px;border-radius:4px;font-size:11.5px;font-weight:500;background:transparent;color:var(--rl-text-secondary);border:none;cursor:pointer;font-family:var(--font);transition:all 0.1s}
-.tab.active{background:#fff;color:var(--rl-text-primary);box-shadow:0 1px 2px rgba(0,0,0,0.08)}
-.filter-sep{width:1px;background:var(--rl-card-border);align-self:stretch;margin:0 4px}
+.ftabs{display:flex;gap:3px;background:#f0eff5;border-radius:6px;padding:3px}
+.tab{padding:4px 11px;border-radius:4px;font-size:11.5px;font-weight:500;background:transparent;color:var(--tx2);border:none;cursor:pointer;font-family:var(--f);transition:all .1s}
+.tab.active{background:#fff;color:var(--tx);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.fsep{width:1px;background:var(--border);align-self:stretch;margin:0 4px}
 
-.upload-zone{border:1.5px dashed var(--rl-card-border);border-radius:8px;padding:36px;text-align:center;cursor:pointer;background:#faf9ff;transition:all 0.18s}
-.upload-zone:hover,.upload-zone.drag-over{border-color:var(--rl-accent);background:var(--rl-accent-bg)}
-.upload-zone h2{font-size:15px;font-weight:600;margin-bottom:5px}
-.upload-zone p{font-size:12.5px;color:var(--rl-text-secondary)}
-.upload-hint{margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:monospace;color:var(--rl-text-muted);background:#fff;border:1px solid var(--rl-card-border);padding:5px 14px;border-radius:20px}
+/* UPLOAD */
+.uzone{border:1.5px dashed var(--border);border-radius:8px;padding:28px;text-align:center;cursor:pointer;background:#faf9ff;transition:all .18s}
+.uzone:hover,.uzone.drag-over{border-color:var(--ac);background:var(--ac-bg)}
+.uzone h2{font-size:14px;font-weight:600;margin-bottom:4px}
+.uzone p{font-size:12px;color:var(--tx2)}
+.uhint{margin-top:10px;display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-family:monospace;color:var(--txm);background:#fff;border:1px solid var(--border);padding:4px 12px;border-radius:20px}
+.upload-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
 
+/* FILE BAR */
+.fbar{display:flex;align-items:center;justify-content:space-between;background:var(--ok-bg);border:1px solid #a7f3d0;border-radius:6px;padding:10px 14px;margin-bottom:0}
+
+/* MSGS */
 .msg{padding:10px 14px;border-radius:6px;font-size:12.5px;margin-bottom:12px;display:none}
-.msg-error{background:var(--invalid-bg);border:1px solid #fecaca;color:var(--invalid)}
-.msg-info{background:var(--rl-blue-bg);border:1px solid #bfdbfe;color:var(--rl-blue)}
+.msg-err{background:var(--er-bg);border:1px solid #fecaca;color:var(--er)}
+.msg-info{background:var(--bl-bg);border:1px solid #bfdbfe;color:var(--bl)}
 
-.criteria-info{background:#f0eff5;border:1px solid var(--rl-card-border);border-radius:6px;padding:10px 14px;font-size:11.5px;color:var(--rl-text-secondary);line-height:1.7;margin-bottom:16px}
-.criteria-info strong{color:var(--rl-text-primary)}
+.criteria{background:#f0eff5;border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:11.5px;color:var(--tx2);line-height:1.7;margin-bottom:16px}
+.criteria strong{color:var(--tx)}
 .export-row{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}
 
-.file-bar{display:flex;align-items:center;justify-content:space-between;background:var(--valid-bg);border:1px solid #a7f3d0;border-radius:6px;padding:10px 14px;margin-bottom:16px}
-
-/* ── CREDITS ── */
-.credits-layout{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
-
+/* CREDITS */
+.cr-layout{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
 .period-bar{display:flex;align-items:center;gap:10px;border-radius:6px;padding:10px 14px;margin-bottom:16px;font-size:12px}
-.period-bar.has-period{background:var(--rl-accent-bg);border:1px solid #ddd6fe}
-.period-bar.has-period strong{color:var(--rl-accent)}
-.period-bar.no-period{background:var(--warn-bg);border:1px solid #fde68a}
-.period-bar.no-period strong{color:var(--warn)}
-
-.metric-block{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden;margin-bottom:12px}
-.metric-block-header{padding:10px 16px;border-bottom:1px solid var(--rl-card-border);display:flex;align-items:center;gap:8px;background:#fafafa}
-.metric-block-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--rl-text-muted);flex:1}
-.rate-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--rl-accent-bg);color:var(--rl-accent);border:1px solid #e9d5ff;white-space:nowrap}
-.metric-row{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid #f5f3fb}
-.metric-row:last-child{border-bottom:none}
-.metric-label{font-size:12.5px;font-weight:500}
-.metric-sub{font-size:10.5px;color:var(--rl-text-muted);margin-top:2px}
-.src-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap}
-.src-auto{background:#dcfce7;color:#166534}
-.src-manual{background:#fef9c3;color:#854d0e}
-.metric-input{width:120px;padding:6px 10px;border-radius:6px;border:1px solid var(--rl-card-border);font-size:12.5px;font-family:monospace;color:var(--rl-text-primary);background:#fff;text-align:right}
-.metric-input:focus{outline:none;border-color:var(--rl-accent);box-shadow:0 0 0 2px rgba(124,58,237,0.1)}
-.metric-cc{width:80px;padding:6px 10px;border-radius:6px;border:1px solid #ddd6fe;font-size:12.5px;font-family:monospace;font-weight:700;text-align:right;background:var(--rl-accent-bg);color:var(--rl-accent)}
-
+.period-bar.has{background:var(--ac-bg);border:1px solid #ddd6fe}
+.period-bar.has strong{color:var(--ac)}
+.period-bar.no{background:var(--wn-bg);border:1px solid #fde68a}
+.period-bar.no strong{color:var(--wn)}
+.mblock{background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}
+.mblock-hdr{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:#fafafa}
+.mblock-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--txm);flex:1}
+.rate-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--ac-bg);color:var(--ac);border:1px solid #e9d5ff;white-space:nowrap}
+.mrow{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid #f5f3fb}
+.mrow:last-child{border-bottom:none}
+.mlbl{font-size:12.5px;font-weight:500}
+.msub{font-size:10.5px;color:var(--txm);margin-top:2px}
+.src{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.src-a{background:#dcfce7;color:#166534}
+.src-m{background:#fef9c3;color:#854d0e}
+.minput{width:120px;padding:6px 10px;border-radius:6px;border:1px solid var(--border);font-size:12.5px;font-family:monospace;color:var(--tx);background:#fff;text-align:right}
+.minput:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 2px rgba(124,58,237,.1)}
+.mcc{width:80px;padding:6px 10px;border-radius:6px;border:1px solid #ddd6fe;font-size:12.5px;font-family:monospace;font-weight:700;text-align:right;background:var(--ac-bg);color:var(--ac)}
 .total-card{background:linear-gradient(135deg,#f5f3ff,#eef2ff);border:1px solid #ddd6fe;border-radius:8px;padding:20px;margin-bottom:12px}
-.total-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--rl-accent);margin-bottom:8px}
-.total-value{font-size:40px;font-weight:800;color:var(--rl-accent);letter-spacing:-1.5px;font-family:monospace;line-height:1}
-.total-sub{font-size:11px;color:var(--rl-text-muted);margin-top:6px;line-height:1.5}
-
-.breakdown-card{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden}
-.breakdown-header{padding:10px 16px;border-bottom:1px solid var(--rl-card-border);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--rl-text-muted);background:#fafafa}
-.breakdown-body{padding:4px 16px 8px}
+.total-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--ac);margin-bottom:8px}
+.total-val{font-size:40px;font-weight:800;color:var(--ac);letter-spacing:-1.5px;font-family:monospace;line-height:1}
+.total-sub{font-size:11px;color:var(--txm);margin-top:6px;line-height:1.5}
+.bd-card{background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);overflow:hidden}
+.bd-hdr{padding:10px 16px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--txm);background:#fafafa}
+.bd-body{padding:4px 16px 8px}
 .br-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f5f3fb;font-size:12px}
 .br-row:last-child{border-bottom:none}
-.br-label{color:var(--rl-text-secondary)}
-.br-rate{font-size:10px;color:var(--rl-text-muted);margin-left:4px}
-.br-val{font-family:monospace;font-weight:600;color:var(--rl-text-primary)}
-.br-total-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0 4px;border-top:2px solid var(--rl-accent);margin-top:4px}
-.br-total-label{font-size:13px;font-weight:700}
-.br-total-val{font-family:monospace;font-weight:800;color:var(--rl-accent);font-size:15px}
+.br-lbl{color:var(--tx2)}
+.br-rate{font-size:10px;color:var(--txm);margin-left:4px}
+.br-val{font-family:monospace;font-weight:600;color:var(--tx)}
+.br-tot{display:flex;justify-content:space-between;align-items:center;padding:8px 0 4px;border-top:2px solid var(--ac);margin-top:4px}
+.br-tot-lbl{font-size:13px;font-weight:700}
+.br-tot-val{font-family:monospace;font-weight:800;color:var(--ac);font-size:15px}
 
-.ref-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px}
-.ref-table th{background:#f5f3fb;padding:7px 12px;text-align:left;font-weight:600;color:var(--rl-text-muted);text-transform:uppercase;font-size:10px;letter-spacing:0.5px;border-bottom:1px solid var(--rl-card-border)}
-.ref-table td{padding:7px 12px;border-bottom:1px solid #f5f3fb;color:var(--rl-text-primary)}
-.ref-table tr:last-child td{border-bottom:none}
-.ref-table tr.hi td{background:var(--rl-accent-bg);font-weight:600}
+/* LOOKER STATUS */
+.looker-status{border-radius:8px;padding:14px 16px;font-size:12.5px;line-height:1.7;margin-top:16px}
+.looker-ok{background:var(--ok-bg);border:1px solid #a7f3d0;color:var(--ok)}
+.looker-err{background:var(--er-bg);border:1px solid #fecaca;color:var(--er)}
+.progress-bar{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.progress-fill{height:100%;background:var(--ac);border-radius:2px;transition:width .3s}
 
 @media(max-width:960px){
-  .funnel-steps{grid-template-columns:repeat(3,1fr)}
-  .kpi-grid-3,.credits-layout{grid-template-columns:1fr}
+  .funnel,.kpi-grid-3,.cr-layout,.upload-grid{grid-template-columns:1fr}
+  .funnel{grid-template-columns:repeat(3,1fr)}
 }
 </style>
 </head>
 <body>
 
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <div class="sidebar-mark">R/</div>
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="sb-mark">R/</div>
     <div>
-      <div class="sidebar-logo-text">RocketLab</div>
-      <div class="sidebar-logo-sub">BBVA Colombia</div>
+      <div class="sb-lt">RocketLab</div>
+      <div class="sb-ls">BBVA Colombia</div>
     </div>
   </div>
-  <div class="sidebar-section">Herramientas</div>
-  <button class="sidebar-item active" onclick="showPage('validator',this)">
-    <span class="si-icon">🔍</span> Funnel Validator
+  <div class="sb-sec">Herramientas</div>
+  <button class="sb-item active" onclick="showPage('upload',this)">
+    <span class="si">📂</span> Cargar Archivos
   </button>
-  <button class="sidebar-item" onclick="showPage('credits',this)">
-    <span class="si-icon">💎</span> Calculadora de Créditos
+  <button class="sb-item" onclick="showPage('funnel',this)">
+    <span class="si">🔍</span> Resultados Funnel
   </button>
-  <button class="sidebar-item" onclick="showPage('looker',this)">
-    <span class="si-icon">📊</span> Exportar a Looker
+  <button class="sb-item" onclick="showPage('credits',this)">
+    <span class="si">💎</span> Calculadora Créditos
   </button>
 </aside>
 
-<div class="app-body">
+<div class="app">
   <div class="grad-bar"></div>
   <div class="topbar">
-    <span style="font-size:12px;color:var(--rl-text-muted)">BBVA CO</span>
-    <span style="font-size:12px;color:var(--rl-text-muted)"> / </span>
-    <span style="font-size:12px;font-weight:500" id="topbarActive">Funnel Validator</span>
+    <span style="font-size:12px;color:var(--txm)">BBVA CO</span>
+    <span style="font-size:12px;color:var(--txm)"> / </span>
+    <span style="font-size:12px;font-weight:500" id="topbarActive">Cargar Archivos</span>
     <div class="topbar-sep"></div>
-    <span class="topbar-badge" id="topbarBadge">step_6 + completed_aprobado</span>
+    <span class="tb-badge" id="topbarBadge">RTG · UA · Partners</span>
     <div class="avatar">RL</div>
   </div>
 
   <div class="content">
 
-    <!-- ═══ FUNNEL VALIDATOR ═══ -->
-    <div class="page active" id="page-validator">
-      <div class="page-header">
+    <!-- ══════ CARGAR ARCHIVOS ══════ -->
+    <div class="page active" id="page-upload">
+      <div class="pg-header">
         <div>
-          <div class="page-title">Funnel Validator</div>
-          <div class="page-subtitle">Validación de apertura de cuenta · BBVA Colombia</div>
+          <div class="pg-title">Cargar Archivos</div>
+          <div class="pg-sub">Subí los tres archivos y procesá todo junto · BBVA Colombia</div>
         </div>
-        <button class="btn btn-primary" onclick="document.getElementById('csvInput').click()">+ Cargar archivo</button>
+        <button class="btn btn-success" id="btnProcess" onclick="processAll()" disabled>⚡ Procesar todo</button>
       </div>
 
-      <div class="msg msg-error" id="msgError"></div>
-      <div class="msg msg-info"  id="msgInfo"></div>
-
-      <div class="criteria-info">
-        <strong>Lógica de filtros (secuencial):</strong><br>
-        &nbsp;1. Base: IDs que tienen <strong>completed_aprobado</strong> (o completed_contratado)<br>
-        &nbsp;2. <strong>País CO + Is Primary</strong> → excluye Non-CO y no-primary<br>
-        &nbsp;3. <strong>Múltiples completions</strong> → más de 1 completion por AppsFlyer ID → excluido<br>
-        &nbsp;4. <strong>Sin step_6</strong> → step_6 obligatorio, step_1 no obligatorio<br>
-        &nbsp;5. <strong>Salto geográfico &lt;50 min</strong> → cambio de ciudad entre eventos consecutivos en menos de 50 min → excluido
+      <div class="criteria">
+        <strong>Qué hace cada archivo:</strong><br>
+        &nbsp;📱 <strong>Raw RTG</strong> → Funnel Validator (filtra altas válidas) + cuenta todas las filas como IAEs RTG<br>
+        &nbsp;📲 <strong>Raw UA</strong> → cuenta todas las filas como IAEs UA<br>
+        &nbsp;📊 <strong>Partners Report</strong> → re-attr, re-eng, clicks, sessions por día<br>
+        &nbsp;✅ Al procesar, los resultados se actualizan en Funnel y Créditos, y se escriben en el Sheet de Looker
       </div>
+
+      <div class="upload-grid">
+        <!-- RTG -->
+        <div>
+          <div class="sec-lbl">📱 Raw Data RTG <span style="color:var(--er)">*</span></div>
+          <div id="rtgBar" style="display:none" class="fbar" style="margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span>✅</span>
+              <div>
+                <div style="font-size:12px;font-weight:600;color:var(--ok)" id="rtgName">—</div>
+                <div style="font-size:10.5px;color:var(--txm)" id="rtgSummary">—</div>
+              </div>
+            </div>
+            <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('rtg')">✕</button>
+          </div>
+          <div class="uzone" id="rtgZone" style="padding:20px">
+            <input type="file" id="rtgInput" accept=".csv,.tsv,.txt" style="display:none">
+            <div style="font-size:24px;margin-bottom:6px">📱</div>
+            <h2>Raw Data RTG</h2>
+            <p>Non-organic in-app events · RTG</p>
+            <div class="uhint">AppsFlyer ID · Event Name · Event Time · Country</div>
+          </div>
+        </div>
+
+        <!-- UA -->
+        <div>
+          <div class="sec-lbl">📲 Raw Data UA <span style="color:var(--er)">*</span></div>
+          <div id="uaBar" style="display:none" class="fbar">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span>✅</span>
+              <div>
+                <div style="font-size:12px;font-weight:600;color:var(--ok)" id="uaName">—</div>
+                <div style="font-size:10.5px;color:var(--txm)" id="uaSummary">—</div>
+              </div>
+            </div>
+            <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('ua')">✕</button>
+          </div>
+          <div class="uzone" id="uaZone" style="padding:20px">
+            <input type="file" id="uaInput" accept=".csv,.tsv,.txt" style="display:none">
+            <div style="font-size:24px;margin-bottom:6px">📲</div>
+            <h2>Raw Data UA</h2>
+            <p>Non-organic in-app events · UA</p>
+            <div class="uhint">AppsFlyer ID · Event Name · Event Time</div>
+          </div>
+        </div>
+
+        <!-- Partners -->
+        <div>
+          <div class="sec-lbl">📊 Partners Report <span style="color:var(--er)">*</span></div>
+          <div id="partnersBar" style="display:none" class="fbar">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span>✅</span>
+              <div>
+                <div style="font-size:12px;font-weight:600;color:var(--ok)" id="partnersName">—</div>
+                <div style="font-size:10.5px;color:var(--txm)" id="partnersSummary">—</div>
+              </div>
+            </div>
+            <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('partners')">✕</button>
+          </div>
+          <div class="uzone" id="partnersZone" style="padding:20px">
+            <input type="file" id="partnersInput" accept=".csv,.tsv,.txt" style="display:none">
+            <div style="font-size:24px;margin-bottom:6px">📊</div>
+            <h2>Partners Report</h2>
+            <p>Re-attr · Re-eng · Clicks · Sessions</p>
+            <div class="uhint">Date · Clicks · Conversions · Conversion Type · Sessions</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Process status -->
+      <div id="processStatus" style="display:none"></div>
+
+      <!-- Looker link -->
+      <div style="background:var(--ac-bg);border:1px solid #ddd6fe;border-radius:8px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+        <div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--ac)">📊 Google Sheet → Looker Studio</div>
+          <div style="font-size:11px;color:var(--txm);margin-top:2px">Los datos se escriben automáticamente al procesar</div>
+        </div>
+        <a href="https://docs.google.com/spreadsheets/d/1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI/edit" target="_blank" class="btn btn-secondary" style="font-size:11.5px">🔗 Abrir Sheet</a>
+      </div>
+    </div>
+
+    <!-- ══════ RESULTADOS FUNNEL ══════ -->
+    <div class="page" id="page-funnel">
+      <div class="pg-header">
+        <div>
+          <div class="pg-title">Resultados Funnel</div>
+          <div class="pg-sub">Validación de apertura de cuenta · BBVA Colombia</div>
+        </div>
+      </div>
+
+      <div class="msg msg-err" id="msgError"></div>
+      <div class="msg msg-info" id="msgInfo"></div>
 
       <div id="funnelSection" style="display:none">
-        <div class="section-label">Waterfall de filtros</div>
-        <div class="funnel-steps">
-          <div class="funnel-step step-start">
-            <div class="funnel-step-num">Base</div>
-            <div class="funnel-step-value" id="fS0">—</div>
-            <div class="funnel-step-label">Altas brutas únicas</div>
-            <div class="funnel-arrow">›</div>
-          </div>
-          <div class="funnel-step step-filter">
-            <div class="funnel-step-num">Filtro 1</div>
-            <div class="funnel-step-value" id="fS1">—</div>
-            <div class="funnel-step-label">Tras excluir País/Primary</div>
-            <div class="funnel-step-excl" id="fE1">—</div>
-            <div class="funnel-arrow">›</div>
-          </div>
-          <div class="funnel-step step-filter">
-            <div class="funnel-step-num">Filtro 2</div>
-            <div class="funnel-step-value" id="fS2">—</div>
-            <div class="funnel-step-label">Tras excluir múlt. completions</div>
-            <div class="funnel-step-excl" id="fE2">—</div>
-            <div class="funnel-arrow">›</div>
-          </div>
-          <div class="funnel-step step-filter">
-            <div class="funnel-step-num">Filtro 3</div>
-            <div class="funnel-step-value" id="fS3">—</div>
-            <div class="funnel-step-label">Tras excluir sin step_6</div>
-            <div class="funnel-step-excl" id="fE3">—</div>
-            <div class="funnel-arrow">›</div>
-          </div>
-          <div class="funnel-step step-filter">
-            <div class="funnel-step-num">Filtro 4</div>
-            <div class="funnel-step-value" id="fS4">—</div>
-            <div class="funnel-step-label">Tras excluir salto geo</div>
-            <div class="funnel-step-excl" id="fE4">—</div>
-            <div class="funnel-arrow">›</div>
-          </div>
-          <div class="funnel-step step-end">
-            <div class="funnel-step-num">Válidas</div>
-            <div class="funnel-step-value" id="fValid">—</div>
-            <div class="funnel-step-label">Altas válidas / pagables</div>
-          </div>
+        <div class="sec-lbl">Waterfall de filtros</div>
+        <div class="funnel">
+          <div class="fs s0"><div class="fs-n">Base</div><div class="fs-v" id="fS0">—</div><div class="fs-l">Altas brutas</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 1</div><div class="fs-v" id="fS1">—</div><div class="fs-l">Tras País/Primary</div><div class="fs-x" id="fE1">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 2</div><div class="fs-v" id="fS2">—</div><div class="fs-l">Tras múlt. comp.</div><div class="fs-x" id="fE2">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 3</div><div class="fs-v" id="fS3">—</div><div class="fs-l">Tras sin step_6</div><div class="fs-x" id="fE3">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 4</div><div class="fs-v" id="fS4">—</div><div class="fs-l">Tras salto geo</div><div class="fs-x" id="fE4">—</div><div class="fa">›</div></div>
+          <div class="fs se"><div class="fs-n">Válidas</div><div class="fs-v" id="fValid">—</div><div class="fs-l">Altas pagables</div></div>
         </div>
 
-        <div class="section-label">Por producto (solo facturables)</div>
+        <div class="sec-lbl">Por producto (facturables)</div>
         <div class="kpi-grid kpi-grid-3">
-          <div class="kpi-card ap"><div class="kpi-label">Libreton / Cuenta Digital</div><div class="kpi-value" style="color:var(--rl-accent)" id="sLibreton">0</div></div>
-          <div class="kpi-card ab"><div class="kpi-label">Nómina</div><div class="kpi-value" style="color:var(--rl-blue)" id="sNomina">0</div></div>
-          <div class="kpi-card aw"><div class="kpi-label">Otro / Sin clasificar</div><div class="kpi-value" style="color:var(--warn)" id="sOther">0</div></div>
+          <div class="kpi-card ap"><div class="kpi-lbl">Libreton / Cuenta Digital</div><div class="kpi-val" style="color:var(--ac)" id="sLibreton">0</div></div>
+          <div class="kpi-card ab"><div class="kpi-lbl">Nómina</div><div class="kpi-val" style="color:var(--bl)" id="sNomina">0</div></div>
+          <div class="kpi-card aw"><div class="kpi-lbl">Otro / Sin clasificar</div><div class="kpi-val" style="color:var(--wn)" id="sOther">0</div></div>
         </div>
 
-        <div class="section-label">Altas válidas por día</div>
+        <div class="sec-lbl">Altas válidas por día</div>
         <div class="card" style="padding:20px 20px 14px;margin-bottom:20px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
-            <div style="font-size:12px;color:var(--rl-text-muted)">Fecha del evento <code>completed_aprobado</code> · solo facturables</div>
-            <div style="display:flex;gap:10px;font-size:11px;color:var(--rl-text-muted)">
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--rl-accent);display:inline-block"></span>Libreton</span>
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--rl-blue);display:inline-block"></span>Nómina</span>
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--warn);display:inline-block"></span>Otro</span>
+            <div style="font-size:12px;color:var(--txm)">Fecha del evento <code>completed_aprobado</code> · solo facturables</div>
+            <div style="display:flex;gap:10px;font-size:11px;color:var(--txm)">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--ac);display:inline-block"></span>Libreton</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--bl);display:inline-block"></span>Nómina</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--wn);display:inline-block"></span>Otro</span>
             </div>
           </div>
           <div id="dailyChart" style="width:100%;overflow-x:auto"></div>
         </div>
       </div>
 
-      <div class="upload-zone" id="uploadZone">
-        <input type="file" accept=".csv,.tsv,.txt" id="csvInput" style="display:none"/>
+      <div id="noFunnelData" style="background:#f0eff5;border:1px solid var(--border);border-radius:8px;padding:32px;text-align:center;color:var(--txm)">
         <div style="font-size:32px;margin-bottom:10px">📂</div>
-        <h2>Arrastrá el CSV de AF aquí</h2>
-        <p>Raw data export de AppsFlyer (non-organic in-app events)</p>
-        <div class="upload-hint">AppsFlyer ID · Event Name · Event Time · City · Country Code · Is Primary Attribution · Media Source</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:6px">Sin datos cargados</div>
+        <div style="font-size:12.5px">Cargá el Raw RTG en la página "Cargar Archivos" para ver los resultados del funnel</div>
       </div>
 
       <div id="resultsSection" style="display:none;margin-top:4px">
         <div class="filter-bar">
-          <div class="filter-tabs" id="statusTabs">
+          <div class="ftabs" id="statusTabs">
             <button class="tab active" onclick="setFilter('all','status',this)">Todos</button>
             <button class="tab" onclick="setFilter('clean','status',this)">✅ Facturables</button>
             <button class="tab" onclick="setFilter('excl_co','status',this)">🌐 País/Primary</button>
-            <button class="tab" onclick="setFilter('excl_dup','status',this)">🔁 Múlt. completions</button>
+            <button class="tab" onclick="setFilter('excl_dup','status',this)">🔁 Múlt. comp.</button>
             <button class="tab" onclick="setFilter('excl_step6','status',this)">⚠ Sin step_6</button>
             <button class="tab" onclick="setFilter('excl_geo','status',this)">📍 Salto geo</button>
           </div>
-          <div class="filter-sep"></div>
-          <div class="filter-tabs" id="productTabs">
+          <div class="fsep"></div>
+          <div class="ftabs" id="productTabs">
             <button class="tab active" onclick="setFilter('all','product',this)">Todos</button>
             <button class="tab" onclick="setFilter('libreton','product',this)">📘 Libreton</button>
             <button class="tab" onclick="setFilter('nomina','product',this)">💼 Nómina</button>
             <button class="tab" onclick="setFilter('other','product',this)">❓ Otro</button>
           </div>
         </div>
-        <div class="table-wrap">
-          <div class="table-scroll">
+        <div class="tw">
+          <div class="ts">
             <table>
               <thead><tr>
-                <th>AppsFlyer ID</th><th>Estado</th><th>Filtro aplicado</th><th>Producto</th>
-                <th>País</th><th>Media Source</th><th>Completions</th><th>step_6</th><th>Detalle geo</th><th>af_content</th>
+                <th>AppsFlyer ID</th><th>Estado</th><th>Filtro</th><th>Producto</th>
+                <th>País</th><th>Media Source</th><th>Completions</th><th>step_6</th><th>Geo</th><th>af_content</th>
               </tr></thead>
               <tbody id="tableBody"></tbody>
             </table>
@@ -325,310 +386,161 @@ tr:hover td{background:#faf9ff}
           <button class="btn btn-secondary" onclick="exportCSV('all')">Exportar Todos</button>
           <button class="btn btn-secondary" onclick="exportCSV('libreton')">Exportar Libreton</button>
           <button class="btn btn-secondary" onclick="exportCSV('nomina')">Exportar Nómina</button>
-          <button class="btn btn-primary"   onclick="exportCSV('clean')">Exportar Facturables</button>
+          <button class="btn btn-primary" onclick="exportCSV('clean')">Exportar Facturables</button>
         </div>
       </div>
     </div>
 
-    <!-- ═══ CALCULADORA DE CRÉDITOS ═══ -->
+    <!-- ══════ CALCULADORA CRÉDITOS ══════ -->
     <div class="page" id="page-credits">
-      <div class="page-header">
+      <div class="pg-header">
         <div>
-          <div class="page-title">Calculadora de Créditos</div>
-          <div class="page-subtitle">AppsFlyer Capacity Credits · BBVA Colombia</div>
+          <div class="pg-title">Calculadora de Créditos</div>
+          <div class="pg-sub">AppsFlyer Capacity Credits · BBVA Colombia</div>
         </div>
-        <button class="btn btn-secondary" onclick="resetCredits()">Limpiar</button>
+        <button class="btn btn-secondary" onclick="resetCredits()">Limpiar manual</button>
       </div>
 
-      <!-- Período -->
-      <div id="periodBar" class="period-bar no-period">
+      <div id="periodBar" class="period-bar no">
         <span>📅</span>
         <div>
           <strong id="periodText">Sin período definido</strong>
-          <span id="periodSub" style="font-size:11px;color:var(--rl-text-muted);margin-left:8px">Cargá el CSV para auto-detectar el período de análisis</span>
+          <span id="periodSub" style="font-size:11px;color:var(--txm);margin-left:8px">Cargá los archivos para auto-detectar el período</span>
         </div>
       </div>
 
-      <!-- Tasas de referencia -->
-      <div class="criteria-info" style="margin-bottom:16px">
+      <div class="criteria" style="margin-bottom:16px">
         <strong>Tasas oficiales — Capacity Credit Consumption Metrics:</strong>
-        <table class="ref-table">
-          <thead><tr><th>Tipo</th><th>Tasa</th><th>Fuente</th></tr></thead>
+        <table style="width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px">
+          <thead><tr style="background:#f5f3fb"><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--txm);text-transform:uppercase;border-bottom:1px solid var(--border)">Tipo</th><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--txm);text-transform:uppercase;border-bottom:1px solid var(--border)">Tasa</th><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--txm);text-transform:uppercase;border-bottom:1px solid var(--border)">Fuente</th></tr></thead>
           <tbody>
-            <tr class="hi"><td>Clicks</td><td><strong>2 CC / 1,000,000</strong></td><td>CSV — columna <code>Clicks</code></td></tr>
-            <tr class="hi"><td>Re-attributions</td><td><strong>80 CC / 100,000</strong></td><td>CSV — <code>Conversions</code> donde <code>Conversion Type = re-attribution</code></td></tr>
-            <tr class="hi"><td>Re-engagements</td><td><strong>10 CC / 100,000</strong></td><td>CSV — <code>Conversions</code> donde <code>Conversion Type = re-engagement</code></td></tr>
-            <tr class="hi"><td>In-App Events (IAEs)</td><td><strong>2 CC / 1,000,000</strong></td><td>CSV — columnas <code>apertura_cuenta_en_linea_no_cliente (Event counter)</code></td></tr>
-            <tr class="hi"><td>Sessions</td><td><strong>2 CC / 1,000,000</strong></td><td>CSV — columna <code>Sessions</code></td></tr>
+            <tr style="background:var(--ac-bg)"><td style="padding:7px 12px;font-weight:600">Clicks</td><td style="padding:7px 12px;font-weight:600">2 CC / 1M</td><td style="padding:7px 12px">Partners Report CSV</td></tr>
+            <tr style="background:var(--ac-bg)"><td style="padding:7px 12px;font-weight:600">Re-attributions</td><td style="padding:7px 12px;font-weight:600">80 CC / 100k</td><td style="padding:7px 12px">Partners Report CSV</td></tr>
+            <tr style="background:var(--ac-bg)"><td style="padding:7px 12px;font-weight:600">Re-engagements</td><td style="padding:7px 12px;font-weight:600">10 CC / 100k</td><td style="padding:7px 12px">Partners Report CSV</td></tr>
+            <tr style="background:var(--ac-bg)"><td style="padding:7px 12px;font-weight:600">IAEs (RTG + UA)</td><td style="padding:7px 12px;font-weight:600">2 CC / 1M</td><td style="padding:7px 12px">Raw RTG + Raw UA (todas las filas)</td></tr>
+            <tr style="background:var(--ac-bg)"><td style="padding:7px 12px;font-weight:600">Sessions</td><td style="padding:7px 12px;font-weight:600">2 CC / 1M</td><td style="padding:7px 12px">Partners Report CSV</td></tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Upload único -->
-      <div id="creditsFileBar" style="display:none" class="file-bar">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:18px">✅</span>
-          <div>
-            <div style="font-size:12.5px;font-weight:600;color:var(--valid)" id="creditsFileName">—</div>
-            <div style="font-size:11px;color:var(--rl-text-muted)" id="creditsFileSummary">—</div>
-          </div>
-        </div>
-        <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetCredits()">Cambiar archivo</button>
-      </div>
-
-      <div class="upload-zone" id="creditsUploadZone" style="margin-bottom:20px" onclick="document.getElementById('csvCreditsInput').click()">
-        <input type="file" id="csvCreditsInput" accept=".csv,.tsv,.txt" style="display:none">
-        <div style="font-size:32px;margin-bottom:10px">📊</div>
-        <h2>Arrastrá el CSV aquí</h2>
-        <p>partners-report · separado por coma o punto y coma</p>
-        <div class="upload-hint">Date · Clicks · Conversions · Conversion Type · Sessions · apertura_cuenta Event counters</div>
-      </div>
-
-      <!-- Layout métricas + total -->
-      <div class="credits-layout">
-
-        <!-- Columna izquierda: métricas -->
+      <div class="cr-layout">
         <div>
-          <!-- Re-attributions -->
-          <div class="metric-block">
-            <div class="metric-block-header">
-              <span>🔄</span><span class="metric-block-title">Re-attributions</span>
-              <span class="rate-badge">80 CC / 100k</span>
-            </div>
-            <div class="metric-row">
-              <div>
-                <div class="metric-label">Re-attributions</div>
-                <div class="metric-sub">Suma de <code>Conversions</code> donde <code>Conversion Type = re-attribution</code></div>
-              </div>
-              <span class="src-badge src-manual" id="src_reattr">manual</span>
-              <input class="metric-input" type="number" id="inp_reattr" min="0" placeholder="0" oninput="calcCredits()">
-              <div class="metric-cc" id="res_reattr">0.0000</div>
+          <div class="mblock">
+            <div class="mblock-hdr"><span>🔄</span><span class="mblock-title">Re-attributions</span><span class="rate-badge">80 CC / 100k</span></div>
+            <div class="mrow">
+              <div><div class="mlbl">Re-attributions</div><div class="msub">Partners Report · <code>Conversion Type = re-attribution</code></div></div>
+              <span class="src src-m" id="src_reattr">manual</span>
+              <input class="minput" type="number" id="inp_reattr" min="0" placeholder="0" oninput="calcCredits()">
+              <div class="mcc" id="res_reattr">0.0000</div>
             </div>
           </div>
-
-          <!-- Re-engagements -->
-          <div class="metric-block">
-            <div class="metric-block-header">
-              <span>🔁</span><span class="metric-block-title">Re-engagements</span>
-              <span class="rate-badge">10 CC / 100k</span>
-            </div>
-            <div class="metric-row">
-              <div>
-                <div class="metric-label">Re-engagements</div>
-                <div class="metric-sub">Suma de <code>Conversions</code> donde <code>Conversion Type = re-engagement</code></div>
-              </div>
-              <span class="src-badge src-manual" id="src_reeng">manual</span>
-              <input class="metric-input" type="number" id="inp_reeng" min="0" placeholder="0" oninput="calcCredits()">
-              <div class="metric-cc" id="res_reeng">0.0000</div>
+          <div class="mblock">
+            <div class="mblock-hdr"><span>🔁</span><span class="mblock-title">Re-engagements</span><span class="rate-badge">10 CC / 100k</span></div>
+            <div class="mrow">
+              <div><div class="mlbl">Re-engagements</div><div class="msub">Partners Report · <code>Conversion Type = re-engagement</code></div></div>
+              <span class="src src-m" id="src_reeng">manual</span>
+              <input class="minput" type="number" id="inp_reeng" min="0" placeholder="0" oninput="calcCredits()">
+              <div class="mcc" id="res_reeng">0.0000</div>
             </div>
           </div>
-
-          <!-- IAEs -->
-          <div class="metric-block">
-            <div class="metric-block-header">
-              <span>📱</span><span class="metric-block-title">In-App Events (IAEs)</span>
-              <span class="rate-badge">2 CC / 1M</span>
-            </div>
-            <div class="metric-row">
+          <div class="mblock">
+            <div class="mblock-hdr"><span>📱</span><span class="mblock-title">In-App Events (IAEs)</span><span class="rate-badge">2 CC / 1M</span></div>
+            <div class="mrow">
               <div>
-                <div class="metric-label">IAEs apertura_cuenta_en_linea_no_cliente</div>
-                <div class="metric-sub">Suma de todas las columnas <code>(Event counter)</code> del evento principal</div>
+                <div class="mlbl">IAEs totales (RTG + UA)</div>
+                <div class="msub">Todas las filas del Raw RTG + todas las filas del Raw UA</div>
+                <div id="iaeBreakdown" style="font-size:10.5px;color:var(--ac);margin-top:3px;display:none"></div>
               </div>
-              <span class="src-badge src-manual" id="src_iae">manual</span>
-              <input class="metric-input" type="number" id="inp_iae" min="0" placeholder="0" oninput="calcCredits()">
-              <div class="metric-cc" id="res_iae">0.0000</div>
+              <span class="src src-m" id="src_iae">manual</span>
+              <input class="minput" type="number" id="inp_iae" min="0" placeholder="0" oninput="calcCredits()">
+              <div class="mcc" id="res_iae">0.0000</div>
             </div>
           </div>
-
-          <!-- Clicks -->
-          <div class="metric-block">
-            <div class="metric-block-header">
-              <span>🖱️</span><span class="metric-block-title">Clicks</span>
-              <span class="rate-badge">2 CC / 1M</span>
-            </div>
-            <div class="metric-row">
-              <div>
-                <div class="metric-label">Clicks</div>
-                <div class="metric-sub">Columna <code>Clicks</code> del CSV</div>
-              </div>
-              <span class="src-badge src-manual" id="src_clicks">manual</span>
-              <input class="metric-input" type="number" id="inp_clicks" min="0" placeholder="0" oninput="calcCredits()">
-              <div class="metric-cc" id="res_clicks">0.0000</div>
+          <div class="mblock">
+            <div class="mblock-hdr"><span>🖱️</span><span class="mblock-title">Clicks</span><span class="rate-badge">2 CC / 1M</span></div>
+            <div class="mrow">
+              <div><div class="mlbl">Clicks</div><div class="msub">Columna <code>Clicks</code> del Partners Report</div></div>
+              <span class="src src-m" id="src_clicks">manual</span>
+              <input class="minput" type="number" id="inp_clicks" min="0" placeholder="0" oninput="calcCredits()">
+              <div class="mcc" id="res_clicks">0.0000</div>
             </div>
           </div>
-
-          <!-- Sessions -->
-          <div class="metric-block">
-            <div class="metric-block-header">
-              <span>📲</span><span class="metric-block-title">Sessions</span>
-              <span class="rate-badge">2 CC / 1M</span>
-            </div>
-            <div class="metric-row">
-              <div>
-                <div class="metric-label">Sessions</div>
-                <div class="metric-sub">Columna <code>Sessions</code> del CSV</div>
-              </div>
-              <span class="src-badge src-manual" id="src_sessions">manual</span>
-              <input class="metric-input" type="number" id="inp_sessions" min="0" placeholder="0" oninput="calcCredits()">
-              <div class="metric-cc" id="res_sessions">0.0000</div>
+          <div class="mblock">
+            <div class="mblock-hdr"><span>📲</span><span class="mblock-title">Sessions</span><span class="rate-badge">2 CC / 1M</span></div>
+            <div class="mrow">
+              <div><div class="mlbl">Sessions</div><div class="msub">Columna <code>Sessions</code> del Partners Report</div></div>
+              <span class="src src-m" id="src_sessions">manual</span>
+              <input class="minput" type="number" id="inp_sessions" min="0" placeholder="0" oninput="calcCredits()">
+              <div class="mcc" id="res_sessions">0.0000</div>
             </div>
           </div>
         </div>
-
-        <!-- Columna derecha: total + desglose -->
         <div>
           <div class="total-card">
-            <div class="total-label">💎 Total Capacity Credits</div>
-            <div class="total-value" id="totalCredits">0.0000</div>
-            <div class="total-sub" id="totalCreditsSub">Cargá el CSV o ingresá valores manualmente</div>
+            <div class="total-lbl">💎 Total Capacity Credits</div>
+            <div class="total-val" id="totalCredits">0.0000</div>
+            <div class="total-sub" id="totalCreditsSub">Cargá los archivos para auto-completar</div>
           </div>
-
-          <div class="breakdown-card">
-            <div class="breakdown-header">📋 Desglose</div>
-            <div class="breakdown-body">
-              <div class="br-row"><span class="br-label">Re-attr <span class="br-rate">×800/1M</span></span><span class="br-val" id="br_reattr">0.0000</span></div>
-              <div class="br-row"><span class="br-label">Re-eng <span class="br-rate">×100/1M</span></span><span class="br-val" id="br_reeng">0.0000</span></div>
-              <div class="br-row"><span class="br-label">IAEs <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_iae">0.0000</span></div>
-              <div class="br-row"><span class="br-label">Clicks <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_clicks">0.0000</span></div>
-              <div class="br-row"><span class="br-label">Sessions <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_sessions">0.0000</span></div>
-              <div class="br-total-row"><span class="br-total-label">Total CC</span><span class="br-total-val" id="br_total">0.0000</span></div>
+          <div class="bd-card">
+            <div class="bd-hdr">📋 Desglose</div>
+            <div class="bd-body">
+              <div class="br-row"><span class="br-lbl">Re-attr <span class="br-rate">×800/1M</span></span><span class="br-val" id="br_reattr">0.0000</span></div>
+              <div class="br-row"><span class="br-lbl">Re-eng <span class="br-rate">×100/1M</span></span><span class="br-val" id="br_reeng">0.0000</span></div>
+              <div class="br-row"><span class="br-lbl">IAEs <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_iae">0.0000</span></div>
+              <div class="br-row"><span class="br-lbl">Clicks <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_clicks">0.0000</span></div>
+              <div class="br-row"><span class="br-lbl">Sessions <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_sessions">0.0000</span></div>
+              <div class="br-tot"><span class="br-tot-lbl">Total CC</span><span class="br-tot-val" id="br_total">0.0000</span></div>
             </div>
           </div>
-
-          <div style="margin-top:12px;padding:10px 14px;background:#f5f3fb;border-radius:6px;font-size:11px;color:var(--rl-text-muted)">
-            <span class="src-badge src-auto" style="margin-right:6px">auto CSV</span> Extraído automáticamente<br style="margin-bottom:4px">
-            <span class="src-badge src-manual" style="margin-right:6px;margin-top:6px;display:inline-block">manual</span> Ingresar a mano
+          <div style="margin-top:12px;padding:10px 14px;background:#f5f3fb;border-radius:6px;font-size:11px;color:var(--txm)">
+            <span class="src src-a" style="margin-right:6px">auto</span> Extraído de los archivos cargados<br>
+            <span class="src src-m" style="margin-right:6px;margin-top:4px;display:inline-block">manual</span> Ingresar a mano
           </div>
         </div>
       </div>
     </div>
 
-
-    <!-- ═══ EXPORTAR A LOOKER ═══ -->
-    <div class="page" id="page-looker">
-      <div class="page-header">
-        <div>
-          <div class="page-title">Exportar a Looker</div>
-          <div class="page-subtitle">Escribe datos diarios en Google Sheet → Looker Studio · BBVA Colombia</div>
-        </div>
-        <a href="https://docs.google.com/spreadsheets/d/1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI/edit" 
-           target="_blank" class="btn btn-secondary" style="text-decoration:none">🔗 Abrir Sheet</a>
-      </div>
-
-      <div class="criteria-info">
-        <strong>Flujo de carga:</strong><br>
-        &nbsp;1. <strong>Raw RTG</strong> → corre el Funnel Validator + cuenta IAEs RTG<br>
-        &nbsp;2. <strong>Raw UA</strong> → cuenta IAEs UA<br>
-        &nbsp;3. <strong>Partners Report</strong> → re-attr, re-eng, clicks, sessions<br>
-        &nbsp;4. Hacé click en <strong>Escribir en Looker Sheet</strong>
-      </div>
-
-      <!-- RTG Upload -->
-      <div class="section-label">1. Raw Data RTG</div>
-      <div id="rtgFileBar" style="display:none" class="file-bar">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:18px">✅</span>
-          <div>
-            <div style="font-size:12.5px;font-weight:600;color:var(--valid)" id="rtgFileName">—</div>
-            <div style="font-size:11px;color:var(--rl-text-muted)" id="rtgFileSummary">—</div>
-          </div>
-        </div>
-        <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetRTG()">Cambiar</button>
-      </div>
-      <div class="upload-zone" id="rtgUploadZone" style="margin-bottom:16px">
-        <input type="file" id="rtgInput" accept=".csv,.tsv,.txt" style="display:none">
-        <div style="font-size:28px;margin-bottom:8px">📱</div>
-        <h2>Raw Data RTG</h2>
-        <p>Non-organic in-app events · RTG</p>
-        <div class="upload-hint">AppsFlyer ID · Event Name · Event Time · Country Code · Is Primary</div>
-      </div>
-
-      <!-- UA Upload -->
-      <div class="section-label">2. Raw Data UA</div>
-      <div id="uaFileBar" style="display:none" class="file-bar">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:18px">✅</span>
-          <div>
-            <div style="font-size:12.5px;font-weight:600;color:var(--valid)" id="uaFileName">—</div>
-            <div style="font-size:11px;color:var(--rl-text-muted)" id="uaFileSummary">—</div>
-          </div>
-        </div>
-        <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetUA()">Cambiar</button>
-      </div>
-      <div class="upload-zone" id="uaUploadZone" style="margin-bottom:16px">
-        <input type="file" id="uaInput" accept=".csv,.tsv,.txt" style="display:none">
-        <div style="font-size:28px;margin-bottom:8px">📲</div>
-        <h2>Raw Data UA</h2>
-        <p>Non-organic in-app events · UA</p>
-        <div class="upload-hint">AppsFlyer ID · Event Name · Event Time</div>
-      </div>
-
-      <!-- Partners Report -->
-      <div class="section-label">3. Partners Report</div>
-      <div id="creditsFileBar2" style="display:none" class="file-bar">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:18px">✅</span>
-          <div>
-            <div style="font-size:12.5px;font-weight:600;color:var(--valid)" id="creditsFileName2">—</div>
-            <div style="font-size:11px;color:var(--rl-text-muted)" id="creditsFileSummary2">—</div>
-          </div>
-        </div>
-        <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetPartners()">Cambiar</button>
-      </div>
-      <div class="upload-zone" id="partnersUploadZone" style="margin-bottom:20px">
-        <input type="file" id="partnersInput" accept=".csv,.tsv,.txt" style="display:none">
-        <div style="font-size:28px;margin-bottom:8px">📊</div>
-        <h2>Partners Report</h2>
-        <p>Re-attr · Re-eng · Clicks · Sessions · Fechas</p>
-        <div class="upload-hint">Date · Clicks · Conversions · Conversion Type · Sessions</div>
-      </div>
-
-      <!-- IAE Summary -->
-      <div id="iaeBreakdown" style="display:none;background:var(--rl-accent-bg);border:1px solid #ddd6fe;border-radius:6px;padding:9px 14px;font-size:12px;color:var(--rl-accent);margin-bottom:16px;font-weight:600"></div>
-
-      <!-- Write button -->
-      <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px">
-        <button class="btn btn-primary" id="btnWriteLooker" onclick="writeToLooker()">📤 Escribir en Looker Sheet</button>
-        <span style="font-size:11.5px;color:var(--rl-text-muted)">Escribe en ambas hojas: <code>eventos_validos</code> y <code>creditos</code></span>
-      </div>
-      <div id="lookerStatus"></div>
-    </div>
   </div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════
+const LOOKER_ID  = '1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI';
+const CC_RATES   = { reattr:800/1e6, reeng:100/1e6, iae:2/1e6, clicks:2/1e6, sessions:2/1e6 };
+
+const STEP_6               = 'apertura_cuenta_en_linea_no_cliente-app_step_6';
+const STEP_1               = 'apertura_cuenta_en_linea_no_cliente-app_step_1';
+const COMPLETED_APROBADO   = 'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado';
+const COMPLETED_CONTRATADO = 'apertura_cuenta_en_linea_no_cliente-app_completed_contratado';
+const COMPLETION_EVENTS    = [COMPLETED_APROBADO, COMPLETED_CONTRATADO];
+const KNOWN_STEPS          = [STEP_1, STEP_6, COMPLETED_APROBADO, COMPLETED_CONTRATADO];
+const GEO_MIN              = 50;
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let rtgRows      = null;
+let uaRows       = null;
+let partnerRows  = null;
+let allResults   = [];
+let funnelPeriod = { min:null, max:null };
+let activeStatus = 'all';
+let activeProduct= 'all';
+
+// ═══════════════════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════════════════
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
   btn.classList.add('active');
-  const names  = { validator:'Funnel Validator', credits:'Calculadora de Créditos', looker:'Exportar a Looker' };
-  const badges = { validator:'step_6 + completed_aprobado', credits:'Capacity Credits', looker:'Sheet + Looker Studio' };
+  const names  = { upload:'Cargar Archivos', funnel:'Resultados Funnel', credits:'Calculadora Créditos' };
+  const badges = { upload:'RTG · UA · Partners', funnel:'step_6 + completed_aprobado', credits:'Capacity Credits' };
   document.getElementById('topbarActive').textContent = names[id];
   document.getElementById('topbarBadge').textContent  = badges[id];
-}
-
-// ═══════════════════════════════════════════════
-// SHARED STATE
-// ═══════════════════════════════════════════════
-let funnelPeriod = { min: null, max: null };
-
-function updatePeriodBar() {
-  const bar  = document.getElementById('periodBar');
-  const text = document.getElementById('periodText');
-  const sub  = document.getElementById('periodSub');
-  if (funnelPeriod.min && funnelPeriod.max) {
-    bar.className = 'period-bar has-period';
-    text.textContent = `Período: ${funnelPeriod.min} → ${funnelPeriod.max}`;
-    sub.textContent  = 'Extraído de la columna Date del CSV cargado';
-  } else {
-    bar.className = 'period-bar no-period';
-    text.textContent = 'Sin período definido';
-    sub.textContent  = 'Cargá el CSV para auto-detectar el período de análisis';
-  }
 }
 
 // ═══════════════════════════════════════════════
@@ -640,734 +552,492 @@ function parseCSVFile(file, onComplete) {
   reader.onload = evt => {
     let text;
     const bytes = new Uint8Array(evt.target.result);
-    try { text = new TextDecoder('utf-8', { fatal: true }).decode(bytes); }
+    try { text = new TextDecoder('utf-8',{fatal:true}).decode(bytes); }
     catch(e) { text = new TextDecoder('iso-8859-1').decode(bytes); }
-    if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
-    const firstLine = text.split(/\r?\n/)[0] || '';
-    // Detect delimiter: tab > semicolon > comma
-    const tabs   = (firstLine.match(/\t/g)||[]).length;
-    const semis  = (firstLine.match(/;/g)||[]).length;
-    const commas = (firstLine.match(/,/g)||[]).length;
-    const delim  = tabs > semis && tabs > commas ? '\t' : semis > commas ? ';' : ',';
-    Papa.parse(text, {
-      header: true, skipEmptyLines: true, delimiter: delim,
-      transformHeader: h => h.trim(), transform: v => (v||'').trim(),
-      complete: r => {
-        if (!r.data || !r.data.length) { alert('Archivo vacío.'); return; }
-        onComplete(r.data);
-      }
+    if (text.charCodeAt(0)===0xFEFF) text=text.slice(1);
+    const fl = text.split(/\r?\n/)[0]||'';
+    const tabs=(fl.match(/\t/g)||[]).length, semis=(fl.match(/;/g)||[]).length, commas=(fl.match(/,/g)||[]).length;
+    const delim = tabs>semis&&tabs>commas?'\t':semis>commas?';':',';
+    Papa.parse(text,{header:true,skipEmptyLines:true,delimiter:delim,
+      transformHeader:h=>h.trim(),transform:v=>(v||'').trim(),
+      complete:r=>{if(!r.data||!r.data.length){alert('Archivo vacío.');return;}onComplete(r.data);}
     });
   };
   reader.readAsArrayBuffer(file);
 }
 
 function numVal(v) {
-  if (v === null || v === undefined) return 0;
-  const n = parseFloat(String(v).replace(/,/g,'').replace('N/A',''));
-  return isNaN(n) ? 0 : n;
+  if(v===null||v===undefined) return 0;
+  const n=parseFloat(String(v).replace(/,/g,'').replace('N/A',''));
+  return isNaN(n)?0:n;
 }
 
 // ═══════════════════════════════════════════════
-// CREDITS — CSV UPLOAD
+// FILE UPLOADS SETUP
 // ═══════════════════════════════════════════════
-const csvCreditsInput   = document.getElementById('csvCreditsInput');
-const creditsUploadZone = document.getElementById('creditsUploadZone');
+function setupUpload(zoneId, inputId, onFile) {
+  const zone  = document.getElementById(zoneId);
+  const input = document.getElementById(inputId);
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', e=>{e.preventDefault();zone.classList.add('drag-over');});
+  zone.addEventListener('dragleave', ()=>zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e=>{e.preventDefault();zone.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)onFile(f);});
+  input.addEventListener('change', e=>{if(e.target.files[0])onFile(e.target.files[0]);e.target.value='';});
+}
 
-csvCreditsInput.addEventListener('change', e => { if(e.target.files[0]) processCreditsCSV(e.target.files[0]); e.target.value=''; });
-creditsUploadZone.addEventListener('dragover',  e => { e.preventDefault(); creditsUploadZone.classList.add('drag-over'); });
-creditsUploadZone.addEventListener('dragleave', () => creditsUploadZone.classList.remove('drag-over'));
-creditsUploadZone.addEventListener('drop', e => {
-  e.preventDefault(); creditsUploadZone.classList.remove('drag-over');
-  const f = e.dataTransfer.files[0]; if(f) processCreditsCSV(f);
+function showFileBar(type, name, summary) {
+  document.getElementById(type+'Zone').style.display='none';
+  document.getElementById(type+'Bar').style.display='flex';
+  document.getElementById(type+'Name').textContent=name;
+  document.getElementById(type+'Summary').textContent=summary;
+  checkProcessBtn();
+}
+
+function resetFile(type) {
+  if(type==='rtg')      { rtgRows=null; }
+  if(type==='ua')       { uaRows=null; }
+  if(type==='partners') { partnerRows=null; }
+  document.getElementById(type+'Zone').style.display='block';
+  document.getElementById(type+'Bar').style.display='none';
+  checkProcessBtn();
+}
+
+function checkProcessBtn() {
+  document.getElementById('btnProcess').disabled = !(rtgRows && uaRows && partnerRows);
+}
+
+// RTG
+setupUpload('rtgZone','rtgInput', file => {
+  parseCSVFile(file, rows => {
+    rtgRows = rows;
+    showFileBar('rtg', file.name, `${rows.length.toLocaleString('es-CO')} filas (IAEs RTG)`);
+  });
 });
 
-function processCreditsCSV(file) {
+// UA
+setupUpload('uaZone','uaInput', file => {
   parseCSVFile(file, rows => {
-    const cols = Object.keys(rows[0] || {});
-    const findCol = (...names) => cols.find(c => names.some(n => c.toLowerCase().trim() === n.toLowerCase())) || null;
+    uaRows = rows;
+    showFileBar('ua', file.name, `${rows.length.toLocaleString('es-CO')} filas (IAEs UA)`);
+  });
+});
 
-    // Conversion Type + Conversions
-    const colConv     = findCol('conversions');
-    const colConvType = findCol('conversion type');
-    let reattr = 0, reeng = 0;
-    rows.forEach(r => {
-      const t = colConvType ? (r[colConvType]||'').toLowerCase().trim() : '';
-      const v = colConv ? numVal(r[colConv]) : 0;
-      if      (t === 're-attribution') reattr += v;
-      else if (t === 're-engagement')  reeng  += v;
+// Partners
+setupUpload('partnersZone','partnersInput', file => {
+  parseCSVFile(file, rows => {
+    partnerRows = rows;
+    const cols=Object.keys(rows[0]||{});
+    const fc=(...ns)=>cols.find(c=>ns.some(n=>c.toLowerCase().trim()===n.toLowerCase()))||null;
+    const colConv=fc('conversions'), colConvType=fc('conversion type');
+    let reattr=0,reeng=0;
+    rows.forEach(r=>{
+      const t=colConvType?(r[colConvType]||'').toLowerCase().trim():'';
+      const v=colConv?numVal(r[colConv]):0;
+      if(t==='re-attribution')reattr+=v;
+      else if(t==='re-engagement')reeng+=v;
     });
-
-    // Clicks
-    const colClicks = findCol('clicks');
-    const clicks = colClicks ? rows.reduce((s,r) => s + numVal(r[colClicks]), 0) : 0;
-
-    // Sessions
-    const colSessions = findCol('sessions');
-    const sessions = colSessions ? rows.reduce((s,r) => s + numVal(r[colSessions]), 0) : 0;
-
-
-
-    // Period from Date column
-    const colDate = findCol('date');
-    if (colDate) {
-      const dates = rows.map(r => r[colDate]).filter(Boolean).sort();
-      if (dates.length) {
-        funnelPeriod.min = dates[0];
-        funnelPeriod.max = dates[dates.length - 1];
-        updatePeriodBar();
-      }
-    }
-
-    // Set auto values
-    setAutoVal('reattr',   reattr,   true);
-    setAutoVal('reeng',    reeng,    true);
-    setAutoVal('clicks',   clicks,   true);
-    setAutoVal('sessions', sessions, true);
-
-    // File bar
-    creditsUploadZone.style.display = 'none';
-    document.getElementById('creditsFileBar').style.display = 'flex';
-    document.getElementById('creditsFileName').textContent = file.name;
-    document.getElementById('creditsFileSummary').textContent =
-      `${rows.length} filas · ${Math.round(reattr).toLocaleString('es-CO')} re-attr · ${Math.round(reeng).toLocaleString('es-CO')} re-eng`;
-
-    calcCredits();
+    showFileBar('partners', file.name, `${rows.length.toLocaleString('es-CO')} filas · ${Math.round(reattr).toLocaleString('es-CO')} re-attr · ${Math.round(reeng).toLocaleString('es-CO')} re-eng`);
   });
-}
+});
 
-function setAutoVal(id, val, isAuto) {
-  const inp = document.getElementById('inp_' + id);
-  const src = document.getElementById('src_' + id);
-  if (!inp) return;
-  inp.value = Math.round(val);
-  if (src) {
-    src.textContent = isAuto ? 'auto CSV' : 'manual';
-    src.className   = 'src-badge ' + (isAuto ? 'src-auto' : 'src-manual');
+// ═══════════════════════════════════════════════
+// PROCESS ALL
+// ═══════════════════════════════════════════════
+async function processAll() {
+  const btn = document.getElementById('btnProcess');
+  btn.disabled = true;
+  btn.textContent = '⏳ Procesando...';
+  showProcessStatus('loading','⏳ Procesando archivos...',0);
+
+  // Step 1: Funnel from RTG
+  showProcessStatus('loading','🔍 Analizando funnel (RTG)...',20);
+  await sleep(10);
+  analyze(rtgRows);
+
+  // Step 2: Credits from all files
+  showProcessStatus('loading','💎 Calculando créditos...',50);
+  await sleep(10);
+  buildCredits();
+
+  // Step 3: Write to Looker Sheet
+  showProcessStatus('loading','📤 Escribiendo en Google Sheet...',75);
+  await sleep(10);
+  const writeResult = await writeToLooker();
+
+  // Done
+  if (writeResult.ok) {
+    showProcessStatus('ok',
+      `✅ <strong>Todo procesado correctamente</strong><br>
+      <small style="color:var(--txm)">
+        ${allResults.filter(r=>r.status==='clean').length} altas válidas · 
+        IAEs: ${(rtgRows.length+uaRows.length).toLocaleString('es-CO')} ·
+        ${writeResult.msg}<br>
+        <a href="https://docs.google.com/spreadsheets/d/${LOOKER_ID}/edit" target="_blank" style="color:var(--ac)">Ver Sheet →</a>
+      </small>`, 100);
+  } else {
+    showProcessStatus('warn',
+      `⚠️ <strong>Procesado con advertencias</strong><br>
+      <small style="color:var(--txm)">${writeResult.msg}</small>`, 100);
   }
+
+  btn.disabled = false;
+  btn.textContent = '⚡ Procesar todo';
 }
 
-function resetCredits() {
-  ['reattr','reeng','iae','clicks','sessions'].forEach(id => {
-    const inp = document.getElementById('inp_' + id);
-    const src = document.getElementById('src_' + id);
-    if (inp) inp.value = '';
-    if (src) { src.textContent = 'manual'; src.className = 'src-badge src-manual'; }
-  });
-  creditsUploadZone.style.display = 'block';
-  document.getElementById('creditsFileBar').style.display = 'none';
-  funnelPeriod = { min: null, max: null };
-  updatePeriodBar();
+function showProcessStatus(type, html, pct) {
+  const el = document.getElementById('processStatus');
+  el.style.display = 'block';
+  const colors = { loading:'var(--bl-bg)', ok:'var(--ok-bg)', warn:'var(--wn-bg)', err:'var(--er-bg)' };
+  const borders = { loading:'#bfdbfe', ok:'#a7f3d0', warn:'#fde68a', err:'#fecaca' };
+  el.innerHTML = `
+    <div style="background:${colors[type]};border:1px solid ${borders[type]};border-radius:8px;padding:12px 16px;font-size:12.5px">
+      ${html}
+      ${pct<100 ? `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>` : ''}
+    </div>`;
+}
+
+function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
+
+// ═══════════════════════════════════════════════
+// BUILD CREDITS FROM ALL FILES
+// ═══════════════════════════════════════════════
+function buildCredits() {
+  const iaeRTG = rtgRows ? rtgRows.length : 0;
+  const iaeUA  = uaRows  ? uaRows.length  : 0;
+  const total  = iaeRTG + iaeUA;
+
+  // Partners: re-attr, re-eng, clicks, sessions
+  let reattr=0, reeng=0, clicks=0, sessions=0;
+  let minDate=null, maxDate=null;
+
+  if (partnerRows) {
+    const cols=Object.keys(partnerRows[0]||{});
+    const fc=(...ns)=>cols.find(c=>ns.some(n=>c.toLowerCase().trim()===n.toLowerCase()))||null;
+    const colConv=fc('conversions'), colConvType=fc('conversion type');
+    const colClicks=fc('clicks'), colSessions=fc('sessions'), colDate=fc('date');
+
+    partnerRows.forEach(r=>{
+      const t=colConvType?(r[colConvType]||'').toLowerCase().trim():'';
+      const v=colConv?numVal(r[colConv]):0;
+      if(t==='re-attribution')reattr+=v;
+      else if(t==='re-engagement')reeng+=v;
+      if(colClicks)  clicks  +=numVal(r[colClicks]);
+      if(colSessions)sessions+=numVal(r[colSessions]);
+      if(colDate){
+        const d=r[colDate];
+        if(d&&(!minDate||d<minDate))minDate=d;
+        if(d&&(!maxDate||d>maxDate))maxDate=d;
+      }
+    });
+  }
+
+  // Update period bar
+  if (minDate && maxDate) {
+    funnelPeriod.min = minDate;
+    funnelPeriod.max = maxDate;
+    updatePeriodBar();
+  }
+
+  // Set values
+  setAutoVal('reattr',   reattr,   true);
+  setAutoVal('reeng',    reeng,    true);
+  setAutoVal('iae',      total,    true);
+  setAutoVal('clicks',   clicks,   true);
+  setAutoVal('sessions', sessions, true);
+
+  // IAE breakdown
+  const bd = document.getElementById('iaeBreakdown');
+  if (bd) {
+    bd.textContent = `RTG: ${iaeRTG.toLocaleString('es-CO')} + UA: ${iaeUA.toLocaleString('es-CO')} = ${total.toLocaleString('es-CO')}`;
+    bd.style.display = 'block';
+  }
+
   calcCredits();
 }
 
 // ═══════════════════════════════════════════════
-// CREDITS — CALCULATE
+// WRITE TO LOOKER SHEET
+// ═══════════════════════════════════════════════
+async function writeToLooker() {
+  try {
+    const fileName = new Date().toISOString().slice(0,10);
+
+    // ── eventos_validos ──────────────────────────────────────
+    const eventsByDay = {};
+    const clean = allResults.filter(r=>r.status==='clean'&&r.completionDate);
+    clean.forEach(r=>{
+      if(!eventsByDay[r.completionDate]) eventsByDay[r.completionDate]={total:0,libreton:0,nomina:0,otro:0};
+      eventsByDay[r.completionDate].total++;
+      eventsByDay[r.completionDate][r.product==='libreton'?'libreton':r.product==='nomina'?'nomina':'otro']++;
+    });
+
+    const eventRows = Object.keys(eventsByDay).sort().map(d=>[
+      d, eventsByDay[d].total, eventsByDay[d].libreton, eventsByDay[d].nomina, eventsByDay[d].otro,
+      `${funnelPeriod.min||'?'} → ${funnelPeriod.max||'?'}`, fileName
+    ]);
+
+    // ── creditos ─────────────────────────────────────────────
+    const creditsByDay = {};
+
+    const addDay = (date, key, val=1) => {
+      if(!date)return;
+      const d=date.slice(0,10);
+      if(!creditsByDay[d]) creditsByDay[d]={reattr:0,reeng:0,iaeRTG:0,iaeUA:0,clicks:0,sessions:0};
+      creditsByDay[d][key]+=val;
+    };
+
+    if(rtgRows) rtgRows.forEach(r=>addDay(r['Event Time']||r['event_time'],'iaeRTG'));
+    if(uaRows)  uaRows.forEach(r=>addDay(r['Event Time']||r['event_time'],'iaeUA'));
+
+    if(partnerRows){
+      const cols=Object.keys(partnerRows[0]||{});
+      const fc=(...ns)=>cols.find(c=>ns.some(n=>c.toLowerCase().trim()===n.toLowerCase()))||null;
+      const cDate=fc('date'),cConv=fc('conversions'),cType=fc('conversion type'),cClk=fc('clicks'),cSes=fc('sessions');
+      partnerRows.forEach(r=>{
+        const d=cDate?r[cDate]:'';
+        if(!d)return;
+        const t=cType?(r[cType]||'').toLowerCase().trim():'';
+        const v=cConv?numVal(r[cConv]):0;
+        if(t==='re-attribution') addDay(d,'reattr',v);
+        else if(t==='re-engagement') addDay(d,'reeng',v);
+        if(cClk) addDay(d,'clicks',numVal(r[cClk]));
+        if(cSes) addDay(d,'sessions',numVal(r[cSes]));
+      });
+    }
+
+    const creditRows = Object.keys(creditsByDay).sort().map(d=>{
+      const x=creditsByDay[d];
+      const iaeT=x.iaeRTG+x.iaeUA;
+      const ccR=x.reattr*CC_RATES.reattr, ccE=x.reeng*CC_RATES.reeng;
+      const ccI=iaeT*CC_RATES.iae, ccC=x.clicks*CC_RATES.clicks, ccS=x.sessions*CC_RATES.sessions;
+      return [d,x.reattr,x.reeng,x.iaeRTG,x.iaeUA,iaeT,x.clicks,x.sessions,ccR,ccE,ccI,ccC,ccS,ccR+ccE+ccI+ccC+ccS,fileName];
+    });
+
+    // Write via Sheets API (append)
+    const append = async (sheet, rows) => {
+      if(!rows.length)return;
+      const url=`https://sheets.googleapis.com/v4/spreadsheets/${LOOKER_ID}/values/${encodeURIComponent(sheet+'!A2')}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+      const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({values:rows}),credentials:'include'});
+      if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'HTTP '+res.status);}
+    };
+
+    await append('eventos_validos', eventRows);
+    await append('creditos', creditRows);
+
+    return { ok:true, msg:`${eventRows.length} días de eventos · ${creditRows.length} días de créditos escritos en Sheet` };
+
+  } catch(e) {
+    return { ok:false, msg:`No se pudo escribir en Sheet: ${e.message}. Los datos están procesados localmente.` };
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CREDITS CALC
 // ═══════════════════════════════════════════════
 function calcCredits() {
-  const g   = id => { const v = parseFloat(document.getElementById('inp_'+id).value); return isNaN(v)||v<0 ? 0 : v; };
-  const fmt = n => n.toFixed(4);
-
-  const reattr      = g('reattr');
-  const reeng       = g('reeng');
-  const iae         = g('iae');
-  const clicks      = g('clicks');
-  const sessions    = g('sessions');
-
-  const r_reattr      = reattr      * 800 / 1_000_000;
-  const r_reeng       = reeng       * 100 / 1_000_000;
-  const r_iae         = iae         *   2 / 1_000_000;
-  const r_clicks      = clicks      *   2 / 1_000_000;
-  const r_sessions    = sessions    *   2 / 1_000_000;
-
-  const total = r_reattr + r_reeng + r_iae + r_clicks + r_sessions;
-
-  [['reattr',r_reattr],['reeng',r_reeng],['iae',r_iae],
-   ['clicks',r_clicks],['sessions',r_sessions]].forEach(([id,val]) => {
-    const res = document.getElementById('res_' + id);
-    const br  = document.getElementById('br_'  + id);
-    if (res) res.textContent = fmt(val);
-    if (br)  br.textContent  = fmt(val);
+  const g = id=>{const v=parseFloat(document.getElementById('inp_'+id).value);return isNaN(v)||v<0?0:v;};
+  const fmt=n=>n.toFixed(4);
+  const ra=g('reattr'),re=g('reeng'),ia=g('iae'),cl=g('clicks'),se=g('sessions');
+  const rRa=ra*CC_RATES.reattr,rRe=re*CC_RATES.reeng,rIa=ia*CC_RATES.iae,rCl=cl*CC_RATES.clicks,rSe=se*CC_RATES.sessions;
+  const tot=rRa+rRe+rIa+rCl+rSe;
+  [['reattr',rRa],['reeng',rRe],['iae',rIa],['clicks',rCl],['sessions',rSe]].forEach(([id,v])=>{
+    const r=document.getElementById('res_'+id),b=document.getElementById('br_'+id);
+    if(r)r.textContent=fmt(v);if(b)b.textContent=fmt(v);
   });
+  document.getElementById('br_total').textContent=fmt(tot);
+  document.getElementById('totalCredits').textContent=fmt(tot);
+  const fn=n=>Math.round(n).toLocaleString('es-CO');
+  const parts=[];
+  if(ra)parts.push(`${fn(ra)} re-attr`);if(re)parts.push(`${fn(re)} re-eng`);
+  if(ia)parts.push(`${fn(ia)} IAEs`);if(cl)parts.push(`${fn(cl)} clicks`);if(se)parts.push(`${fn(se)} sessions`);
+  document.getElementById('totalCreditsSub').textContent=parts.length?parts.join(' · '):'Cargá los archivos para auto-completar';
+}
 
-  document.getElementById('br_total').textContent     = fmt(total);
-  document.getElementById('totalCredits').textContent = fmt(total);
+function setAutoVal(id,val,isAuto){
+  const i=document.getElementById('inp_'+id),s=document.getElementById('src_'+id);
+  if(!i)return;i.value=Math.round(val);
+  if(s){s.textContent=isAuto?'auto':'manual';s.className='src '+(isAuto?'src-a':'src-m');}
+}
 
-  const fmtN = n => Math.round(n).toLocaleString('es-CO');
-  const parts = [];
-  if (reattr)      parts.push(`${fmtN(reattr)} re-attr`);
-  if (reeng)       parts.push(`${fmtN(reeng)} re-eng`);
-  if (iae)         parts.push(`${fmtN(iae)} IAEs`);
-  if (clicks)      parts.push(`${fmtN(clicks)} clicks`);
-  if (sessions)    parts.push(`${fmtN(sessions)} sessions`);
-  document.getElementById('totalCreditsSub').textContent = parts.length
-    ? parts.join(' · ')
-    : 'Cargá el CSV o ingresá valores manualmente';
+function resetCredits(){
+  ['reattr','reeng','iae','clicks','sessions'].forEach(id=>{
+    const i=document.getElementById('inp_'+id),s=document.getElementById('src_'+id);
+    if(i)i.value='';if(s){s.textContent='manual';s.className='src src-m';}
+  });
+  calcCredits();
+}
+
+function updatePeriodBar(){
+  const bar=document.getElementById('periodBar'),t=document.getElementById('periodText'),s=document.getElementById('periodSub');
+  if(funnelPeriod.min&&funnelPeriod.max){
+    bar.className='period-bar has';
+    t.textContent=`Período: ${funnelPeriod.min} → ${funnelPeriod.max}`;
+    s.textContent='Extraído del Partners Report';
+  } else {
+    bar.className='period-bar no';
+    t.textContent='Sin período definido';
+    s.textContent='Cargá los archivos para auto-detectar el período';
+  }
 }
 
 // ═══════════════════════════════════════════════
 // FUNNEL VALIDATOR
 // ═══════════════════════════════════════════════
-const STEP_6               = 'apertura_cuenta_en_linea_no_cliente-app_step_6';
-const STEP_1               = 'apertura_cuenta_en_linea_no_cliente-app_step_1';
-const COMPLETED_APROBADO   = 'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado';
-const COMPLETED_CONTRATADO = 'apertura_cuenta_en_linea_no_cliente-app_completed_contratado';
-const KNOWN_STEPS          = [STEP_1, STEP_6, COMPLETED_APROBADO, COMPLETED_CONTRATADO];
-const COMPLETION_EVENTS    = [COMPLETED_APROBADO, COMPLETED_CONTRATADO];
-const GEO_MIN_MIN          = 50;
-
-let allResults    = [];
-let activeStatus  = 'all';
-let activeProduct = 'all';
-
-const csvInput   = document.getElementById('csvInput');
-const uploadZone = document.getElementById('uploadZone');
-uploadZone.addEventListener('click',     () => csvInput.click());
-uploadZone.addEventListener('dragover',  e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-uploadZone.addEventListener('drop',      e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) processFile(f); });
-csvInput.addEventListener('change', e => { if(e.target.files[0]) processFile(e.target.files[0]); e.target.value=''; });
-
-function processFile(file) {
-  showInfo('Leyendo ' + file.name + '…');
-  parseCSVFile(file, rows => { hideInfo(); analyze(rows); });
-}
-
-function parseTime(s) {
-  if (!s) return null;
-  const d = new Date(s.replace(' ','T'));
-  return isNaN(d.getTime()) ? null : d.getTime();
-}
-function getAfContent(val) { try { return JSON.parse(val).af_content||''; } catch(e) { return ''; } }
-function classifyProduct(c) {
-  c = (c||'').toLowerCase();
-  if (c.includes('libreton')) return 'libreton';
-  if (c.includes('nomina')||c.includes('nómina')||c.includes('pensional')) return 'nomina';
-  return 'other';
-}
+function parseTime(s){if(!s)return null;const d=new Date(s.replace(' ','T'));return isNaN(d.getTime())?null:d.getTime();}
+function getAfContent(v){try{return JSON.parse(v).af_content||'';}catch(e){return '';}}
+function classifyProduct(c){c=(c||'').toLowerCase();if(c.includes('libreton'))return 'libreton';if(c.includes('nomina')||c.includes('nómina')||c.includes('pensional'))return 'nomina';return 'other';}
 
 function analyze(rows) {
-  const byId = {};
-  rows.forEach(row => {
-    const id = row['AppsFlyer ID'], event = row['Event Name'];
-    if (!id || !event) return;
-    if (!byId[id]) byId[id] = [];
+  const byId={};
+  rows.forEach(row=>{
+    const id=row['AppsFlyer ID'],event=row['Event Name'];
+    if(!id||!event)return;
+    if(!byId[id])byId[id]=[];
     byId[id].push({
-      event,
-      value:       row['Event Value']||'',
-      mediaSource: row['Media Source']||'',
-      country:    (row['Country Code']||'').toUpperCase().trim(),
-      isPrimary:  (row['Is Primary Attribution']||'').toLowerCase().trim(),
-      city:       (row['City']||'').toLowerCase().trim(),
-      rawTime:     row['Event Time']||'',
-      time:        parseTime(row['Event Time']||'')
+      event,value:row['Event Value']||'',mediaSource:row['Media Source']||'',
+      country:(row['Country Code']||'').toUpperCase().trim(),
+      isPrimary:(row['Is Primary Attribution']||'').toLowerCase().trim(),
+      city:(row['City']||'').toLowerCase().trim(),
+      rawTime:row['Event Time']||'',time:parseTime(row['Event Time']||'')
     });
   });
 
-  const completionIds = Object.keys(byId).filter(id => byId[id].some(e => COMPLETION_EVENTS.includes(e.event)));
-  const results = [];
-  const validDates = [];
+  const completionIds=Object.keys(byId).filter(id=>byId[id].some(e=>COMPLETION_EVENTS.includes(e.event)));
+  const results=[], validDates=[];
 
-  completionIds.forEach(id => {
-    const evs = byId[id].sort((a,b) => (a.time||0)-(b.time||0));
-    const completionEv   = evs.find(e=>e.event===COMPLETED_CONTRATADO)||evs.find(e=>e.event===COMPLETED_APROBADO);
-    const country        = completionEv ? completionEv.country    : '';
-    const isPrimary      = completionEv ? completionEv.isPrimary  : '';
-    const afContent      = getAfContent(completionEv ? completionEv.value : '');
-    const mediaSource    = completionEv ? (completionEv.mediaSource||'') : '';
-    const product        = classifyProduct(afContent);
-    const completionDate = completionEv && completionEv.rawTime ? completionEv.rawTime.slice(0,10) : '';
-    const completionCount= evs.filter(e=>COMPLETION_EVENTS.includes(e.event)).length;
-    const hasStep6  = evs.some(e=>e.event===STEP_6);
-    const hasStep1  = evs.some(e=>e.event===STEP_1);
-    const registered= KNOWN_STEPS.filter(s=>evs.some(e=>e.event===s));
-    const validCO      = country === 'CO';
-    const validPrimary = isPrimary==='true'||isPrimary===''||isPrimary==='1';
+  completionIds.forEach(id=>{
+    const evs=byId[id].sort((a,b)=>(a.time||0)-(b.time||0));
+    const ce=evs.find(e=>e.event===COMPLETED_CONTRATADO)||evs.find(e=>e.event===COMPLETED_APROBADO);
+    const country=ce?ce.country:'', isPrimary=ce?ce.isPrimary:'';
+    const afContent=getAfContent(ce?ce.value:''), mediaSource=ce?(ce.mediaSource||')':'');
+    const product=classifyProduct(afContent);
+    const completionDate=ce&&ce.rawTime?ce.rawTime.slice(0,10):'';
+    const completionCount=evs.filter(e=>COMPLETION_EVENTS.includes(e.event)).length;
+    const hasStep6=evs.some(e=>e.event===STEP_6);
+    const hasStep1=evs.some(e=>e.event===STEP_1);
+    const validCO=country==='CO';
+    const validPrimary=isPrimary==='true'||isPrimary===''||isPrimary==='1';
 
-    if (!validCO||!validPrimary) {
-      results.push({id,status:'excl_co',filter:'País/Primary',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',completionDate});
-      return;
-    }
-    if (completionCount>1) {
-      const geo=detectGeoJump(evs);
-      results.push({id,status:'excl_dup',filter:`Múltiples completions (${completionCount})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:geo.detail,completionDate});
-      return;
-    }
-    if (!hasStep6) {
-      results.push({id,status:'excl_step6',filter:'Sin step_6 obligatorio',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',completionDate});
-      return;
-    }
+    if(!validCO||!validPrimary){results.push({id,status:'excl_co',filter:'País/Primary',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:'',completionDate});return;}
+    if(completionCount>1){const geo=detectGeoJump(evs);results.push({id,status:'excl_dup',filter:`Múlt. completions (${completionCount})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:geo.detail,completionDate});return;}
+    if(!hasStep6){results.push({id,status:'excl_step6',filter:'Sin step_6',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:'',completionDate});return;}
     const geo=detectGeoJump(evs);
-    if (geo.hasJump) {
-      results.push({id,status:'excl_geo',filter:'Salto geográfico <50 min',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:geo.detail,completionDate});
-      return;
-    }
-    if (completionDate) validDates.push(completionDate);
-    results.push({id,status:'clean',filter:'—',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,registered,geoDetail:'',completionDate});
+    if(geo.hasJump){results.push({id,status:'excl_geo',filter:'Salto geo <50min',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:geo.detail,completionDate});return;}
+    if(completionDate)validDates.push(completionDate);
+    results.push({id,status:'clean',filter:'—',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:'',completionDate});
   });
 
-  if (validDates.length) {
-    const sorted = validDates.slice().sort();
-    funnelPeriod.min = sorted[0];
-    funnelPeriod.max = sorted[sorted.length-1];
-    updatePeriodBar();
-  }
-
-  allResults = results;
-  renderUI(completionIds.length);
+  if(validDates.length){const s=validDates.slice().sort();funnelPeriod.min=s[0];funnelPeriod.max=s[s.length-1];updatePeriodBar();}
+  allResults=results;
+  renderFunnelUI(completionIds.length);
 }
 
-function detectGeoJump(evs) {
-  for (let i=1;i<evs.length;i++) {
-    const prev=evs[i-1],curr=evs[i];
-    if (!prev.time||!curr.time) continue;
-    const diffMin=(curr.time-prev.time)/60000;
-    if (diffMin<0) continue;
-    if (prev.city&&curr.city&&prev.city!==curr.city&&diffMin<GEO_MIN_MIN) {
-      const ps=prev.event.split('-app_')[1]||prev.event;
-      const cs=curr.event.split('-app_')[1]||curr.event;
-      return {hasJump:true,detail:`${prev.city}→${curr.city} en ${diffMin.toFixed(1)} min (${ps}→${cs})`};
+function detectGeoJump(evs){
+  for(let i=1;i<evs.length;i++){
+    const p=evs[i-1],c=evs[i];
+    if(!p.time||!c.time)continue;
+    const dm=(c.time-p.time)/60000;
+    if(dm<0)continue;
+    if(p.city&&c.city&&p.city!==c.city&&dm<GEO_MIN){
+      const ps=p.event.split('-app_')[1]||p.event,cs=c.event.split('-app_')[1]||c.event;
+      return{hasJump:true,detail:`${p.city}→${c.city} en ${dm.toFixed(1)} min (${ps}→${cs})`};
     }
   }
-  return {hasJump:false,detail:''};
+  return{hasJump:false,detail:''};
 }
 
-function renderUI(totalBase) {
-  const exc_co  = allResults.filter(r=>r.status==='excl_co').length;
-  const exc_dup = allResults.filter(r=>r.status==='excl_dup').length;
-  const exc_s6  = allResults.filter(r=>r.status==='excl_step6').length;
-  const exc_geo = allResults.filter(r=>r.status==='excl_geo').length;
-  const clean   = allResults.filter(r=>r.status==='clean').length;
+function renderFunnelUI(totalBase){
+  const exc_co=allResults.filter(r=>r.status==='excl_co').length;
+  const exc_dup=allResults.filter(r=>r.status==='excl_dup').length;
+  const exc_s6=allResults.filter(r=>r.status==='excl_step6').length;
+  const exc_geo=allResults.filter(r=>r.status==='excl_geo').length;
+  const clean=allResults.filter(r=>r.status==='clean').length;
   const s0=totalBase,s1=s0-exc_co,s2=s1-exc_dup,s3=s2-exc_s6,s4=s3-exc_geo;
   document.getElementById('fS0').textContent=s0;
-  document.getElementById('fS1').textContent=s1; document.getElementById('fE1').textContent=exc_co ?`−${exc_co}`:'—';
-  document.getElementById('fS2').textContent=s2; document.getElementById('fE2').textContent=exc_dup?`−${exc_dup}`:'—';
-  document.getElementById('fS3').textContent=s3; document.getElementById('fE3').textContent=exc_s6 ?`−${exc_s6}`:'—';
-  document.getElementById('fS4').textContent=s4; document.getElementById('fE4').textContent=exc_geo?`−${exc_geo}`:'—';
+  document.getElementById('fS1').textContent=s1;document.getElementById('fE1').textContent=exc_co?`−${exc_co}`:'—';
+  document.getElementById('fS2').textContent=s2;document.getElementById('fE2').textContent=exc_dup?`−${exc_dup}`:'—';
+  document.getElementById('fS3').textContent=s3;document.getElementById('fE3').textContent=exc_s6?`−${exc_s6}`:'—';
+  document.getElementById('fS4').textContent=s4;document.getElementById('fE4').textContent=exc_geo?`−${exc_geo}`:'—';
   document.getElementById('fValid').textContent=clean;
   const fact=allResults.filter(r=>r.status==='clean');
   document.getElementById('sLibreton').textContent=fact.filter(r=>r.product==='libreton').length;
   document.getElementById('sNomina').textContent=fact.filter(r=>r.product==='nomina').length;
   document.getElementById('sOther').textContent=fact.filter(r=>r.product==='other').length;
   document.getElementById('funnelSection').style.display='block';
+  document.getElementById('noFunnelData').style.display='none';
   document.getElementById('resultsSection').style.display='block';
-  document.getElementById('uploadZone').style.display='none';
-  renderChart();
-  renderTable();
+  renderChart();renderTable();
 }
 
-function setFilter(val,type,btn) {
+function setFilter(val,type,btn){
   if(type==='status'){activeStatus=val;document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));}
   else{activeProduct=val;document.querySelectorAll('#productTabs .tab').forEach(t=>t.classList.remove('active'));}
   btn.classList.add('active');renderTable();
 }
 
-function renderTable() {
+function renderTable(){
   let data=allResults;
-  if(activeStatus!=='all')  data=data.filter(r=>r.status===activeStatus);
-  if(activeProduct!=='all') data=data.filter(r=>r.product===activeProduct);
+  if(activeStatus!=='all')data=data.filter(r=>r.status===activeStatus);
+  if(activeProduct!=='all')data=data.filter(r=>r.product===activeProduct);
   document.getElementById('tableBody').innerHTML=data.map(r=>{
-    const sb=r.status==='clean'?`<span class="badge bv">✅ Facturable</span>`
-      :r.status==='excl_co'?`<span class="badge bi">🌐 País/Primary</span>`
-      :r.status==='excl_dup'?`<span class="badge bi">🔁 Múlt. completions</span>`
-      :r.status==='excl_step6'?`<span class="badge bw">⚠ Sin step_6</span>`
-      :`<span class="badge bi">📍 Salto geo</span>`;
-    const fb=r.filter==='—'?`<span style="color:var(--rl-text-muted);font-size:11px">—</span>`:`<span style="font-size:11px;color:var(--invalid)">${esc(r.filter)}</span>`;
-    const pb=r.status!=='clean'?'<span style="color:var(--rl-text-muted);font-size:11px">—</span>'
-      :r.product==='libreton'?`<span class="badge bn">📘 Libreton</span>`
-      :r.product==='nomina'?`<span class="badge bb">💼 Nómina</span>`
-      :`<span class="badge bw">❓ Otro</span>`;
+    const sb=r.status==='clean'?'<span class="badge bv">✅ Facturable</span>'
+      :r.status==='excl_co'?'<span class="badge bi">🌐 País/Primary</span>'
+      :r.status==='excl_dup'?'<span class="badge bi">🔁 Múlt. comp.</span>'
+      :r.status==='excl_step6'?'<span class="badge bw">⚠ Sin step_6</span>'
+      :'<span class="badge bi">📍 Salto geo</span>';
+    const fb=r.filter==='—'?`<span style="color:var(--txm);font-size:11px">—</span>`:`<span style="font-size:11px;color:var(--er)">${esc(r.filter)}</span>`;
+    const pb=r.status!=='clean'?'<span style="color:var(--txm);font-size:11px">—</span>'
+      :r.product==='libreton'?'<span class="badge bn">📘 Libreton</span>'
+      :r.product==='nomina'?'<span class="badge bb">💼 Nómina</span>'
+      :'<span class="badge bw">❓ Otro</span>';
     const cc=r.country==='CO'?`<span class="badge bv">${r.country}</span>`:`<span class="badge bi">${r.country||'—'}</span>`;
-    const ms=`<span style="font-size:11px">${esc(r.mediaSource||'—')}</span>`;
-    const comp=r.completionCount===1?`<span style="font-size:12px;color:var(--rl-text-muted)">1</span>`:`<span class="badge bi">${r.completionCount}</span>`;
-    const s6=r.hasStep6?`<span class="badge bv">✓</span>`:`<span class="badge bi">✗</span>`;
-    const geo=r.geoDetail?`<span style="font-size:11px;color:var(--invalid)">${esc(r.geoDetail)}</span>`:`<span style="color:var(--rl-text-muted);font-size:11px">—</span>`;
-    return `<tr><td style="font-family:monospace;font-size:11px;font-weight:600">${esc(r.id)}</td><td>${sb}</td><td>${fb}</td><td>${pb}</td><td>${cc}</td><td>${ms}</td><td style="text-align:center">${comp}</td><td style="text-align:center">${s6}</td><td style="max-width:260px">${geo}</td><td style="font-size:11px;color:var(--rl-text-muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'—'}</td></tr>`;
-  }).join('')||`<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--rl-text-muted)">Sin resultados para este filtro</td></tr>`;
+    const comp=r.completionCount===1?`<span style="font-size:12px;color:var(--txm)">1</span>`:`<span class="badge bi">${r.completionCount}</span>`;
+    const s6=r.hasStep6?'<span class="badge bv">✓</span>':'<span class="badge bi">✗</span>';
+    const geo=r.geoDetail?`<span style="font-size:11px;color:var(--er)">${esc(r.geoDetail)}</span>`:`<span style="color:var(--txm);font-size:11px">—</span>`;
+    return `<tr><td style="font-family:monospace;font-size:11px;font-weight:600">${esc(r.id)}</td><td>${sb}</td><td>${fb}</td><td>${pb}</td><td>${cc}</td><td style="font-size:11px">${esc(r.mediaSource||'—')}</td><td style="text-align:center">${comp}</td><td style="text-align:center">${s6}</td><td style="max-width:240px">${geo}</td><td style="font-size:11px;color:var(--txm);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'—'}</td></tr>`;
+  }).join('')||`<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--txm)">Sin resultados para este filtro</td></tr>`;
 }
 
-function exportCSV(which) {
+function exportCSV(which){
   let data=allResults;
-  if(which==='clean')    data=data.filter(r=>r.status==='clean');
-  if(which==='libreton') data=data.filter(r=>r.status==='clean'&&r.product==='libreton');
-  if(which==='nomina')   data=data.filter(r=>r.status==='clean'&&r.product==='nomina');
-  const rows=[['AppsFlyer ID','Estado','Filtro aplicado','Producto','País','Media Source','Completions','Tiene step_6','Detalle geo','af_content']];
+  if(which==='clean')data=data.filter(r=>r.status==='clean');
+  if(which==='libreton')data=data.filter(r=>r.status==='clean'&&r.product==='libreton');
+  if(which==='nomina')data=data.filter(r=>r.status==='clean'&&r.product==='nomina');
+  const rows=[['AppsFlyer ID','Estado','Filtro','Producto','País','Media Source','Completions','Tiene step_6','Detalle geo','af_content']];
   data.forEach(r=>rows.push([r.id,r.status,r.filter,r.product,r.country,r.mediaSource||'',r.completionCount,r.hasStep6?'Sí':'No',r.geoDetail,r.afContent]));
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'})),download:`bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`});
   document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
 }
 
-function renderChart() {
-  const clean = allResults.filter(r => r.status === 'clean' && r.completionDate);
-  const dateSet = new Set(clean.map(r => r.completionDate));
-  const dates = Array.from(dateSet).sort();
-  const byDay = {};
-  dates.forEach(d => { byDay[d] = {libreton:0,nomina:0,other:0,total:0}; });
-  clean.forEach(r => { if(!byDay[r.completionDate]) return; byDay[r.completionDate][r.product]++; byDay[r.completionDate].total++; });
-  const totals = dates.map(d => byDay[d].total);
-  const maxVal = Math.max(...totals, 1);
-  const labels = dates.map(d => { const [y,m,day]=d.split('-'); return `${day}/${m}`; });
-  const BAR_W=Math.max(36,Math.min(64,Math.floor(700/Math.max(dates.length,1))));
-  const GAP=Math.max(6,Math.round(BAR_W*0.28)),PAD_L=36,PAD_R=12,PAD_T=20,PAD_B=40,CHART_H=180;
-  const totalW=PAD_L+dates.length*(BAR_W+GAP)-GAP+PAD_R;
-  const C={libreton:'#7c3aed',nomina:'#2563eb',other:'#d97706',gridLine:'#e4e2ee',labelDk:'#9997b3',totalLbl:'#1a1927'};
+function renderChart(){
+  const clean=allResults.filter(r=>r.status==='clean'&&r.completionDate);
+  const dates=Array.from(new Set(clean.map(r=>r.completionDate))).sort();
+  const byDay={};dates.forEach(d=>{byDay[d]={libreton:0,nomina:0,other:0,total:0};});
+  clean.forEach(r=>{if(!byDay[r.completionDate])return;byDay[r.completionDate][r.product]++;byDay[r.completionDate].total++;});
+  const maxVal=Math.max(...dates.map(d=>byDay[d].total),1);
+  const labels=dates.map(d=>{const[y,m,day]=d.split('-');return `${day}/${m}`;});
+  const BW=Math.max(36,Math.min(64,Math.floor(700/Math.max(dates.length,1))));
+  const G=Math.max(6,Math.round(BW*.28)),PL=36,PR=12,PT=20,PB=40,CH=180;
+  const TW=PL+dates.length*(BW+G)-G+PR;
+  const C={l:'#7c3aed',n:'#2563eb',o:'#d97706',gl:'#e4e2ee',ld:'#9997b3',tt:'#1a1927'};
   const ticks=[0,Math.ceil(maxVal/2),maxVal];
-  let svg=[`<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${CHART_H+PAD_T+PAD_B}" style="font-family:'Inter',sans-serif;display:block">`];
-  ticks.forEach(tick=>{
-    const y=PAD_T+CHART_H-Math.round((tick/maxVal)*CHART_H);
-    svg.push(`<line x1="${PAD_L}" y1="${y}" x2="${totalW-PAD_R}" y2="${y}" stroke="${C.gridLine}" stroke-width="1"/>`);
-    svg.push(`<text x="${PAD_L-5}" y="${y+4}" text-anchor="end" font-size="9" fill="${C.labelDk}">${tick}</text>`);
-  });
+  let svg=[`<svg xmlns="http://www.w3.org/2000/svg" width="${TW}" height="${CH+PT+PB}" style="font-family:'Inter',sans-serif;display:block">`];
+  ticks.forEach(tick=>{const y=PT+CH-Math.round((tick/maxVal)*CH);svg.push(`<line x1="${PL}" y1="${y}" x2="${TW-PR}" y2="${y}" stroke="${C.gl}" stroke-width="1"/><text x="${PL-5}" y="${y+4}" text-anchor="end" font-size="9" fill="${C.ld}">${tick}</text>`);});
   dates.forEach((d,i)=>{
-    const x=PAD_L+i*(BAR_W+GAP);
-    const {libreton:lib,nomina:nom,other:oth,total:tot}=byDay[d];
-    const hLib=Math.round((lib/maxVal)*CHART_H),hNom=Math.round((nom/maxVal)*CHART_H),hOth=Math.round((oth/maxVal)*CHART_H);
-    let yOff=PAD_T+CHART_H;
-    const seg=(h,color)=>{if(h<=0)return '';yOff-=h;return `<rect x="${x}" y="${yOff}" width="${BAR_W}" height="${h}" fill="${color}" rx="2"/>`;};
-    svg.push(seg(hLib,C.libreton));svg.push(seg(hNom,C.nomina));svg.push(seg(hOth,C.other));
-    if(tot>0) svg.push(`<text x="${x+BAR_W/2}" y="${PAD_T+CHART_H-Math.round((tot/maxVal)*CHART_H)-4}" text-anchor="middle" font-size="10" font-weight="700" fill="${C.totalLbl}">${tot}</text>`);
-    svg.push(`<text x="${x+BAR_W/2}" y="${PAD_T+CHART_H+16}" text-anchor="middle" font-size="10" fill="${C.labelDk}">${labels[i]}</text>`);
+    const x=PL+i*(BW+G),{libreton:l,nomina:n,other:o,total:t}=byDay[d];
+    const hL=Math.round((l/maxVal)*CH),hN=Math.round((n/maxVal)*CH),hO=Math.round((o/maxVal)*CH);
+    let yO=PT+CH;
+    const seg=(h,c)=>{if(h<=0)return '';yO-=h;return `<rect x="${x}" y="${yO}" width="${BW}" height="${h}" fill="${c}" rx="2"/>`;};
+    svg.push(seg(hL,C.l));svg.push(seg(hN,C.n));svg.push(seg(hO,C.o));
+    if(t>0)svg.push(`<text x="${x+BW/2}" y="${PT+CH-Math.round((t/maxVal)*CH)-4}" text-anchor="middle" font-size="10" font-weight="700" fill="${C.tt}">${t}</text>`);
+    svg.push(`<text x="${x+BW/2}" y="${PT+CH+16}" text-anchor="middle" font-size="10" fill="${C.ld}">${labels[i]}</text>`);
   });
   svg.push('</svg>');
   document.getElementById('dailyChart').innerHTML=svg.join('');
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function showError(m){const e=document.getElementById('msgError');e.textContent='⚠ '+m;e.style.display='block';document.getElementById('msgInfo').style.display='none';}
-function showInfo(m){const e=document.getElementById('msgInfo');e.textContent='ℹ '+m;e.style.display='block';document.getElementById('msgError').style.display='none';}
-function hideInfo(){document.getElementById('msgInfo').style.display='none';}
-
-// ─── PARTNERS UPLOAD (for Looker page) ────────────────────────
-function setupPartnersUpload() {
-  const zone  = document.getElementById('partnersUploadZone');
-  const input = document.getElementById('partnersInput');
-  if (!zone || !input) return;
-  zone.addEventListener('click', () => input.click());
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) processPartnersCSV2(e.target.files ? e.target.files[0] : e.dataTransfer.files[0]); });
-  input.addEventListener('change', e => { if(e.target.files[0]) processPartnersCSV2(e.target.files[0]); e.target.value=''; });
-}
-
-function processPartnersCSV2(file) {
-  parseCSVFile(file, rows => {
-    partnerRows = rows;
-    document.getElementById('creditsFileBar2').style.display = 'flex';
-    document.getElementById('partnersUploadZone').style.display = 'none';
-    document.getElementById('creditsFileName2').textContent = file.name;
-
-    const cols = Object.keys(rows[0] || {});
-    const findCol = (...names) => cols.find(c => names.some(n => c.toLowerCase().trim() === n.toLowerCase())) || null;
-    const colConv     = findCol('conversions');
-    const colConvType = findCol('conversion type');
-    let reattr = 0, reeng = 0;
-    rows.forEach(r => {
-      const t = colConvType ? (r[colConvType]||'').toLowerCase().trim() : '';
-      const v = colConv ? numVal(r[colConv]) : 0;
-      if (t === 're-attribution') reattr += v;
-      else if (t === 're-engagement') reeng += v;
-    });
-    document.getElementById('creditsFileSummary2').textContent =
-      `${rows.length.toLocaleString('es-CO')} filas · ${Math.round(reattr).toLocaleString('es-CO')} re-attr · ${Math.round(reeng).toLocaleString('es-CO')} re-eng`;
-    
-    // Also update credits page if loaded
-    setAutoVal('reattr', reattr, true);
-    setAutoVal('reeng',  reeng,  true);
-    calcCredits();
-  });
-}
-
-function resetPartners() {
-  partnerRows = null;
-  document.getElementById('creditsFileBar2').style.display = 'none';
-  document.getElementById('partnersUploadZone').style.display = 'block';
-}
-
-// Initialize uploads on load
-document.addEventListener('DOMContentLoaded', () => {
-  setupRTGUpload();
-  setupUAUpload();
-  setupPartnersUpload();
-});
-
-
-// ═══════════════════════════════════════════════════════════════
-// LOOKER SHEET CONFIG
-// ═══════════════════════════════════════════════════════════════
-const LOOKER_SHEET_ID = '1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI';
-const LOOKER_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI/edit';
-
-// CC rates
-const CC_RATES = {
-  reattr:   800 / 1_000_000,
-  reeng:    100 / 1_000_000,
-  iae:        2 / 1_000_000,
-  clicks:     2 / 1_000_000,
-  sessions:   2 / 1_000_000,
-};
-
-// State
-let rtgRows    = null; // parsed RTG raw data
-let uaRows     = null; // parsed UA raw data  
-let partnerRows = null; // parsed partners report
-
-// ─── RTG FILE ────────────────────────────────────────────────
-function setupRTGUpload() {
-  const zone  = document.getElementById('rtgUploadZone');
-  const input = document.getElementById('rtgInput');
-  if (!zone || !input) return;
-  zone.addEventListener('click', () => input.click());
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) processRTGFile(e.dataTransfer.files[0]); });
-  input.addEventListener('change', e => { if(e.target.files[0]) processRTGFile(e.target.files[0]); e.target.value=''; });
-}
-
-function processRTGFile(file) {
-  parseCSVFile(file, rows => {
-    rtgRows = rows;
-    const total = rows.length;
-    document.getElementById('rtgFileBar').style.display = 'flex';
-    document.getElementById('rtgUploadZone').style.display = 'none';
-    document.getElementById('rtgFileName').textContent = file.name;
-    document.getElementById('rtgFileSummary').textContent = `${total.toLocaleString('es-CO')} filas (IAEs RTG)`;
-    // Also run the funnel analysis
-    analyze(rows);
-    updateCreditsSummary();
-  });
-}
-
-// ─── UA FILE ─────────────────────────────────────────────────
-function setupUAUpload() {
-  const zone  = document.getElementById('uaUploadZone');
-  const input = document.getElementById('uaInput');
-  if (!zone || !input) return;
-  zone.addEventListener('click', () => input.click());
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) processUAFile(e.dataTransfer.files[0]); });
-  input.addEventListener('change', e => { if(e.target.files[0]) processUAFile(e.target.files[0]); e.target.value=''; });
-}
-
-function processUAFile(file) {
-  parseCSVFile(file, rows => {
-    uaRows = rows;
-    document.getElementById('uaFileBar').style.display = 'flex';
-    document.getElementById('uaUploadZone').style.display = 'none';
-    document.getElementById('uaFileName').textContent = file.name;
-    document.getElementById('uaFileSummary').textContent = `${rows.length.toLocaleString('es-CO')} filas (IAEs UA)`;
-    updateCreditsSummary();
-  });
-}
-
-// ─── UPDATE CREDITS SUMMARY ──────────────────────────────────
-function updateCreditsSummary() {
-  const iaeRTG = rtgRows ? rtgRows.length : 0;
-  const iaeUA  = uaRows  ? uaRows.length  : 0;
-  const iaeTotal = iaeRTG + iaeUA;
-  
-  // Update IAE field
-  setAutoVal('iae', iaeTotal, true);
-  
-  // Show IAE breakdown
-  const breakdown = document.getElementById('iaeBreakdown');
-  if (breakdown) {
-    breakdown.textContent = `RTG: ${iaeRTG.toLocaleString('es-CO')} + UA: ${iaeUA.toLocaleString('es-CO')} = ${iaeTotal.toLocaleString('es-CO')}`;
-    breakdown.style.display = 'block';
-  }
-  
-  calcCredits();
-}
-
-// ─── WRITE TO LOOKER SHEET ───────────────────────────────────
-async function writeToLooker() {
-  const btn = document.getElementById('btnWriteLooker');
-  btn.disabled = true;
-  btn.textContent = '⏳ Escribiendo...';
-
-  try {
-    // ── Build daily events data ──────────────────────────────
-    const eventsByDay = {}; // date → { total, libreton, nomina, otro }
-    
-    if (allResults && allResults.length > 0) {
-      const clean = allResults.filter(r => r.status === 'clean' && r.completionDate);
-      clean.forEach(r => {
-        if (!eventsByDay[r.completionDate]) eventsByDay[r.completionDate] = { total:0, libreton:0, nomina:0, otro:0 };
-        eventsByDay[r.completionDate].total++;
-        eventsByDay[r.completionDate][r.product === 'libreton' ? 'libreton' : r.product === 'nomina' ? 'nomina' : 'otro']++;
-      });
-    }
-
-    // ── Build daily credits data ─────────────────────────────
-    const creditsByDay = {}; // date → { reattr, reeng, iaeRTG, iaeUA, clicks, sessions }
-
-    // IAEs from RTG by day (count all rows by Event Time date)
-    if (rtgRows) {
-      rtgRows.forEach(r => {
-        const date = (r['Event Time'] || r['event_time'] || '').slice(0,10);
-        if (!date) return;
-        if (!creditsByDay[date]) initCreditDay(creditsByDay, date);
-        creditsByDay[date].iaeRTG++;
-      });
-    }
-
-    // IAEs from UA by day
-    if (uaRows) {
-      uaRows.forEach(r => {
-        const date = (r['Event Time'] || r['event_time'] || '').slice(0,10);
-        if (!date) return;
-        if (!creditsByDay[date]) initCreditDay(creditsByDay, date);
-        creditsByDay[date].iaeUA++;
-      });
-    }
-
-    // Re-attr, re-eng, clicks, sessions from partners report by day
-    if (partnerRows) {
-      const cols = Object.keys(partnerRows[0] || {});
-      const findCol = (...names) => cols.find(c => names.some(n => c.toLowerCase().trim() === n.toLowerCase())) || null;
-      const colDate     = findCol('date');
-      const colConv     = findCol('conversions');
-      const colConvType = findCol('conversion type');
-      const colClicks   = findCol('clicks');
-      const colSessions = findCol('sessions');
-
-      partnerRows.forEach(r => {
-        const date = colDate ? (r[colDate] || '').slice(0,10) : '';
-        if (!date) return;
-        if (!creditsByDay[date]) initCreditDay(creditsByDay, date);
-        const convType = colConvType ? (r[colConvType] || '').toLowerCase().trim() : '';
-        const convVal  = colConv ? numVal(r[colConv]) : 0;
-        if (convType === 're-attribution') creditsByDay[date].reattr += convVal;
-        else if (convType === 're-engagement') creditsByDay[date].reeng += convVal;
-        if (colClicks)   creditsByDay[date].clicks   += numVal(r[colClicks]);
-        if (colSessions) creditsByDay[date].sessions += numVal(r[colSessions]);
-      });
-    }
-
-    // ── Prepare rows for Sheets API ──────────────────────────
-    const fileName = (rtgRows ? 'RTG+' : '') + (uaRows ? 'UA+' : '') + (partnerRows ? 'Partners' : '');
-    const today = new Date().toISOString().slice(0,10);
-
-    // eventos_validos rows
-    const eventRows = Object.keys(eventsByDay).sort().map(date => [
-      date,
-      eventsByDay[date].total,
-      eventsByDay[date].libreton,
-      eventsByDay[date].nomina,
-      eventsByDay[date].otro,
-      `${funnelPeriod.min || '?'} → ${funnelPeriod.max || '?'}`,
-      fileName
-    ]);
-
-    // creditos rows
-    const creditRows = Object.keys(creditsByDay).sort().map(date => {
-      const d = creditsByDay[date];
-      const iaeTotal = d.iaeRTG + d.iaeUA;
-      const ccReattr   = d.reattr   * CC_RATES.reattr;
-      const ccReeng    = d.reeng    * CC_RATES.reeng;
-      const ccIae      = iaeTotal   * CC_RATES.iae;
-      const ccClicks   = d.clicks   * CC_RATES.clicks;
-      const ccSessions = d.sessions * CC_RATES.sessions;
-      const ccTotal    = ccReattr + ccReeng + ccIae + ccClicks + ccSessions;
-      return [
-        date, d.reattr, d.reeng, d.iaeRTG, d.iaeUA, iaeTotal,
-        d.clicks, d.sessions,
-        ccReattr, ccReeng, ccIae, ccClicks, ccSessions, ccTotal,
-        fileName
-      ];
-    });
-
-    if (eventRows.length === 0 && creditRows.length === 0) {
-      throw new Error('No hay datos para escribir. Cargá al menos un archivo.');
-    }
-
-    // ── Write to Sheets API ──────────────────────────────────
-    const apiBase = `https://sheets.googleapis.com/v4/spreadsheets/${LOOKER_SHEET_ID}/values:batchUpdate`;
-    
-    const body = {
-      valueInputOption: 'USER_ENTERED',
-      data: []
-    };
-
-    if (eventRows.length > 0) {
-      // Append after last row — first find next empty row
-      const nextEventRow = 2; // Will use append
-      body.data.push({
-        range: `eventos_validos!A2`,
-        values: eventRows
-      });
-    }
-
-    if (creditRows.length > 0) {
-      body.data.push({
-        range: `creditos!A2`,
-        values: creditRows
-      });
-    }
-
-    // Use append instead to avoid overwriting
-    // Write eventos_validos
-    if (eventRows.length > 0) {
-      await sheetsAppend('eventos_validos', eventRows);
-    }
-    if (creditRows.length > 0) {
-      await sheetsAppend('creditos', creditRows);
-    }
-
-    // Show success
-    document.getElementById('lookerStatus').innerHTML = `
-      <div style="background:var(--valid-bg);border:1px solid #a7f3d0;border-radius:6px;padding:10px 14px;font-size:12.5px;color:var(--valid)">
-        ✅ <strong>Datos escritos en el Sheet de Looker</strong><br>
-        <small style="color:var(--rl-text-muted)">
-          ${eventRows.length} días de eventos válidos · ${creditRows.length} días de créditos<br>
-          <a href="${LOOKER_SHEET_URL}" target="_blank" style="color:var(--rl-accent)">Abrir Sheet →</a>
-        </small>
-      </div>`;
-
-  } catch(e) {
-    document.getElementById('lookerStatus').innerHTML = `
-      <div style="background:var(--invalid-bg);border:1px solid #fecaca;border-radius:6px;padding:10px 14px;font-size:12.5px;color:var(--invalid)">
-        ❌ ${e.message}
-      </div>`;
-  }
-
-  btn.disabled = false;
-  btn.textContent = '📤 Escribir en Looker Sheet';
-}
-
-async function sheetsAppend(sheetName, rows) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${LOOKER_SHEET_ID}/values/${encodeURIComponent(sheetName + '!A2')}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ values: rows }),
-    credentials: 'include'
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(`Error escribiendo ${sheetName}: ${err.error?.message || res.status}`);
-  }
-  return res.json();
-}
-
-function initCreditDay(obj, date) {
-  obj[date] = { reattr:0, reeng:0, iaeRTG:0, iaeUA:0, clicks:0, sessions:0 };
-}
-
-function resetRTG() {
-  rtgRows = null;
-  document.getElementById('rtgFileBar').style.display = 'none';
-  document.getElementById('rtgUploadZone').style.display = 'block';
-  updateCreditsSummary();
-}
-
-function resetUA() {
-  uaRows = null;
-  document.getElementById('uaFileBar').style.display = 'none';
-  document.getElementById('uaUploadZone').style.display = 'block';
-  updateCreditsSummary();
-}
-
 </script>
 </body>
 </html>
