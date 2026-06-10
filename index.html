@@ -179,6 +179,9 @@ tr:hover td{background:#faf9ff}
   <button class="sidebar-item" onclick="showPage('credits',this)">
     <span class="si-icon">💎</span> Calculadora de Créditos
   </button>
+  <button class="sidebar-item" onclick="showPage('looker',this)">
+    <span class="si-icon">📊</span> Exportar a Looker
+  </button>
 </aside>
 
 <div class="app-body">
@@ -500,6 +503,96 @@ tr:hover td{background:#faf9ff}
       </div>
     </div>
 
+
+    <!-- ═══ EXPORTAR A LOOKER ═══ -->
+    <div class="page" id="page-looker">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Exportar a Looker</div>
+          <div class="page-subtitle">Escribe datos diarios en Google Sheet → Looker Studio · BBVA Colombia</div>
+        </div>
+        <a href="https://docs.google.com/spreadsheets/d/1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI/edit" 
+           target="_blank" class="btn btn-secondary" style="text-decoration:none">🔗 Abrir Sheet</a>
+      </div>
+
+      <div class="criteria-info">
+        <strong>Flujo de carga:</strong><br>
+        &nbsp;1. <strong>Raw RTG</strong> → corre el Funnel Validator + cuenta IAEs RTG<br>
+        &nbsp;2. <strong>Raw UA</strong> → cuenta IAEs UA<br>
+        &nbsp;3. <strong>Partners Report</strong> → re-attr, re-eng, clicks, sessions<br>
+        &nbsp;4. Hacé click en <strong>Escribir en Looker Sheet</strong>
+      </div>
+
+      <!-- RTG Upload -->
+      <div class="section-label">1. Raw Data RTG</div>
+      <div id="rtgFileBar" style="display:none" class="file-bar">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:18px">✅</span>
+          <div>
+            <div style="font-size:12.5px;font-weight:600;color:var(--valid)" id="rtgFileName">—</div>
+            <div style="font-size:11px;color:var(--rl-text-muted)" id="rtgFileSummary">—</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetRTG()">Cambiar</button>
+      </div>
+      <div class="upload-zone" id="rtgUploadZone" style="margin-bottom:16px">
+        <input type="file" id="rtgInput" accept=".csv,.tsv,.txt" style="display:none">
+        <div style="font-size:28px;margin-bottom:8px">📱</div>
+        <h2>Raw Data RTG</h2>
+        <p>Non-organic in-app events · RTG</p>
+        <div class="upload-hint">AppsFlyer ID · Event Name · Event Time · Country Code · Is Primary</div>
+      </div>
+
+      <!-- UA Upload -->
+      <div class="section-label">2. Raw Data UA</div>
+      <div id="uaFileBar" style="display:none" class="file-bar">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:18px">✅</span>
+          <div>
+            <div style="font-size:12.5px;font-weight:600;color:var(--valid)" id="uaFileName">—</div>
+            <div style="font-size:11px;color:var(--rl-text-muted)" id="uaFileSummary">—</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetUA()">Cambiar</button>
+      </div>
+      <div class="upload-zone" id="uaUploadZone" style="margin-bottom:16px">
+        <input type="file" id="uaInput" accept=".csv,.tsv,.txt" style="display:none">
+        <div style="font-size:28px;margin-bottom:8px">📲</div>
+        <h2>Raw Data UA</h2>
+        <p>Non-organic in-app events · UA</p>
+        <div class="upload-hint">AppsFlyer ID · Event Name · Event Time</div>
+      </div>
+
+      <!-- Partners Report -->
+      <div class="section-label">3. Partners Report</div>
+      <div id="creditsFileBar2" style="display:none" class="file-bar">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:18px">✅</span>
+          <div>
+            <div style="font-size:12.5px;font-weight:600;color:var(--valid)" id="creditsFileName2">—</div>
+            <div style="font-size:11px;color:var(--rl-text-muted)" id="creditsFileSummary2">—</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetPartners()">Cambiar</button>
+      </div>
+      <div class="upload-zone" id="partnersUploadZone" style="margin-bottom:20px">
+        <input type="file" id="partnersInput" accept=".csv,.tsv,.txt" style="display:none">
+        <div style="font-size:28px;margin-bottom:8px">📊</div>
+        <h2>Partners Report</h2>
+        <p>Re-attr · Re-eng · Clicks · Sessions · Fechas</p>
+        <div class="upload-hint">Date · Clicks · Conversions · Conversion Type · Sessions</div>
+      </div>
+
+      <!-- IAE Summary -->
+      <div id="iaeBreakdown" style="display:none;background:var(--rl-accent-bg);border:1px solid #ddd6fe;border-radius:6px;padding:9px 14px;font-size:12px;color:var(--rl-accent);margin-bottom:16px;font-weight:600"></div>
+
+      <!-- Write button -->
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px">
+        <button class="btn btn-primary" id="btnWriteLooker" onclick="writeToLooker()">📤 Escribir en Looker Sheet</button>
+        <span style="font-size:11.5px;color:var(--rl-text-muted)">Escribe en ambas hojas: <code>eventos_validos</code> y <code>creditos</code></span>
+      </div>
+      <div id="lookerStatus"></div>
+    </div>
   </div>
 </div>
 
@@ -512,8 +605,8 @@ function showPage(id, btn) {
   document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   btn.classList.add('active');
-  const names  = { validator:'Funnel Validator', credits:'Calculadora de Créditos' };
-  const badges = { validator:'step_6 + completed_aprobado', credits:'Capacity Credits' };
+  const names  = { validator:'Funnel Validator', credits:'Calculadora de Créditos', looker:'Exportar a Looker' };
+  const badges = { validator:'step_6 + completed_aprobado', credits:'Capacity Credits', looker:'Sheet + Looker Studio' };
   document.getElementById('topbarActive').textContent = names[id];
   document.getElementById('topbarBadge').textContent  = badges[id];
 }
@@ -943,6 +1036,338 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function showError(m){const e=document.getElementById('msgError');e.textContent='⚠ '+m;e.style.display='block';document.getElementById('msgInfo').style.display='none';}
 function showInfo(m){const e=document.getElementById('msgInfo');e.textContent='ℹ '+m;e.style.display='block';document.getElementById('msgError').style.display='none';}
 function hideInfo(){document.getElementById('msgInfo').style.display='none';}
+
+// ─── PARTNERS UPLOAD (for Looker page) ────────────────────────
+function setupPartnersUpload() {
+  const zone  = document.getElementById('partnersUploadZone');
+  const input = document.getElementById('partnersInput');
+  if (!zone || !input) return;
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) processPartnersCSV2(e.target.files ? e.target.files[0] : e.dataTransfer.files[0]); });
+  input.addEventListener('change', e => { if(e.target.files[0]) processPartnersCSV2(e.target.files[0]); e.target.value=''; });
+}
+
+function processPartnersCSV2(file) {
+  parseCSVFile(file, rows => {
+    partnerRows = rows;
+    document.getElementById('creditsFileBar2').style.display = 'flex';
+    document.getElementById('partnersUploadZone').style.display = 'none';
+    document.getElementById('creditsFileName2').textContent = file.name;
+
+    const cols = Object.keys(rows[0] || {});
+    const findCol = (...names) => cols.find(c => names.some(n => c.toLowerCase().trim() === n.toLowerCase())) || null;
+    const colConv     = findCol('conversions');
+    const colConvType = findCol('conversion type');
+    let reattr = 0, reeng = 0;
+    rows.forEach(r => {
+      const t = colConvType ? (r[colConvType]||'').toLowerCase().trim() : '';
+      const v = colConv ? numVal(r[colConv]) : 0;
+      if (t === 're-attribution') reattr += v;
+      else if (t === 're-engagement') reeng += v;
+    });
+    document.getElementById('creditsFileSummary2').textContent =
+      `${rows.length.toLocaleString('es-CO')} filas · ${Math.round(reattr).toLocaleString('es-CO')} re-attr · ${Math.round(reeng).toLocaleString('es-CO')} re-eng`;
+    
+    // Also update credits page if loaded
+    setAutoVal('reattr', reattr, true);
+    setAutoVal('reeng',  reeng,  true);
+    calcCredits();
+  });
+}
+
+function resetPartners() {
+  partnerRows = null;
+  document.getElementById('creditsFileBar2').style.display = 'none';
+  document.getElementById('partnersUploadZone').style.display = 'block';
+}
+
+// Initialize uploads on load
+document.addEventListener('DOMContentLoaded', () => {
+  setupRTGUpload();
+  setupUAUpload();
+  setupPartnersUpload();
+});
+
+
+// ═══════════════════════════════════════════════════════════════
+// LOOKER SHEET CONFIG
+// ═══════════════════════════════════════════════════════════════
+const LOOKER_SHEET_ID = '1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI';
+const LOOKER_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI/edit';
+
+// CC rates
+const CC_RATES = {
+  reattr:   800 / 1_000_000,
+  reeng:    100 / 1_000_000,
+  iae:        2 / 1_000_000,
+  clicks:     2 / 1_000_000,
+  sessions:   2 / 1_000_000,
+};
+
+// State
+let rtgRows    = null; // parsed RTG raw data
+let uaRows     = null; // parsed UA raw data  
+let partnerRows = null; // parsed partners report
+
+// ─── RTG FILE ────────────────────────────────────────────────
+function setupRTGUpload() {
+  const zone  = document.getElementById('rtgUploadZone');
+  const input = document.getElementById('rtgInput');
+  if (!zone || !input) return;
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) processRTGFile(e.dataTransfer.files[0]); });
+  input.addEventListener('change', e => { if(e.target.files[0]) processRTGFile(e.target.files[0]); e.target.value=''; });
+}
+
+function processRTGFile(file) {
+  parseCSVFile(file, rows => {
+    rtgRows = rows;
+    const total = rows.length;
+    document.getElementById('rtgFileBar').style.display = 'flex';
+    document.getElementById('rtgUploadZone').style.display = 'none';
+    document.getElementById('rtgFileName').textContent = file.name;
+    document.getElementById('rtgFileSummary').textContent = `${total.toLocaleString('es-CO')} filas (IAEs RTG)`;
+    // Also run the funnel analysis
+    analyze(rows);
+    updateCreditsSummary();
+  });
+}
+
+// ─── UA FILE ─────────────────────────────────────────────────
+function setupUAUpload() {
+  const zone  = document.getElementById('uaUploadZone');
+  const input = document.getElementById('uaInput');
+  if (!zone || !input) return;
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) processUAFile(e.dataTransfer.files[0]); });
+  input.addEventListener('change', e => { if(e.target.files[0]) processUAFile(e.target.files[0]); e.target.value=''; });
+}
+
+function processUAFile(file) {
+  parseCSVFile(file, rows => {
+    uaRows = rows;
+    document.getElementById('uaFileBar').style.display = 'flex';
+    document.getElementById('uaUploadZone').style.display = 'none';
+    document.getElementById('uaFileName').textContent = file.name;
+    document.getElementById('uaFileSummary').textContent = `${rows.length.toLocaleString('es-CO')} filas (IAEs UA)`;
+    updateCreditsSummary();
+  });
+}
+
+// ─── UPDATE CREDITS SUMMARY ──────────────────────────────────
+function updateCreditsSummary() {
+  const iaeRTG = rtgRows ? rtgRows.length : 0;
+  const iaeUA  = uaRows  ? uaRows.length  : 0;
+  const iaeTotal = iaeRTG + iaeUA;
+  
+  // Update IAE field
+  setAutoVal('iae', iaeTotal, true);
+  
+  // Show IAE breakdown
+  const breakdown = document.getElementById('iaeBreakdown');
+  if (breakdown) {
+    breakdown.textContent = `RTG: ${iaeRTG.toLocaleString('es-CO')} + UA: ${iaeUA.toLocaleString('es-CO')} = ${iaeTotal.toLocaleString('es-CO')}`;
+    breakdown.style.display = 'block';
+  }
+  
+  calcCredits();
+}
+
+// ─── WRITE TO LOOKER SHEET ───────────────────────────────────
+async function writeToLooker() {
+  const btn = document.getElementById('btnWriteLooker');
+  btn.disabled = true;
+  btn.textContent = '⏳ Escribiendo...';
+
+  try {
+    // ── Build daily events data ──────────────────────────────
+    const eventsByDay = {}; // date → { total, libreton, nomina, otro }
+    
+    if (allResults && allResults.length > 0) {
+      const clean = allResults.filter(r => r.status === 'clean' && r.completionDate);
+      clean.forEach(r => {
+        if (!eventsByDay[r.completionDate]) eventsByDay[r.completionDate] = { total:0, libreton:0, nomina:0, otro:0 };
+        eventsByDay[r.completionDate].total++;
+        eventsByDay[r.completionDate][r.product === 'libreton' ? 'libreton' : r.product === 'nomina' ? 'nomina' : 'otro']++;
+      });
+    }
+
+    // ── Build daily credits data ─────────────────────────────
+    const creditsByDay = {}; // date → { reattr, reeng, iaeRTG, iaeUA, clicks, sessions }
+
+    // IAEs from RTG by day (count all rows by Event Time date)
+    if (rtgRows) {
+      rtgRows.forEach(r => {
+        const date = (r['Event Time'] || r['event_time'] || '').slice(0,10);
+        if (!date) return;
+        if (!creditsByDay[date]) initCreditDay(creditsByDay, date);
+        creditsByDay[date].iaeRTG++;
+      });
+    }
+
+    // IAEs from UA by day
+    if (uaRows) {
+      uaRows.forEach(r => {
+        const date = (r['Event Time'] || r['event_time'] || '').slice(0,10);
+        if (!date) return;
+        if (!creditsByDay[date]) initCreditDay(creditsByDay, date);
+        creditsByDay[date].iaeUA++;
+      });
+    }
+
+    // Re-attr, re-eng, clicks, sessions from partners report by day
+    if (partnerRows) {
+      const cols = Object.keys(partnerRows[0] || {});
+      const findCol = (...names) => cols.find(c => names.some(n => c.toLowerCase().trim() === n.toLowerCase())) || null;
+      const colDate     = findCol('date');
+      const colConv     = findCol('conversions');
+      const colConvType = findCol('conversion type');
+      const colClicks   = findCol('clicks');
+      const colSessions = findCol('sessions');
+
+      partnerRows.forEach(r => {
+        const date = colDate ? (r[colDate] || '').slice(0,10) : '';
+        if (!date) return;
+        if (!creditsByDay[date]) initCreditDay(creditsByDay, date);
+        const convType = colConvType ? (r[colConvType] || '').toLowerCase().trim() : '';
+        const convVal  = colConv ? numVal(r[colConv]) : 0;
+        if (convType === 're-attribution') creditsByDay[date].reattr += convVal;
+        else if (convType === 're-engagement') creditsByDay[date].reeng += convVal;
+        if (colClicks)   creditsByDay[date].clicks   += numVal(r[colClicks]);
+        if (colSessions) creditsByDay[date].sessions += numVal(r[colSessions]);
+      });
+    }
+
+    // ── Prepare rows for Sheets API ──────────────────────────
+    const fileName = (rtgRows ? 'RTG+' : '') + (uaRows ? 'UA+' : '') + (partnerRows ? 'Partners' : '');
+    const today = new Date().toISOString().slice(0,10);
+
+    // eventos_validos rows
+    const eventRows = Object.keys(eventsByDay).sort().map(date => [
+      date,
+      eventsByDay[date].total,
+      eventsByDay[date].libreton,
+      eventsByDay[date].nomina,
+      eventsByDay[date].otro,
+      `${funnelPeriod.min || '?'} → ${funnelPeriod.max || '?'}`,
+      fileName
+    ]);
+
+    // creditos rows
+    const creditRows = Object.keys(creditsByDay).sort().map(date => {
+      const d = creditsByDay[date];
+      const iaeTotal = d.iaeRTG + d.iaeUA;
+      const ccReattr   = d.reattr   * CC_RATES.reattr;
+      const ccReeng    = d.reeng    * CC_RATES.reeng;
+      const ccIae      = iaeTotal   * CC_RATES.iae;
+      const ccClicks   = d.clicks   * CC_RATES.clicks;
+      const ccSessions = d.sessions * CC_RATES.sessions;
+      const ccTotal    = ccReattr + ccReeng + ccIae + ccClicks + ccSessions;
+      return [
+        date, d.reattr, d.reeng, d.iaeRTG, d.iaeUA, iaeTotal,
+        d.clicks, d.sessions,
+        ccReattr, ccReeng, ccIae, ccClicks, ccSessions, ccTotal,
+        fileName
+      ];
+    });
+
+    if (eventRows.length === 0 && creditRows.length === 0) {
+      throw new Error('No hay datos para escribir. Cargá al menos un archivo.');
+    }
+
+    // ── Write to Sheets API ──────────────────────────────────
+    const apiBase = `https://sheets.googleapis.com/v4/spreadsheets/${LOOKER_SHEET_ID}/values:batchUpdate`;
+    
+    const body = {
+      valueInputOption: 'USER_ENTERED',
+      data: []
+    };
+
+    if (eventRows.length > 0) {
+      // Append after last row — first find next empty row
+      const nextEventRow = 2; // Will use append
+      body.data.push({
+        range: `eventos_validos!A2`,
+        values: eventRows
+      });
+    }
+
+    if (creditRows.length > 0) {
+      body.data.push({
+        range: `creditos!A2`,
+        values: creditRows
+      });
+    }
+
+    // Use append instead to avoid overwriting
+    // Write eventos_validos
+    if (eventRows.length > 0) {
+      await sheetsAppend('eventos_validos', eventRows);
+    }
+    if (creditRows.length > 0) {
+      await sheetsAppend('creditos', creditRows);
+    }
+
+    // Show success
+    document.getElementById('lookerStatus').innerHTML = `
+      <div style="background:var(--valid-bg);border:1px solid #a7f3d0;border-radius:6px;padding:10px 14px;font-size:12.5px;color:var(--valid)">
+        ✅ <strong>Datos escritos en el Sheet de Looker</strong><br>
+        <small style="color:var(--rl-text-muted)">
+          ${eventRows.length} días de eventos válidos · ${creditRows.length} días de créditos<br>
+          <a href="${LOOKER_SHEET_URL}" target="_blank" style="color:var(--rl-accent)">Abrir Sheet →</a>
+        </small>
+      </div>`;
+
+  } catch(e) {
+    document.getElementById('lookerStatus').innerHTML = `
+      <div style="background:var(--invalid-bg);border:1px solid #fecaca;border-radius:6px;padding:10px 14px;font-size:12.5px;color:var(--invalid)">
+        ❌ ${e.message}
+      </div>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '📤 Escribir en Looker Sheet';
+}
+
+async function sheetsAppend(sheetName, rows) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${LOOKER_SHEET_ID}/values/${encodeURIComponent(sheetName + '!A2')}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ values: rows }),
+    credentials: 'include'
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`Error escribiendo ${sheetName}: ${err.error?.message || res.status}`);
+  }
+  return res.json();
+}
+
+function initCreditDay(obj, date) {
+  obj[date] = { reattr:0, reeng:0, iaeRTG:0, iaeUA:0, clicks:0, sessions:0 };
+}
+
+function resetRTG() {
+  rtgRows = null;
+  document.getElementById('rtgFileBar').style.display = 'none';
+  document.getElementById('rtgUploadZone').style.display = 'block';
+  updateCreditsSummary();
+}
+
+function resetUA() {
+  uaRows = null;
+  document.getElementById('uaFileBar').style.display = 'none';
+  document.getElementById('uaUploadZone').style.display = 'block';
+  updateCreditsSummary();
+}
+
 </script>
 </body>
 </html>
