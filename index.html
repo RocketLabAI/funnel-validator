@@ -607,6 +607,9 @@ function checkProcessBtn() {
   document.getElementById('btnProcess').disabled = !(rtgRows && uaRows && partnerRows);
 }
 
+// Initialize uploads when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+
 // RTG
 setupUpload('rtgZone','rtgInput', file => {
   parseCSVFile(file, rows => {
@@ -640,6 +643,8 @@ setupUpload('partnersZone','partnersInput', file => {
     showFileBar('partners', file.name, `${rows.length.toLocaleString('es-CO')} filas · ${Math.round(reattr).toLocaleString('es-CO')} re-attr · ${Math.round(reeng).toLocaleString('es-CO')} re-eng`);
   });
 });
+
+}); // end DOMContentLoaded
 
 // ═══════════════════════════════════════════════
 // PROCESS ALL
