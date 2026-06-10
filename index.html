@@ -236,7 +236,7 @@ tr:hover td{background:#faf9ff}
             </div>
             <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('rtg')">✕</button>
           </div>
-          <div class="uzone" id="rtgZone" style="padding:20px">
+          <div class="uzone" id="rtgZone" style="padding:20px" onclick="document.getElementById('rtgInput').click()">
             <input type="file" id="rtgInput" accept=".csv,.tsv,.txt" style="display:none">
             <div style="font-size:24px;margin-bottom:6px">📱</div>
             <h2>Raw Data RTG</h2>
@@ -258,7 +258,7 @@ tr:hover td{background:#faf9ff}
             </div>
             <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('ua')">✕</button>
           </div>
-          <div class="uzone" id="uaZone" style="padding:20px">
+          <div class="uzone" id="uaZone" style="padding:20px" onclick="document.getElementById('uaInput').click()">
             <input type="file" id="uaInput" accept=".csv,.tsv,.txt" style="display:none">
             <div style="font-size:24px;margin-bottom:6px">📲</div>
             <h2>Raw Data UA</h2>
@@ -280,7 +280,7 @@ tr:hover td{background:#faf9ff}
             </div>
             <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('partners')">✕</button>
           </div>
-          <div class="uzone" id="partnersZone" style="padding:20px">
+          <div class="uzone" id="partnersZone" style="padding:20px" onclick="document.getElementById('partnersInput').click()">
             <input type="file" id="partnersInput" accept=".csv,.tsv,.txt" style="display:none">
             <div style="font-size:24px;margin-bottom:6px">📊</div>
             <h2>Partners Report</h2>
@@ -578,10 +578,11 @@ function numVal(v) {
 function setupUpload(zoneId, inputId, onFile) {
   const zone  = document.getElementById(zoneId);
   const input = document.getElementById(inputId);
-  zone.addEventListener('click', () => input.click());
-  zone.addEventListener('dragover', e=>{e.preventDefault();zone.classList.add('drag-over');});
-  zone.addEventListener('dragleave', ()=>zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e=>{e.preventDefault();zone.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)onFile(f);});
+  // Click on zone triggers input — stopPropagation to avoid double-fire
+  zone.onclick = (e) => { if(e.target === input) return; input.click(); };
+  zone.addEventListener('dragover', e=>{e.preventDefault();e.stopPropagation();zone.classList.add('drag-over');});
+  zone.addEventListener('dragleave', e=>{e.stopPropagation();zone.classList.remove('drag-over');});
+  zone.addEventListener('drop', e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)onFile(f);});
   input.addEventListener('change', e=>{if(e.target.files[0])onFile(e.target.files[0]);e.target.value='';});
 }
 
