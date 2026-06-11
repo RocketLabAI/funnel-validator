@@ -560,7 +560,7 @@ function parseCSVFile(file, onComplete) {
     const delim = tabs>semis&&tabs>commas?'\t':semis>commas?';':',';
     Papa.parse(text,{header:true,skipEmptyLines:true,delimiter:delim,
       transformHeader:h=>h.trim(),transform:v=>(v||'').trim(),
-      complete:r=>{if(!r.data||!r.data.length){alert('Archivo vacío.');return;}onComplete(r.data);}
+      complete:r=>{console.log('PapaParse complete, rows:', r.data?.length);if(!r.data||!r.data.length){alert('Archivo vacío.');return;}onComplete(r.data);}
     });
   };
   reader.readAsArrayBuffer(file);
@@ -587,10 +587,16 @@ function setupUpload(zoneId, inputId, onFile) {
 }
 
 function showFileBar(type, name, summary) {
-  document.getElementById(type+'Zone').style.display='none';
-  document.getElementById(type+'Bar').style.display='flex';
-  document.getElementById(type+'Name').textContent=name;
-  document.getElementById(type+'Summary').textContent=summary;
+  console.log('showFileBar called:', type, name, summary);
+  const zone = document.getElementById(type+'Zone');
+  const bar  = document.getElementById(type+'Bar');
+  const nm   = document.getElementById(type+'Name');
+  const sm   = document.getElementById(type+'Summary');
+  console.log('Elements:', zone, bar, nm, sm);
+  if(zone) zone.style.display='none';
+  if(bar)  bar.style.display='flex';
+  if(nm)   nm.textContent=name;
+  if(sm)   sm.textContent=summary;
   checkProcessBtn();
 }
 
@@ -609,6 +615,7 @@ function checkProcessBtn() {
 
 // Initialize uploads when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOMContentLoaded fired, setting up uploads...');
 
 // RTG
 setupUpload('rtgZone','rtgInput', file => {
@@ -915,7 +922,7 @@ function analyze(rows) {
     const evs=byId[id].sort((a,b)=>(a.time||0)-(b.time||0));
     const ce=evs.find(e=>e.event===COMPLETED_CONTRATADO)||evs.find(e=>e.event===COMPLETED_APROBADO);
     const country=ce?ce.country:'', isPrimary=ce?ce.isPrimary:'';
-    const afContent=getAfContent(ce?ce.value:''), mediaSource=ce?(ce.mediaSource||')':'');
+    const afContent=getAfContent(ce?ce.value:''), mediaSource=ce?(ce.mediaSource||''):''
     const product=classifyProduct(afContent);
     const completionDate=ce&&ce.rawTime?ce.rawTime.slice(0,10):'';
     const completionCount=evs.filter(e=>COMPLETION_EVENTS.includes(e.event)).length;
