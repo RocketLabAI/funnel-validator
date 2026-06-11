@@ -507,7 +507,8 @@ tr:hover td{background:#faf9ff}
 // ═══════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════
-const LOOKER_ID  = '1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI';
+const LOOKER_ID   = '1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI';
+const WEBAPP_URL  = 'https://script.google.com/macros/s/AKfycbwu2-N87XhAkBeR-1i7S643F692mMJBE10FgpKutrKgcp8aKLV3m7WI-DwXTUHdB394/exec';
 const CC_RATES   = { reattr:800/1e6, reeng:100/1e6, iae:2/1e6, clicks:2/1e6, sessions:2/1e6 };
 
 const STEP_6               = 'apertura_cuenta_en_linea_no_cliente-app_step_6';
@@ -828,10 +829,15 @@ async function writeToLooker() {
 
     // Write via Sheets API (append)
     const append = async (sheet, rows) => {
-      if(!rows.length)return;
-      const url=`https://sheets.googleapis.com/v4/spreadsheets/${LOOKER_ID}/values/${encodeURIComponent(sheet+'!A2')}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
-      const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({values:rows}),credentials:'include'});
-      if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'HTTP '+res.status);}
+      if(!rows.length) return;
+      const res = await fetch(WEBAPP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ sheet, rows })
+      });
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      if(!data.ok) throw new Error(data.error || 'Error en Web App');
     };
 
     await append('eventos_validos', eventRows);
