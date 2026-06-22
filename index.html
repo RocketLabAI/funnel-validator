@@ -828,20 +828,27 @@ async function writeToLooker() {
     });
 
     // Write via Sheets API (append)
-    const append = async (sheet, rows) => {
+    const upsert = async (sheet, rows) => {
       if(!rows.length) return;
+      // Primero limpia la hoja
+      await fetch(WEBAPP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'clear', sheet })
+      });
+      // Después escribe
       const res = await fetch(WEBAPP_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ sheet, rows })
+        body: JSON.stringify({ action: 'write', sheet, rows })
       });
       if(!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if(!data.ok) throw new Error(data.error || 'Error en Web App');
     };
 
-    await append('eventos_validos', eventRows);
-    await append('creditos', creditRows);
+    await upsert('eventos_validos', eventRows);
+    await upsert('creditos', creditRows);
 
     return { ok:true, msg:`${eventRows.length} días de eventos · ${creditRows.length} días de créditos escritos en Sheet` };
 
