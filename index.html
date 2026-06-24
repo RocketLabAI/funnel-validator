@@ -829,27 +829,16 @@ async function writeToLooker() {
 
     const upsert = async (sheet, rows) => {
       if(!rows.length) return;
-      
-      // Clear primero — esperamos la respuesta antes de escribir
-      const clearRes = await fetch(WEBAPP_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'clear', sheet })
-      });
-      const clearData = await clearRes.json();
-      if(!clearData.ok) throw new Error(`Clear falló en ${sheet}: ${clearData.error}`);
-      
-      // Después escribimos
-      const writeRes = await fetch(WEBAPP_URL, {
+      const res = await fetch(WEBAPP_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'write', sheet, rows })
       });
-      if(!writeRes.ok) throw new Error('HTTP ' + writeRes.status);
-      const data = await writeRes.json();
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
       if(!data.ok) throw new Error(data.error || 'Error en Web App');
     };
-
+    
     await upsert('eventos_validos', eventRows);
     await upsert('creditos', creditRows);
 
