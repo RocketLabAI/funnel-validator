@@ -561,7 +561,7 @@ function parseCSVFile(file, onComplete) {
     const delim = tabs>semis&&tabs>commas?'\t':semis>commas?';':',';
     Papa.parse(text,{header:true,skipEmptyLines:true,delimiter:delim,
       transformHeader:h=>h.trim(),transform:v=>(v||'').trim(),
-      complete:r=>{console.log('PapaParse complete, rows:', r.data?.length);if(!r.data||!r.data.length){alert('Archivo vacío.');return;}onComplete(r.data);}
+      complete:r=>{if(!r.data||!r.data.length){alert('Archivo vacío.');return;}onComplete(r.data);}
     });
   };
   reader.readAsArrayBuffer(file);
@@ -573,13 +573,20 @@ function numVal(v) {
   return isNaN(n)?0:n;
 }
 
+// ─── FIX 3: extracción de Event Time case-insensitive ──────────
+function getEventTime(row) {
+  const key = Object.keys(row).find(k =>
+    k.toLowerCase().replace(/\s+/g, '_') === 'event_time'
+  );
+  return key ? row[key] : null;
+}
+
 // ═══════════════════════════════════════════════
 // FILE UPLOADS SETUP
 // ═══════════════════════════════════════════════
 function setupUpload(zoneId, inputId, onFile) {
   const zone  = document.getElementById(zoneId);
   const input = document.getElementById(inputId);
-  // Click on zone triggers input — stopPropagation to avoid double-fire
   zone.onclick = (e) => { if(e.target === input) return; input.click(); };
   zone.addEventListener('dragover', e=>{e.preventDefault();e.stopPropagation();zone.classList.add('drag-over');});
   zone.addEventListener('dragleave', e=>{e.stopPropagation();zone.classList.remove('drag-over');});
@@ -588,12 +595,10 @@ function setupUpload(zoneId, inputId, onFile) {
 }
 
 function showFileBar(type, name, summary) {
-  console.log('showFileBar called:', type, name, summary);
   const zone = document.getElementById(type+'Zone');
   const bar  = document.getElementById(type+'Bar');
   const nm   = document.getElementById(type+'Name');
   const sm   = document.getElementById(type+'Summary');
-  console.log('Elements:', zone, bar, nm, sm);
   if(zone) zone.style.display='none';
   if(bar)  bar.style.display='flex';
   if(nm)   nm.textContent=name;
@@ -614,45 +619,38 @@ function checkProcessBtn() {
   document.getElementById('btnProcess').disabled = !(rtgRows && uaRows && partnerRows);
 }
 
-// Initialize uploads when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOMContentLoaded fired, setting up uploads...');
-
-// RTG
-setupUpload('rtgZone','rtgInput', file => {
-  parseCSVFile(file, rows => {
-    rtgRows = rows;
-    showFileBar('rtg', file.name, `${rows.length.toLocaleString('es-CO')} filas (IAEs RTG)`);
-  });
-});
-
-// UA
-setupUpload('uaZone','uaInput', file => {
-  parseCSVFile(file, rows => {
-    uaRows = rows;
-    showFileBar('ua', file.name, `${rows.length.toLocaleString('es-CO')} filas (IAEs UA)`);
-  });
-});
-
-// Partners
-setupUpload('partnersZone','partnersInput', file => {
-  parseCSVFile(file, rows => {
-    partnerRows = rows;
-    const cols=Object.keys(rows[0]||{});
-    const fc=(...ns)=>cols.find(c=>ns.some(n=>c.toLowerCase().trim()===n.toLowerCase()))||null;
-    const colConv=fc('conversions'), colConvType=fc('conversion type');
-    let reattr=0,reeng=0;
-    rows.forEach(r=>{
-      const t=colConvType?(r[colConvType]||'').toLowerCase().trim():'';
-      const v=colConv?numVal(r[colConv]):0;
-      if(t==='re-attribution')reattr+=v;
-      else if(t==='re-engagement')reeng+=v;
+  setupUpload('rtgZone','rtgInput', file => {
+    parseCSVFile(file, rows => {
+      rtgRows = rows;
+      showFileBar('rtg', file.name, `${rows.length.toLocaleString('es-CO')} filas (IAEs RTG)`);
     });
-    showFileBar('partners', file.name, `${rows.length.toLocaleString('es-CO')} filas · ${Math.round(reattr).toLocaleString('es-CO')} re-attr · ${Math.round(reeng).toLocaleString('es-CO')} re-eng`);
+  });
+
+  setupUpload('uaZone','uaInput', file => {
+    parseCSVFile(file, rows => {
+      uaRows = rows;
+      showFileBar('ua', file.name, `${rows.length.toLocaleString('es-CO')} filas (IAEs UA)`);
+    });
+  });
+
+  setupUpload('partnersZone','partnersInput', file => {
+    parseCSVFile(file, rows => {
+      partnerRows = rows;
+      const cols=Object.keys(rows[0]||{});
+      const fc=(...ns)=>cols.find(c=>ns.some(n=>c.toLowerCase().trim()===n.toLowerCase()))||null;
+      const colConv=fc('conversions'), colConvType=fc('conversion type');
+      let reattr=0,reeng=0;
+      rows.forEach(r=>{
+        const t=colConvType?(r[colConvType]||'').toLowerCase().trim():'';
+        const v=colConv?numVal(r[colConv]):0;
+        if(t==='re-attribution')reattr+=v;
+        else if(t==='re-engagement')reeng+=v;
+      });
+      showFileBar('partners', file.name, `${rows.length.toLocaleString('es-CO')} filas · ${Math.round(reattr).toLocaleString('es-CO')} re-attr · ${Math.round(reeng).toLocaleString('es-CO')} re-eng`);
+    });
   });
 });
-
-}); // end DOMContentLoaded
 
 // ═══════════════════════════════════════════════
 // PROCESS ALL
@@ -663,27 +661,23 @@ async function processAll() {
   btn.textContent = '⏳ Procesando...';
   showProcessStatus('loading','⏳ Procesando archivos...',0);
 
-  // Step 1: Funnel from RTG
   showProcessStatus('loading','🔍 Analizando funnel (RTG)...',20);
   await sleep(10);
   analyze(rtgRows);
 
-  // Step 2: Credits from all files
   showProcessStatus('loading','💎 Calculando créditos...',50);
   await sleep(10);
   buildCredits();
 
-  // Step 3: Write to Looker Sheet
   showProcessStatus('loading','📤 Escribiendo en Google Sheet...',75);
   await sleep(10);
   const writeResult = await writeToLooker();
 
-  // Done
   if (writeResult.ok) {
     showProcessStatus('ok',
       `✅ <strong>Todo procesado correctamente</strong><br>
       <small style="color:var(--txm)">
-        ${allResults.filter(r=>r.status==='clean').length} altas válidas · 
+        ${allResults.filter(r=>r.status==='clean').length} altas válidas ·
         IAEs: ${(rtgRows.length+uaRows.length).toLocaleString('es-CO')} ·
         ${writeResult.msg}<br>
         <a href="https://docs.google.com/spreadsheets/d/${LOOKER_ID}/edit" target="_blank" style="color:var(--ac)">Ver Sheet →</a>
@@ -720,7 +714,6 @@ function buildCredits() {
   const iaeUA  = uaRows  ? uaRows.length  : 0;
   const total  = iaeRTG + iaeUA;
 
-  // Partners: re-attr, re-eng, clicks, sessions
   let reattr=0, reeng=0, clicks=0, sessions=0;
   let minDate=null, maxDate=null;
 
@@ -745,21 +738,18 @@ function buildCredits() {
     });
   }
 
-  // Update period bar
   if (minDate && maxDate) {
     funnelPeriod.min = minDate;
     funnelPeriod.max = maxDate;
     updatePeriodBar();
   }
 
-  // Set values
   setAutoVal('reattr',   reattr,   true);
   setAutoVal('reeng',    reeng,    true);
   setAutoVal('iae',      total,    true);
   setAutoVal('clicks',   clicks,   true);
   setAutoVal('sessions', sessions, true);
 
-  // IAE breakdown
   const bd = document.getElementById('iaeBreakdown');
   if (bd) {
     bd.textContent = `RTG: ${iaeRTG.toLocaleString('es-CO')} + UA: ${iaeUA.toLocaleString('es-CO')} = ${total.toLocaleString('es-CO')}`;
@@ -794,14 +784,15 @@ async function writeToLooker() {
     const creditsByDay = {};
 
     const addDay = (date, key, val=1) => {
-      if(!date)return;
-      const d=date.slice(0,10);
+      if(!date) return;
+      const d = date.slice(0,10);
       if(!creditsByDay[d]) creditsByDay[d]={reattr:0,reeng:0,iaeRTG:0,iaeUA:0,clicks:0,sessions:0};
-      creditsByDay[d][key]+=val;
+      creditsByDay[d][key] += val;
     };
 
-    if(rtgRows) rtgRows.forEach(r=>addDay(r['Event Time']||r['event_time'],'iaeRTG'));
-    if(uaRows)  uaRows.forEach(r=>addDay(r['Event Time']||r['event_time'],'iaeUA'));
+    // FIX 3: usar getEventTime() en lugar de acceso directo por nombre
+    if(rtgRows) rtgRows.forEach(r => addDay(getEventTime(r), 'iaeRTG'));
+    if(uaRows)  uaRows.forEach(r  => addDay(getEventTime(r), 'iaeUA'));
 
     if(partnerRows){
       const cols=Object.keys(partnerRows[0]||{});
@@ -827,8 +818,8 @@ async function writeToLooker() {
       return [d,x.reattr,x.reeng,x.iaeRTG,x.iaeUA,iaeT,x.clicks,x.sessions,ccR,ccE,ccI,ccC,ccS,ccR+ccE+ccI+ccC+ccS,fileName];
     });
 
+    // FIX 1+2: siempre llamar al servidor aunque rows esté vacío — el server limpia igual
     const upsert = async (sheet, rows) => {
-      if(!rows.length) return;
       const res = await fetch(WEBAPP_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
@@ -838,7 +829,7 @@ async function writeToLooker() {
       const data = await res.json();
       if(!data.ok) throw new Error(data.error || 'Error en Web App');
     };
-    
+
     await upsert('eventos_validos', eventRows);
     await upsert('creditos', creditRows);
 
@@ -1024,7 +1015,7 @@ function exportCSV(which){
   const rows=[['AppsFlyer ID','Estado','Filtro','Producto','País','Media Source','Completions','Tiene step_6','Detalle geo','af_content']];
   data.forEach(r=>rows.push([r.id,r.status,r.filter,r.product,r.country,r.mediaSource||'',r.completionCount,r.hasStep6?'Sí':'No',r.geoDetail,r.afContent]));
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'})),download:`bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`});
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'})),download:`bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`});
   document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
 }
 
