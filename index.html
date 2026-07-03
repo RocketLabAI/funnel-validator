@@ -209,17 +209,17 @@ tr:hover td{background:#faf9ff}
       <div class="pg-header">
         <div>
           <div class="pg-title">Cargar Archivos</div>
-          <div class="pg-sub">Subí los tres archivos y procesá todo junto · BBVA Colombia</div>
+          <div class="pg-sub">Subí el RTG (obligatorio) y, si querés, UA y Partners · BBVA Colombia</div>
         </div>
         <button class="btn btn-success" id="btnProcess" onclick="processAll()" disabled>⚡ Procesar todo</button>
       </div>
 
       <div class="criteria">
         <strong>Qué hace cada archivo:</strong><br>
-        &nbsp;📱 <strong>Raw RTG</strong> → Funnel Validator (filtra altas válidas) + cuenta todas las filas como IAEs RTG<br>
-        &nbsp;📲 <strong>Raw UA</strong> → cuenta todas las filas como IAEs UA<br>
-        &nbsp;📊 <strong>Partners Report</strong> → re-attr, re-eng, clicks, sessions por día<br>
-        &nbsp;✅ Al procesar, los resultados se actualizan en Funnel y Créditos, y se escriben en el Sheet de Looker
+        &nbsp;📱 <strong>Raw RTG</strong> <span style="color:var(--er)">(obligatorio)</span> → Funnel Validator (filtra altas válidas) + cuenta todas las filas como IAEs RTG<br>
+        &nbsp;📲 <strong>Raw UA</strong> <span style="color:var(--txm)">(opcional)</span> → cuenta todas las filas como IAEs UA<br>
+        &nbsp;📊 <strong>Partners Report</strong> <span style="color:var(--txm)">(opcional)</span> → re-attr, re-eng, clicks, sessions por día<br>
+        &nbsp;✅ Con solo el RTG ya podés procesar: obtenés el funnel + los IAEs de RTG. Los créditos de re-attr / re-eng / clicks / sessions requieren el Partners Report.
       </div>
 
       <div class="upload-grid">
@@ -247,7 +247,7 @@ tr:hover td{background:#faf9ff}
 
         <!-- UA -->
         <div>
-          <div class="sec-lbl">📲 Raw Data UA <span style="color:var(--er)">*</span></div>
+          <div class="sec-lbl">📲 Raw Data UA <span style="color:var(--txm)">(opcional)</span></div>
           <div id="uaBar" style="display:none" class="fbar">
             <div style="display:flex;align-items:center;gap:8px">
               <span>✅</span>
@@ -269,7 +269,7 @@ tr:hover td{background:#faf9ff}
 
         <!-- Partners -->
         <div>
-          <div class="sec-lbl">📊 Partners Report <span style="color:var(--er)">*</span></div>
+          <div class="sec-lbl">📊 Partners Report <span style="color:var(--txm)">(opcional)</span></div>
           <div id="partnersBar" style="display:none" class="fbar">
             <div style="display:flex;align-items:center;gap:8px">
               <span>✅</span>
@@ -615,8 +615,10 @@ function resetFile(type) {
   checkProcessBtn();
 }
 
+// Con solo el RTG cargado ya se puede procesar (funnel + IAEs RTG).
+// UA y Partners son opcionales: enriquecen los créditos.
 function checkProcessBtn() {
-  document.getElementById('btnProcess').disabled = !(rtgRows && uaRows && partnerRows);
+  document.getElementById('btnProcess').disabled = !rtgRows;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -673,19 +675,24 @@ async function processAll() {
   await sleep(10);
   const writeResult = await writeToLooker();
 
+  const iaeTotal = (rtgRows ? rtgRows.length : 0) + (uaRows ? uaRows.length : 0);
+  const optionalNote = (!uaRows || !partnerRows)
+    ? `<br><small style="color:var(--txm)">ℹ️ Procesado solo con ${uaRows?'':'RTG'}${(!uaRows&&!partnerRows)?' ':''}${!partnerRows?'(sin Partners: créditos de re-attr/re-eng/clicks/sessions en 0)':''}${!uaRows?' — sin UA':''}.</small>`
+    : '';
+
   if (writeResult.ok) {
     showProcessStatus('ok',
       `✅ <strong>Todo procesado correctamente</strong><br>
       <small style="color:var(--txm)">
         ${allResults.filter(r=>r.status==='clean').length} altas válidas ·
-        IAEs: ${(rtgRows.length+uaRows.length).toLocaleString('es-CO')} ·
+        IAEs: ${iaeTotal.toLocaleString('es-CO')} ·
         ${writeResult.msg}<br>
         <a href="https://docs.google.com/spreadsheets/d/${LOOKER_ID}/edit" target="_blank" style="color:var(--ac)">Ver Sheet →</a>
-      </small>`, 100);
+      </small>${optionalNote}`, 100);
   } else {
     showProcessStatus('warn',
       `⚠️ <strong>Procesado con advertencias</strong><br>
-      <small style="color:var(--txm)">${writeResult.msg}</small>`, 100);
+      <small style="color:var(--txm)">${writeResult.msg}</small>${optionalNote}`, 100);
   }
 
   btn.disabled = false;
@@ -744,11 +751,11 @@ function buildCredits() {
     updatePeriodBar();
   }
 
-  setAutoVal('reattr',   reattr,   true);
-  setAutoVal('reeng',    reeng,    true);
+  setAutoVal('reattr',   reattr,   !!partnerRows);
+  setAutoVal('reeng',    reeng,    !!partnerRows);
   setAutoVal('iae',      total,    true);
-  setAutoVal('clicks',   clicks,   true);
-  setAutoVal('sessions', sessions, true);
+  setAutoVal('clicks',   clicks,   !!partnerRows);
+  setAutoVal('sessions', sessions, !!partnerRows);
 
   const bd = document.getElementById('iaeBreakdown');
   if (bd) {
