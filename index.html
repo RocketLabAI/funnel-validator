@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"> 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BBVA CO — Validator + Credits</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -347,15 +347,11 @@ tr:hover td{background:#faf9ff}
           </div>
         </div>
 
-        <div class="sec-lbl">Altas válidas por día</div>
+        <div class="sec-lbl">Altas válidas por día × Media Source (pid)</div>
         <div class="card" style="padding:20px 20px 14px;margin-bottom:20px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
-            <div style="font-size:12px;color:var(--txm)">Fecha del evento <code>completed_aprobado</code> · solo facturables</div>
-            <div style="display:flex;gap:10px;font-size:11px;color:var(--txm)">
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--ac);display:inline-block"></span>Libreton</span>
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--bl);display:inline-block"></span>Nómina</span>
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--wn);display:inline-block"></span>Otro</span>
-            </div>
+            <div style="font-size:12px;color:var(--txm)">Altas válidas (facturables) por día, apiladas por media source</div>
+            <div id="dailyLegend" style="display:flex;gap:10px 14px;flex-wrap:wrap;font-size:11px;color:var(--txm)"></div>
           </div>
           <div id="dailyChart" style="width:100%;overflow-x:auto"></div>
         </div>
@@ -517,6 +513,15 @@ tr:hover td{background:#faf9ff}
         </div>
       </div>
 
+      <div class="sec-lbl" style="margin-top:20px">Créditos totales por día × Media Source (pid)</div>
+      <div class="card" style="padding:20px 20px 14px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <div style="font-size:12px;color:var(--txm)">Capacity Credits por día, apilados por media source</div>
+          <div id="creditsChartLegend" style="display:flex;gap:10px 14px;flex-wrap:wrap;font-size:11px;color:var(--txm)"></div>
+        </div>
+        <div id="creditsChart" style="width:100%;overflow-x:auto"></div>
+      </div>
+
       <div class="sec-lbl" style="margin-top:20px">Por Media Source (pid)</div>
       <div class="tw">
         <div class="ts">
@@ -550,6 +555,11 @@ const COMPLETION_EVENTS    = [COMPLETED_APROBADO, COMPLETED_CONTRATADO];
 const KNOWN_STEPS          = [STEP_1, STEP_6, COMPLETED_APROBADO, COMPLETED_CONTRATADO];
 const GEO_MIN              = 50;
 
+// Paleta categórica para pids + asignación estable (mismo pid → mismo color en toda la app)
+const PID_PALETTE = ['#7c3aed','#2563eb','#059669','#d97706','#db2777','#0891b2','#65a30d','#9333ea','#e11d48','#0d9488','#f59e0b','#4f46e5','#7A53CA','#6592FF','#72EAE1'];
+const _pidColorReg = {}; let _pidColorN = 0;
+function pidColor(p){ if(!(p in _pidColorReg)){ _pidColorReg[p]=PID_PALETTE[_pidColorN%PID_PALETTE.length]; _pidColorN++; } return _pidColorReg[p]; }
+
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
@@ -562,7 +572,6 @@ let activeStatus = 'all';
 let activeProduct= 'all';
 let activePid    = 'all';
 
-// pid normalizado de un resultado del funnel
 const pidOf = r => (r.mediaSource && r.mediaSource.trim()) ? r.mediaSource.trim() : '(sin pid)';
 
 // ═══════════════════════════════════════════════
@@ -660,8 +669,6 @@ function resetFile(type) {
   checkProcessBtn();
 }
 
-// Con solo el RTG cargado ya se puede procesar (funnel + IAEs RTG).
-// UA y Partners son opcionales: enriquecen los créditos.
 function checkProcessBtn() {
   document.getElementById('btnProcess').disabled = !rtgRows;
 }
@@ -810,6 +817,7 @@ function buildCredits() {
 
   calcCredits();
   renderCreditsByPid();
+  renderCreditsChart();
 }
 
 // ═══════════════════════════════════════════════
@@ -819,7 +827,6 @@ async function writeToLooker() {
   try {
     const fileName = new Date().toISOString().slice(0,10);
 
-    // ── eventos_validos: por día × media source (pid) ─────────
     const evByKey = {};
     const clean = allResults.filter(r=>r.status==='clean'&&r.completionDate);
     clean.forEach(r=>{
@@ -834,7 +841,6 @@ async function writeToLooker() {
       .map(b=>[b.date, b.ms, b.total, b.libreton, b.nomina, b.otro,
                `${funnelPeriod.min||'?'} → ${funnelPeriod.max||'?'}`, fileName]);
 
-    // ── creditos: por día × media source (pid) ────────────────
     const crByKey = {};
     const addDay = (date, ms, key, val=1) => {
       if(!date) return;
@@ -845,7 +851,6 @@ async function writeToLooker() {
       crByKey[k][key] += val;
     };
 
-    // FIX 3: usar getEventTime() y getMediaSource()
     if(rtgRows) rtgRows.forEach(r => addDay(getEventTime(r), getMediaSource(r), 'iaeRTG'));
     if(uaRows)  uaRows.forEach(r  => addDay(getEventTime(r), getMediaSource(r), 'iaeUA'));
 
@@ -877,7 +882,6 @@ async function writeToLooker() {
                 ccR, ccE, ccI, ccC, ccS, ccR+ccE+ccI+ccC+ccS, fileName];
       });
 
-    // FIX 1+2: siempre llamar al servidor aunque rows esté vacío
     const upsert = async (sheet, rows) => {
       const res = await fetch(WEBAPP_URL, {
         method: 'POST',
@@ -935,7 +939,6 @@ function resetCredits(){
   calcCredits();
 }
 
-// Créditos por Media Source (pid) — desglose en pantalla
 function renderCreditsByPid(){
   const body=document.getElementById('creditsByPidBody'); if(!body)return;
   const agg={};
@@ -962,6 +965,33 @@ function renderCreditsByPid(){
       <td>${fmt(x.reattr)}</td><td>${fmt(x.reeng)}</td>
       <td style="font-family:monospace;font-weight:700;color:var(--ac)">${cc.toFixed(4)}</td></tr>`).join('')
     || `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txm)">Cargá archivos para ver el desglose</td></tr>`;
+}
+
+function renderCreditsChart(){
+  const byDay={}; const pids=new Set();
+  const add=(date, ms, cc)=>{
+    if(!date||!cc) return;
+    const d=String(date).slice(0,10);
+    const m=(ms&&String(ms).trim())?String(ms).trim():'(sin pid)';
+    pids.add(m); (byDay[d]=byDay[d]||{}); byDay[d][m]=(byDay[d][m]||0)+cc;
+  };
+  if(rtgRows) rtgRows.forEach(r=>add(getEventTime(r), getMediaSource(r), CC_RATES.iae));
+  if(uaRows)  uaRows.forEach(r=>add(getEventTime(r), getMediaSource(r), CC_RATES.iae));
+  if(partnerRows){
+    const cols=Object.keys(partnerRows[0]||{});
+    const fc=(...ns)=>cols.find(c=>ns.some(n=>c.toLowerCase().trim()===n.toLowerCase()))||null;
+    const cDate=fc('date'),cType=fc('conversion type'),cConv=fc('conversions'),cClk=fc('clicks'),cSes=fc('sessions'),cMs=fc('media source (pid)','media source');
+    partnerRows.forEach(r=>{
+      const d=cDate?r[cDate]:''; if(!d)return;
+      const ms=cMs?r[cMs]:'', t=cType?(r[cType]||'').toLowerCase().trim():'', v=cConv?numVal(r[cConv]):0;
+      if(t==='re-attribution') add(d,ms,v*CC_RATES.reattr);
+      else if(t==='re-engagement') add(d,ms,v*CC_RATES.reeng);
+      if(cClk) add(d,ms,numVal(r[cClk])*CC_RATES.clicks);
+      if(cSes) add(d,ms,numVal(r[cSes])*CC_RATES.sessions);
+    });
+  }
+  const cats=Array.from(pids).sort();
+  renderStackedByPid('creditsChart','creditsChartLegend',byDay,cats, v=>v.toFixed(1));
 }
 
 function updatePeriodBar(){
@@ -1067,7 +1097,6 @@ function renderFunnelUI(totalBase){
   renderChart();renderTable();
 }
 
-// Altas por Media Source (pid) — desglose en pantalla
 function renderByPid(){
   const agg={};
   allResults.forEach(r=>{
@@ -1094,6 +1123,37 @@ function populatePidFilter(){
 }
 
 function setPidFilter(v){ activePid=v; renderTable(); }
+
+function renderStackedByPid(chartId, legendId, byDay, cats, fmt){
+  const el = document.getElementById(chartId); if(!el) return;
+  const colors = {}; cats.forEach(p=>colors[p]=pidColor(p));
+  const lg = document.getElementById(legendId);
+  if(lg) lg.innerHTML = cats.map(p=>`<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:${colors[p]};display:inline-block"></span>${esc(p)}</span>`).join('');
+  const dates = Object.keys(byDay).sort();
+  if(!dates.length){ el.innerHTML='<div style="padding:20px;color:var(--txm);font-size:12px">Sin datos</div>'; return; }
+  const totals = dates.map(d=>cats.reduce((s,p)=>s+(byDay[d][p]||0),0));
+  const maxVal = Math.max(...totals, 1);
+  const labels = dates.map(d=>{const parts=d.split('-');return `${parts[2]}/${parts[1]}`;});
+  const BW=Math.max(28,Math.min(58,Math.floor(780/Math.max(dates.length,1))));
+  const G=Math.max(6,Math.round(BW*.28)), PL=48, PR=12, PT=20, PB=40, CH=200;
+  const TW=PL+dates.length*(BW+G)-G+PR;
+  const gl='#e4e2ee', ld='#9997b3', tt='#1a1927';
+  const svg=[`<svg xmlns="http://www.w3.org/2000/svg" width="${TW}" height="${CH+PT+PB}" style="font-family:'Inter',sans-serif;display:block">`];
+  [0, maxVal/2, maxVal].forEach(tk=>{const y=PT+CH-Math.round((tk/maxVal)*CH);svg.push(`<line x1="${PL}" y1="${y}" x2="${TW-PR}" y2="${y}" stroke="${gl}" stroke-width="1"/><text x="${PL-6}" y="${y+4}" text-anchor="end" font-size="9" fill="${ld}">${fmt(tk)}</text>`);});
+  dates.forEach((d,i)=>{
+    const x=PL+i*(BW+G); let yO=PT+CH;
+    cats.forEach(p=>{
+      const v=byDay[d][p]||0; if(v<=0)return;
+      const h=Math.round((v/maxVal)*CH); yO-=h;
+      svg.push(`<rect x="${x}" y="${yO}" width="${BW}" height="${h}" fill="${colors[p]}"><title>${esc(p)} · ${labels[i]}: ${fmt(v)}</title></rect>`);
+    });
+    const t=totals[i];
+    if(t>0) svg.push(`<text x="${x+BW/2}" y="${PT+CH-Math.round((t/maxVal)*CH)-4}" text-anchor="middle" font-size="10" font-weight="700" fill="${tt}">${fmt(t)}</text>`);
+    svg.push(`<text x="${x+BW/2}" y="${PT+CH+16}" text-anchor="middle" font-size="10" fill="${ld}">${labels[i]}</text>`);
+  });
+  svg.push('</svg>');
+  el.innerHTML=svg.join('');
+}
 
 function setFilter(val,type,btn){
   if(type==='status'){activeStatus=val;document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));}
@@ -1139,29 +1199,10 @@ function exportCSV(which){
 
 function renderChart(){
   const clean=allResults.filter(r=>r.status==='clean'&&r.completionDate);
-  const dates=Array.from(new Set(clean.map(r=>r.completionDate))).sort();
-  const byDay={};dates.forEach(d=>{byDay[d]={libreton:0,nomina:0,other:0,total:0};});
-  clean.forEach(r=>{if(!byDay[r.completionDate])return;byDay[r.completionDate][r.product]++;byDay[r.completionDate].total++;});
-  const maxVal=Math.max(...dates.map(d=>byDay[d].total),1);
-  const labels=dates.map(d=>{const[y,m,day]=d.split('-');return `${day}/${m}`;});
-  const BW=Math.max(36,Math.min(64,Math.floor(700/Math.max(dates.length,1))));
-  const G=Math.max(6,Math.round(BW*.28)),PL=36,PR=12,PT=20,PB=40,CH=180;
-  const TW=PL+dates.length*(BW+G)-G+PR;
-  const C={l:'#7c3aed',n:'#2563eb',o:'#d97706',gl:'#e4e2ee',ld:'#9997b3',tt:'#1a1927'};
-  const ticks=[0,Math.ceil(maxVal/2),maxVal];
-  let svg=[`<svg xmlns="http://www.w3.org/2000/svg" width="${TW}" height="${CH+PT+PB}" style="font-family:'Inter',sans-serif;display:block">`];
-  ticks.forEach(tick=>{const y=PT+CH-Math.round((tick/maxVal)*CH);svg.push(`<line x1="${PL}" y1="${y}" x2="${TW-PR}" y2="${y}" stroke="${C.gl}" stroke-width="1"/><text x="${PL-5}" y="${y+4}" text-anchor="end" font-size="9" fill="${C.ld}">${tick}</text>`);});
-  dates.forEach((d,i)=>{
-    const x=PL+i*(BW+G),{libreton:l,nomina:n,other:o,total:t}=byDay[d];
-    const hL=Math.round((l/maxVal)*CH),hN=Math.round((n/maxVal)*CH),hO=Math.round((o/maxVal)*CH);
-    let yO=PT+CH;
-    const seg=(h,c)=>{if(h<=0)return '';yO-=h;return `<rect x="${x}" y="${yO}" width="${BW}" height="${h}" fill="${c}" rx="2"/>`;};
-    svg.push(seg(hL,C.l));svg.push(seg(hN,C.n));svg.push(seg(hO,C.o));
-    if(t>0)svg.push(`<text x="${x+BW/2}" y="${PT+CH-Math.round((t/maxVal)*CH)-4}" text-anchor="middle" font-size="10" font-weight="700" fill="${C.tt}">${t}</text>`);
-    svg.push(`<text x="${x+BW/2}" y="${PT+CH+16}" text-anchor="middle" font-size="10" fill="${C.ld}">${labels[i]}</text>`);
-  });
-  svg.push('</svg>');
-  document.getElementById('dailyChart').innerHTML=svg.join('');
+  const byDay={};
+  clean.forEach(r=>{ const d=r.completionDate, p=pidOf(r); (byDay[d]=byDay[d]||{})[p]=(byDay[d][p]||0)+1; });
+  const cats=Array.from(new Set(clean.map(pidOf))).sort();
+  renderStackedByPid('dailyChart','dailyLegend',byDay,cats, v=>Math.round(v).toLocaleString('es-CO'));
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
