@@ -98,6 +98,7 @@ tr:hover td{background:#faf9ff}
 .tab{padding:4px 11px;border-radius:4px;font-size:11.5px;font-weight:500;background:transparent;color:var(--tx2);border:none;cursor:pointer;font-family:var(--f);transition:all .1s}
 .tab.active{background:#fff;color:var(--tx);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .fsep{width:1px;background:var(--border);align-self:stretch;margin:0 4px}
+.pid-select{padding:5px 10px;border-radius:6px;border:1px solid var(--border);font-size:11.5px;font-family:var(--f);color:var(--tx);background:#fff}
 
 /* UPLOAD */
 .uzone{border:1.5px dashed var(--border);border-radius:8px;padding:28px;text-align:center;cursor:pointer;background:#faf9ff;transition:all .18s}
@@ -285,7 +286,7 @@ tr:hover td{background:#faf9ff}
             <div style="font-size:24px;margin-bottom:6px">📊</div>
             <h2>Partners Report</h2>
             <p>Re-attr · Re-eng · Clicks · Sessions</p>
-            <div class="uhint">Date · Clicks · Conversions · Conversion Type · Sessions</div>
+            <div class="uhint">Date · Media Source (pid) · Clicks · Conversions · Conversion Type · Sessions</div>
           </div>
         </div>
       </div>
@@ -297,7 +298,7 @@ tr:hover td{background:#faf9ff}
       <div style="background:var(--ac-bg);border:1px solid #ddd6fe;border-radius:8px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-top:8px">
         <div>
           <div style="font-size:12.5px;font-weight:600;color:var(--ac)">📊 Google Sheet → Looker Studio</div>
-          <div style="font-size:11px;color:var(--txm);margin-top:2px">Los datos se escriben automáticamente al procesar</div>
+          <div style="font-size:11px;color:var(--txm);margin-top:2px">Los datos se escriben automáticamente al procesar (por día × media source)</div>
         </div>
         <a href="https://docs.google.com/spreadsheets/d/1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI/edit" target="_blank" class="btn btn-secondary" style="font-size:11.5px">🔗 Abrir Sheet</a>
       </div>
@@ -331,6 +332,19 @@ tr:hover td{background:#faf9ff}
           <div class="kpi-card ap"><div class="kpi-lbl">Libreton / Cuenta Digital</div><div class="kpi-val" style="color:var(--ac)" id="sLibreton">0</div></div>
           <div class="kpi-card ab"><div class="kpi-lbl">Nómina</div><div class="kpi-val" style="color:var(--bl)" id="sNomina">0</div></div>
           <div class="kpi-card aw"><div class="kpi-lbl">Otro / Sin clasificar</div><div class="kpi-val" style="color:var(--wn)" id="sOther">0</div></div>
+        </div>
+
+        <div class="sec-lbl">Por Media Source (pid)</div>
+        <div class="tw" style="margin-bottom:20px">
+          <div class="ts">
+            <table>
+              <thead><tr>
+                <th>Media Source (pid)</th><th>Válidas</th><th>📘 Libreton</th>
+                <th>💼 Nómina</th><th>❓ Otro</th><th>Excluidas</th>
+              </tr></thead>
+              <tbody id="byPidBody"></tbody>
+            </table>
+          </div>
         </div>
 
         <div class="sec-lbl">Altas válidas por día</div>
@@ -370,6 +384,10 @@ tr:hover td{background:#faf9ff}
             <button class="tab" onclick="setFilter('nomina','product',this)">💼 Nómina</button>
             <button class="tab" onclick="setFilter('other','product',this)">❓ Otro</button>
           </div>
+          <div class="fsep"></div>
+          <select id="pidFilter" class="pid-select" onchange="setPidFilter(this.value)">
+            <option value="all">Todos los pids</option>
+          </select>
         </div>
         <div class="tw">
           <div class="ts">
@@ -498,6 +516,19 @@ tr:hover td{background:#faf9ff}
           </div>
         </div>
       </div>
+
+      <div class="sec-lbl" style="margin-top:20px">Por Media Source (pid)</div>
+      <div class="tw">
+        <div class="ts">
+          <table>
+            <thead><tr>
+              <th>Media Source (pid)</th><th>IAEs</th><th>Clicks</th><th>Sessions</th>
+              <th>Re-attr</th><th>Re-eng</th><th>Total CC</th>
+            </tr></thead>
+            <tbody id="creditsByPidBody"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -529,6 +560,10 @@ let allResults   = [];
 let funnelPeriod = { min:null, max:null };
 let activeStatus = 'all';
 let activeProduct= 'all';
+let activePid    = 'all';
+
+// pid normalizado de un resultado del funnel
+const pidOf = r => (r.mediaSource && r.mediaSource.trim()) ? r.mediaSource.trim() : '(sin pid)';
 
 // ═══════════════════════════════════════════════
 // NAVIGATION
@@ -579,6 +614,16 @@ function getEventTime(row) {
     k.toLowerCase().replace(/\s+/g, '_') === 'event_time'
   );
   return key ? row[key] : null;
+}
+
+// ─── Media Source (pid) case-insensitive · cubre RTG/UA ("Media Source") y Partners ("Media Source (pid)")
+function getMediaSource(row) {
+  const key = Object.keys(row).find(k => {
+    const n = k.toLowerCase().replace(/\s+/g, ' ').trim();
+    return n === 'media source' || n === 'media source (pid)';
+  });
+  const v = key ? row[key] : '';
+  return (v && String(v).trim()) ? String(v).trim() : '(sin pid)';
 }
 
 // ═══════════════════════════════════════════════
@@ -764,68 +809,75 @@ function buildCredits() {
   }
 
   calcCredits();
+  renderCreditsByPid();
 }
 
 // ═══════════════════════════════════════════════
-// WRITE TO LOOKER SHEET
+// WRITE TO LOOKER SHEET  (por día × Media Source pid)
 // ═══════════════════════════════════════════════
 async function writeToLooker() {
   try {
     const fileName = new Date().toISOString().slice(0,10);
 
-    // ── eventos_validos ──────────────────────────────────────
-    const eventsByDay = {};
+    // ── eventos_validos: por día × media source (pid) ─────────
+    const evByKey = {};
     const clean = allResults.filter(r=>r.status==='clean'&&r.completionDate);
     clean.forEach(r=>{
-      if(!eventsByDay[r.completionDate]) eventsByDay[r.completionDate]={total:0,libreton:0,nomina:0,otro:0};
-      eventsByDay[r.completionDate].total++;
-      eventsByDay[r.completionDate][r.product==='libreton'?'libreton':r.product==='nomina'?'nomina':'otro']++;
+      const ms = pidOf(r);
+      const k = r.completionDate + '||' + ms;
+      if(!evByKey[k]) evByKey[k]={date:r.completionDate,ms,total:0,libreton:0,nomina:0,otro:0};
+      const b=evByKey[k]; b.total++;
+      b[r.product==='libreton'?'libreton':r.product==='nomina'?'nomina':'otro']++;
     });
+    const eventRows = Object.values(evByKey)
+      .sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:(a.ms<b.ms?-1:1))
+      .map(b=>[b.date, b.ms, b.total, b.libreton, b.nomina, b.otro,
+               `${funnelPeriod.min||'?'} → ${funnelPeriod.max||'?'}`, fileName]);
 
-    const eventRows = Object.keys(eventsByDay).sort().map(d=>[
-      d, eventsByDay[d].total, eventsByDay[d].libreton, eventsByDay[d].nomina, eventsByDay[d].otro,
-      `${funnelPeriod.min||'?'} → ${funnelPeriod.max||'?'}`, fileName
-    ]);
-
-    // ── creditos ─────────────────────────────────────────────
-    const creditsByDay = {};
-
-    const addDay = (date, key, val=1) => {
+    // ── creditos: por día × media source (pid) ────────────────
+    const crByKey = {};
+    const addDay = (date, ms, key, val=1) => {
       if(!date) return;
       const d = date.slice(0,10);
-      if(!creditsByDay[d]) creditsByDay[d]={reattr:0,reeng:0,iaeRTG:0,iaeUA:0,clicks:0,sessions:0};
-      creditsByDay[d][key] += val;
+      const m = (ms && String(ms).trim()) ? String(ms).trim() : '(sin pid)';
+      const k = d + '||' + m;
+      if(!crByKey[k]) crByKey[k]={date:d,ms:m,reattr:0,reeng:0,iaeRTG:0,iaeUA:0,clicks:0,sessions:0};
+      crByKey[k][key] += val;
     };
 
-    // FIX 3: usar getEventTime() en lugar de acceso directo por nombre
-    if(rtgRows) rtgRows.forEach(r => addDay(getEventTime(r), 'iaeRTG'));
-    if(uaRows)  uaRows.forEach(r  => addDay(getEventTime(r), 'iaeUA'));
+    // FIX 3: usar getEventTime() y getMediaSource()
+    if(rtgRows) rtgRows.forEach(r => addDay(getEventTime(r), getMediaSource(r), 'iaeRTG'));
+    if(uaRows)  uaRows.forEach(r  => addDay(getEventTime(r), getMediaSource(r), 'iaeUA'));
 
     if(partnerRows){
       const cols=Object.keys(partnerRows[0]||{});
       const fc=(...ns)=>cols.find(c=>ns.some(n=>c.toLowerCase().trim()===n.toLowerCase()))||null;
-      const cDate=fc('date'),cConv=fc('conversions'),cType=fc('conversion type'),cClk=fc('clicks'),cSes=fc('sessions');
+      const cDate=fc('date'),cConv=fc('conversions'),cType=fc('conversion type'),
+            cClk=fc('clicks'),cSes=fc('sessions'),cMs=fc('media source (pid)','media source');
       partnerRows.forEach(r=>{
         const d=cDate?r[cDate]:'';
         if(!d)return;
+        const ms=cMs?r[cMs]:'';
         const t=cType?(r[cType]||'').toLowerCase().trim():'';
         const v=cConv?numVal(r[cConv]):0;
-        if(t==='re-attribution') addDay(d,'reattr',v);
-        else if(t==='re-engagement') addDay(d,'reeng',v);
-        if(cClk) addDay(d,'clicks',numVal(r[cClk]));
-        if(cSes) addDay(d,'sessions',numVal(r[cSes]));
+        if(t==='re-attribution') addDay(d,ms,'reattr',v);
+        else if(t==='re-engagement') addDay(d,ms,'reeng',v);
+        if(cClk) addDay(d,ms,'clicks',numVal(r[cClk]));
+        if(cSes) addDay(d,ms,'sessions',numVal(r[cSes]));
       });
     }
 
-    const creditRows = Object.keys(creditsByDay).sort().map(d=>{
-      const x=creditsByDay[d];
-      const iaeT=x.iaeRTG+x.iaeUA;
-      const ccR=x.reattr*CC_RATES.reattr, ccE=x.reeng*CC_RATES.reeng;
-      const ccI=iaeT*CC_RATES.iae, ccC=x.clicks*CC_RATES.clicks, ccS=x.sessions*CC_RATES.sessions;
-      return [d,x.reattr,x.reeng,x.iaeRTG,x.iaeUA,iaeT,x.clicks,x.sessions,ccR,ccE,ccI,ccC,ccS,ccR+ccE+ccI+ccC+ccS,fileName];
-    });
+    const creditRows = Object.values(crByKey)
+      .sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:(a.ms<b.ms?-1:1))
+      .map(x=>{
+        const iaeT=x.iaeRTG+x.iaeUA;
+        const ccR=x.reattr*CC_RATES.reattr, ccE=x.reeng*CC_RATES.reeng;
+        const ccI=iaeT*CC_RATES.iae, ccC=x.clicks*CC_RATES.clicks, ccS=x.sessions*CC_RATES.sessions;
+        return [x.date, x.ms, x.reattr, x.reeng, x.iaeRTG, x.iaeUA, iaeT, x.clicks, x.sessions,
+                ccR, ccE, ccI, ccC, ccS, ccR+ccE+ccI+ccC+ccS, fileName];
+      });
 
-    // FIX 1+2: siempre llamar al servidor aunque rows esté vacío — el server limpia igual
+    // FIX 1+2: siempre llamar al servidor aunque rows esté vacío
     const upsert = async (sheet, rows) => {
       const res = await fetch(WEBAPP_URL, {
         method: 'POST',
@@ -840,7 +892,7 @@ async function writeToLooker() {
     await upsert('eventos_validos', eventRows);
     await upsert('creditos', creditRows);
 
-    return { ok:true, msg:`${eventRows.length} días de eventos · ${creditRows.length} días de créditos escritos en Sheet` };
+    return { ok:true, msg:`${eventRows.length} filas de eventos · ${creditRows.length} filas de créditos (día × pid) escritas en Sheet` };
 
   } catch(e) {
     return { ok:false, msg:`No se pudo escribir en Sheet: ${e.message}. Los datos están procesados localmente.` };
@@ -881,6 +933,35 @@ function resetCredits(){
     if(i)i.value='';if(s){s.textContent='manual';s.className='src src-m';}
   });
   calcCredits();
+}
+
+// Créditos por Media Source (pid) — desglose en pantalla
+function renderCreditsByPid(){
+  const body=document.getElementById('creditsByPidBody'); if(!body)return;
+  const agg={};
+  const add=(ms,k,v)=>{const m=(ms&&String(ms).trim())?String(ms).trim():'(sin pid)';if(!agg[m])agg[m]={iae:0,clicks:0,sessions:0,reattr:0,reeng:0};agg[m][k]+=v;};
+  if(rtgRows) rtgRows.forEach(r=>add(getMediaSource(r),'iae',1));
+  if(uaRows)  uaRows.forEach(r=>add(getMediaSource(r),'iae',1));
+  if(partnerRows){
+    const cols=Object.keys(partnerRows[0]||{});
+    const fc=(...ns)=>cols.find(c=>ns.some(n=>c.toLowerCase().trim()===n.toLowerCase()))||null;
+    const cType=fc('conversion type'),cConv=fc('conversions'),cClk=fc('clicks'),cSes=fc('sessions'),cMs=fc('media source (pid)','media source');
+    partnerRows.forEach(r=>{
+      const ms=cMs?r[cMs]:'', t=cType?(r[cType]||'').toLowerCase().trim():'', v=cConv?numVal(r[cConv]):0;
+      if(t==='re-attribution')add(ms,'reattr',v); else if(t==='re-engagement')add(ms,'reeng',v);
+      if(cClk)add(ms,'clicks',numVal(r[cClk])); if(cSes)add(ms,'sessions',numVal(r[cSes]));
+    });
+  }
+  const fmt=n=>Math.round(n).toLocaleString('es-CO');
+  body.innerHTML = Object.entries(agg).map(([ms,x])=>{
+    const cc=x.reattr*CC_RATES.reattr+x.reeng*CC_RATES.reeng+x.iae*CC_RATES.iae+x.clicks*CC_RATES.clicks+x.sessions*CC_RATES.sessions;
+    return {ms,x,cc};
+  }).sort((a,b)=>b.cc-a.cc).map(({ms,x,cc})=>`<tr>
+      <td style="font-family:monospace;font-size:11px;font-weight:600">${esc(ms)}</td>
+      <td>${fmt(x.iae)}</td><td>${fmt(x.clicks)}</td><td>${fmt(x.sessions)}</td>
+      <td>${fmt(x.reattr)}</td><td>${fmt(x.reeng)}</td>
+      <td style="font-family:monospace;font-weight:700;color:var(--ac)">${cc.toFixed(4)}</td></tr>`).join('')
+    || `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txm)">Cargá archivos para ver el desglose</td></tr>`;
 }
 
 function updatePeriodBar(){
@@ -982,8 +1063,37 @@ function renderFunnelUI(totalBase){
   document.getElementById('funnelSection').style.display='block';
   document.getElementById('noFunnelData').style.display='none';
   document.getElementById('resultsSection').style.display='block';
+  renderByPid();populatePidFilter();
   renderChart();renderTable();
 }
+
+// Altas por Media Source (pid) — desglose en pantalla
+function renderByPid(){
+  const agg={};
+  allResults.forEach(r=>{
+    const ms=pidOf(r);
+    if(!agg[ms])agg[ms]={valid:0,lib:0,nom:0,otro:0,excl:0};
+    if(r.status==='clean'){ agg[ms].valid++; agg[ms][r.product==='libreton'?'lib':r.product==='nomina'?'nom':'otro']++; }
+    else agg[ms].excl++;
+  });
+  document.getElementById('byPidBody').innerHTML = Object.entries(agg)
+    .sort((a,b)=>b[1].valid-a[1].valid)
+    .map(([ms,x])=>`<tr>
+      <td style="font-family:monospace;font-size:11px;font-weight:600">${esc(ms)}</td>
+      <td style="font-weight:700;color:var(--ok)">${x.valid}</td>
+      <td>${x.lib}</td><td>${x.nom}</td><td>${x.otro}</td>
+      <td style="color:var(--txm)">${x.excl}</td></tr>`).join('')
+    || `<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--txm)">Sin datos</td></tr>`;
+}
+
+function populatePidFilter(){
+  const sel=document.getElementById('pidFilter'); if(!sel)return;
+  const pids=Array.from(new Set(allResults.map(pidOf))).sort();
+  sel.innerHTML='<option value="all">Todos los pids</option>'+pids.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
+  activePid='all';
+}
+
+function setPidFilter(v){ activePid=v; renderTable(); }
 
 function setFilter(val,type,btn){
   if(type==='status'){activeStatus=val;document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));}
@@ -995,6 +1105,7 @@ function renderTable(){
   let data=allResults;
   if(activeStatus!=='all')data=data.filter(r=>r.status===activeStatus);
   if(activeProduct!=='all')data=data.filter(r=>r.product===activeProduct);
+  if(activePid!=='all')data=data.filter(r=>pidOf(r)===activePid);
   document.getElementById('tableBody').innerHTML=data.map(r=>{
     const sb=r.status==='clean'?'<span class="badge bv">✅ Facturable</span>'
       :r.status==='excl_co'?'<span class="badge bi">🌐 País/Primary</span>'
