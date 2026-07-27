@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BBVA CO — Validator + Credits</title>
+<title>BBVA CO ‚Äî Validator + Credits</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
@@ -98,7 +98,6 @@ tr:hover td{background:#faf9ff}
 .tab{padding:4px 11px;border-radius:4px;font-size:11.5px;font-weight:500;background:transparent;color:var(--tx2);border:none;cursor:pointer;font-family:var(--f);transition:all .1s}
 .tab.active{background:#fff;color:var(--tx);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .fsep{width:1px;background:var(--border);align-self:stretch;margin:0 4px}
-.pid-select{padding:5px 10px;border-radius:6px;border:1px solid var(--border);font-size:11.5px;font-family:var(--f);color:var(--tx);background:#fff}
 
 /* UPLOAD */
 .uzone{border:1.5px dashed var(--border);border-radius:8px;padding:28px;text-align:center;cursor:pointer;background:#faf9ff;transition:all .18s}
@@ -182,13 +181,16 @@ tr:hover td{background:#faf9ff}
   </div>
   <div class="sb-sec">Herramientas</div>
   <button class="sb-item active" onclick="showPage('upload',this)">
-    <span class="si">📂</span> Cargar Archivos
+    <span class="si">üìÇ</span> Cargar Archivos
   </button>
   <button class="sb-item" onclick="showPage('funnel',this)">
-    <span class="si">🔍</span> Resultados Funnel
+    <span class="si">üîç</span> Resultados Funnel
   </button>
   <button class="sb-item" onclick="showPage('credits',this)">
-    <span class="si">💎</span> Calculadora Créditos
+    <span class="si">üíé</span> Calculadora Cr√©ditos
+  </button>
+  <button class="sb-item" onclick="showPage('julio',this)">
+    <span class="si">üóìÔ∏è</span> Validaci√≥n hasta Julio 2026
   </button>
 </aside>
 
@@ -199,94 +201,94 @@ tr:hover td{background:#faf9ff}
     <span style="font-size:12px;color:var(--txm)"> / </span>
     <span style="font-size:12px;font-weight:500" id="topbarActive">Cargar Archivos</span>
     <div class="topbar-sep"></div>
-    <span class="tb-badge" id="topbarBadge">RTG · UA · Partners</span>
+    <span class="tb-badge" id="topbarBadge">RTG ¬∑ UA ¬∑ Partners</span>
     <div class="avatar">RL</div>
   </div>
 
   <div class="content">
 
-    <!-- ══════ CARGAR ARCHIVOS ══════ -->
+    <!-- ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê CARGAR ARCHIVOS ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê -->
     <div class="page active" id="page-upload">
       <div class="pg-header">
         <div>
           <div class="pg-title">Cargar Archivos</div>
-          <div class="pg-sub">Subí el RTG (obligatorio) y, si querés, UA y Partners · BBVA Colombia</div>
+          <div class="pg-sub">Sub√≠ el RTG (obligatorio) y, si quer√©s, UA y Partners ¬∑ BBVA Colombia</div>
         </div>
-        <button class="btn btn-success" id="btnProcess" onclick="processAll()" disabled>⚡ Procesar todo</button>
+        <button class="btn btn-success" id="btnProcess" onclick="processAll()" disabled>‚ö° Procesar todo</button>
       </div>
 
       <div class="criteria">
-        <strong>Qué hace cada archivo:</strong><br>
-        &nbsp;📱 <strong>Raw RTG</strong> <span style="color:var(--er)">(obligatorio)</span> → Funnel Validator (filtra altas válidas) + cuenta todas las filas como IAEs RTG<br>
-        &nbsp;📲 <strong>Raw UA</strong> <span style="color:var(--txm)">(opcional)</span> → cuenta todas las filas como IAEs UA<br>
-        &nbsp;📊 <strong>Partners Report</strong> <span style="color:var(--txm)">(opcional)</span> → re-attr, re-eng, clicks, sessions por día<br>
-        &nbsp;✅ Con solo el RTG ya podés procesar: obtenés el funnel + los IAEs de RTG. Los créditos de re-attr / re-eng / clicks / sessions requieren el Partners Report.
+        <strong>Qu√© hace cada archivo:</strong><br>
+        &nbsp;üì± <strong>Raw RTG</strong> <span style="color:var(--er)">(obligatorio)</span> ‚Üí Funnel Validator (filtra altas v√°lidas) + cuenta todas las filas como IAEs RTG<br>
+        &nbsp;üì≤ <strong>Raw UA</strong> <span style="color:var(--txm)">(opcional)</span> ‚Üí cuenta todas las filas como IAEs UA<br>
+        &nbsp;üìä <strong>Partners Report</strong> <span style="color:var(--txm)">(opcional)</span> ‚Üí re-attr, re-eng, clicks, sessions por d√≠a<br>
+        &nbsp;‚úÖ Con solo el RTG ya pod√©s procesar: obten√©s el funnel + los IAEs de RTG. Los cr√©ditos de re-attr / re-eng / clicks / sessions requieren el Partners Report.
       </div>
 
       <div class="upload-grid">
         <!-- RTG -->
         <div>
-          <div class="sec-lbl">📱 Raw Data RTG <span style="color:var(--er)">*</span></div>
+          <div class="sec-lbl">üì± Raw Data RTG <span style="color:var(--er)">*</span></div>
           <div id="rtgBar" style="display:none;margin-bottom:8px" class="fbar">
             <div style="display:flex;align-items:center;gap:8px">
-              <span>✅</span>
+              <span>‚úÖ</span>
               <div>
-                <div style="font-size:12px;font-weight:600;color:var(--ok)" id="rtgName">—</div>
-                <div style="font-size:10.5px;color:var(--txm)" id="rtgSummary">—</div>
+                <div style="font-size:12px;font-weight:600;color:var(--ok)" id="rtgName">‚Äî</div>
+                <div style="font-size:10.5px;color:var(--txm)" id="rtgSummary">‚Äî</div>
               </div>
             </div>
-            <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('rtg')">✕</button>
+            <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('rtg')">‚úï</button>
           </div>
           <div class="uzone" id="rtgZone" style="padding:20px" onclick="document.getElementById('rtgInput').click()">
             <input type="file" id="rtgInput" accept=".csv,.tsv,.txt" style="display:none">
-            <div style="font-size:24px;margin-bottom:6px">📱</div>
+            <div style="font-size:24px;margin-bottom:6px">üì±</div>
             <h2>Raw Data RTG</h2>
-            <p>Non-organic in-app events · RTG</p>
-            <div class="uhint">AppsFlyer ID · Event Name · Event Time · Country</div>
+            <p>Non-organic in-app events ¬∑ RTG</p>
+            <div class="uhint">AppsFlyer ID ¬∑ Event Name ¬∑ Event Time ¬∑ Country</div>
           </div>
         </div>
 
         <!-- UA -->
         <div>
-          <div class="sec-lbl">📲 Raw Data UA <span style="color:var(--txm)">(opcional)</span></div>
+          <div class="sec-lbl">üì≤ Raw Data UA <span style="color:var(--txm)">(opcional)</span></div>
           <div id="uaBar" style="display:none" class="fbar">
             <div style="display:flex;align-items:center;gap:8px">
-              <span>✅</span>
+              <span>‚úÖ</span>
               <div>
-                <div style="font-size:12px;font-weight:600;color:var(--ok)" id="uaName">—</div>
-                <div style="font-size:10.5px;color:var(--txm)" id="uaSummary">—</div>
+                <div style="font-size:12px;font-weight:600;color:var(--ok)" id="uaName">‚Äî</div>
+                <div style="font-size:10.5px;color:var(--txm)" id="uaSummary">‚Äî</div>
               </div>
             </div>
-            <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('ua')">✕</button>
+            <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('ua')">‚úï</button>
           </div>
           <div class="uzone" id="uaZone" style="padding:20px" onclick="document.getElementById('uaInput').click()">
             <input type="file" id="uaInput" accept=".csv,.tsv,.txt" style="display:none">
-            <div style="font-size:24px;margin-bottom:6px">📲</div>
+            <div style="font-size:24px;margin-bottom:6px">üì≤</div>
             <h2>Raw Data UA</h2>
-            <p>Non-organic in-app events · UA</p>
-            <div class="uhint">AppsFlyer ID · Event Name · Event Time</div>
+            <p>Non-organic in-app events ¬∑ UA</p>
+            <div class="uhint">AppsFlyer ID ¬∑ Event Name ¬∑ Event Time</div>
           </div>
         </div>
 
         <!-- Partners -->
         <div>
-          <div class="sec-lbl">📊 Partners Report <span style="color:var(--txm)">(opcional)</span></div>
+          <div class="sec-lbl">üìä Partners Report <span style="color:var(--txm)">(opcional)</span></div>
           <div id="partnersBar" style="display:none" class="fbar">
             <div style="display:flex;align-items:center;gap:8px">
-              <span>✅</span>
+              <span>‚úÖ</span>
               <div>
-                <div style="font-size:12px;font-weight:600;color:var(--ok)" id="partnersName">—</div>
-                <div style="font-size:10.5px;color:var(--txm)" id="partnersSummary">—</div>
+                <div style="font-size:12px;font-weight:600;color:var(--ok)" id="partnersName">‚Äî</div>
+                <div style="font-size:10.5px;color:var(--txm)" id="partnersSummary">‚Äî</div>
               </div>
             </div>
-            <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('partners')">✕</button>
+            <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('partners')">‚úï</button>
           </div>
           <div class="uzone" id="partnersZone" style="padding:20px" onclick="document.getElementById('partnersInput').click()">
             <input type="file" id="partnersInput" accept=".csv,.tsv,.txt" style="display:none">
-            <div style="font-size:24px;margin-bottom:6px">📊</div>
+            <div style="font-size:24px;margin-bottom:6px">üìä</div>
             <h2>Partners Report</h2>
-            <p>Re-attr · Re-eng · Clicks · Sessions</p>
-            <div class="uhint">Date · Media Source (pid) · Clicks · Conversions · Conversion Type · Sessions</div>
+            <p>Re-attr ¬∑ Re-eng ¬∑ Clicks ¬∑ Sessions</p>
+            <div class="uhint">Date ¬∑ Clicks ¬∑ Conversions ¬∑ Conversion Type ¬∑ Sessions</div>
           </div>
         </div>
       </div>
@@ -297,19 +299,19 @@ tr:hover td{background:#faf9ff}
       <!-- Looker link -->
       <div style="background:var(--ac-bg);border:1px solid #ddd6fe;border-radius:8px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-top:8px">
         <div>
-          <div style="font-size:12.5px;font-weight:600;color:var(--ac)">📊 Google Sheet → Looker Studio</div>
-          <div style="font-size:11px;color:var(--txm);margin-top:2px">Los datos se escriben automáticamente al procesar (por día × media source)</div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--ac)">üìä Google Sheet ‚Üí Looker Studio</div>
+          <div style="font-size:11px;color:var(--txm);margin-top:2px">Los datos se escriben autom√°ticamente al procesar</div>
         </div>
-        <a href="https://docs.google.com/spreadsheets/d/1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI/edit" target="_blank" class="btn btn-secondary" style="font-size:11.5px">🔗 Abrir Sheet</a>
+        <a href="https://docs.google.com/spreadsheets/d/1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI/edit" target="_blank" class="btn btn-secondary" style="font-size:11.5px">üîó Abrir Sheet</a>
       </div>
     </div>
 
-    <!-- ══════ RESULTADOS FUNNEL ══════ -->
+    <!-- ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê RESULTADOS FUNNEL ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê -->
     <div class="page" id="page-funnel">
       <div class="pg-header">
         <div>
           <div class="pg-title">Resultados Funnel</div>
-          <div class="pg-sub">Validación de apertura de cuenta · BBVA Colombia</div>
+          <div class="pg-sub">Validaci√≥n de apertura de cuenta ¬∑ BBVA Colombia</div>
         </div>
       </div>
 
@@ -319,78 +321,65 @@ tr:hover td{background:#faf9ff}
       <div id="funnelSection" style="display:none">
         <div class="sec-lbl">Waterfall de filtros</div>
         <div class="funnel">
-          <div class="fs s0"><div class="fs-n">Base</div><div class="fs-v" id="fS0">—</div><div class="fs-l">Altas brutas</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 1</div><div class="fs-v" id="fS1">—</div><div class="fs-l">Tras País/Primary</div><div class="fs-x" id="fE1">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 2</div><div class="fs-v" id="fS2">—</div><div class="fs-l">Tras múlt. comp.</div><div class="fs-x" id="fE2">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 3</div><div class="fs-v" id="fS3">—</div><div class="fs-l">Tras sin step_6</div><div class="fs-x" id="fE3">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 4</div><div class="fs-v" id="fS4">—</div><div class="fs-l">Tras salto geo</div><div class="fs-x" id="fE4">—</div><div class="fa">›</div></div>
-          <div class="fs se"><div class="fs-n">Válidas</div><div class="fs-v" id="fValid">—</div><div class="fs-l">Altas pagables</div></div>
+          <div class="fs s0"><div class="fs-n">Base</div><div class="fs-v" id="fS0">‚Äî</div><div class="fs-l">Altas brutas</div><div class="fa">‚Ä∫</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 1</div><div class="fs-v" id="fS1">‚Äî</div><div class="fs-l">Tras Pa√≠s/Primary</div><div class="fs-x" id="fE1">‚Äî</div><div class="fa">‚Ä∫</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 2</div><div class="fs-v" id="fS2">‚Äî</div><div class="fs-l">Tras m√∫lt. comp.</div><div class="fs-x" id="fE2">‚Äî</div><div class="fa">‚Ä∫</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 3</div><div class="fs-v" id="fS3">‚Äî</div><div class="fs-l">Tras sin step_6</div><div class="fs-x" id="fE3">‚Äî</div><div class="fa">‚Ä∫</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 4</div><div class="fs-v" id="fS4">‚Äî</div><div class="fs-l">Tras salto geo</div><div class="fs-x" id="fE4">‚Äî</div><div class="fa">‚Ä∫</div></div>
+          <div class="fs se"><div class="fs-n">V√°lidas</div><div class="fs-v" id="fValid">‚Äî</div><div class="fs-l">Altas pagables</div></div>
         </div>
 
         <div class="sec-lbl">Por producto (facturables)</div>
         <div class="kpi-grid kpi-grid-3">
           <div class="kpi-card ap"><div class="kpi-lbl">Libreton / Cuenta Digital</div><div class="kpi-val" style="color:var(--ac)" id="sLibreton">0</div></div>
-          <div class="kpi-card ab"><div class="kpi-lbl">Nómina</div><div class="kpi-val" style="color:var(--bl)" id="sNomina">0</div></div>
+          <div class="kpi-card ab"><div class="kpi-lbl">N√≥mina</div><div class="kpi-val" style="color:var(--bl)" id="sNomina">0</div></div>
           <div class="kpi-card aw"><div class="kpi-lbl">Otro / Sin clasificar</div><div class="kpi-val" style="color:var(--wn)" id="sOther">0</div></div>
         </div>
 
-        <div class="sec-lbl">Por Media Source (pid)</div>
-        <div class="tw" style="margin-bottom:20px">
-          <div class="ts">
-            <table>
-              <thead><tr>
-                <th>Media Source (pid)</th><th>Válidas</th><th>📘 Libreton</th>
-                <th>💼 Nómina</th><th>❓ Otro</th><th>Excluidas</th>
-              </tr></thead>
-              <tbody id="byPidBody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="sec-lbl">Altas válidas por día × Media Source (pid)</div>
+        <div class="sec-lbl">Altas v√°lidas por d√≠a</div>
         <div class="card" style="padding:20px 20px 14px;margin-bottom:20px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
-            <div style="font-size:12px;color:var(--txm)">Altas válidas (facturables) por día, apiladas por media source</div>
-            <div id="dailyLegend" style="display:flex;gap:10px 14px;flex-wrap:wrap;font-size:11px;color:var(--txm)"></div>
+            <div style="font-size:12px;color:var(--txm)">Fecha del evento <code>completed_aprobado</code> ¬∑ solo facturables</div>
+            <div style="display:flex;gap:10px;font-size:11px;color:var(--txm)">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--ac);display:inline-block"></span>Libreton</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--bl);display:inline-block"></span>N√≥mina</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--wn);display:inline-block"></span>Otro</span>
+            </div>
           </div>
           <div id="dailyChart" style="width:100%;overflow-x:auto"></div>
         </div>
       </div>
 
       <div id="noFunnelData" style="background:#f0eff5;border:1px solid var(--border);border-radius:8px;padding:32px;text-align:center;color:var(--txm)">
-        <div style="font-size:32px;margin-bottom:10px">📂</div>
+        <div style="font-size:32px;margin-bottom:10px">üìÇ</div>
         <div style="font-size:14px;font-weight:600;margin-bottom:6px">Sin datos cargados</div>
-        <div style="font-size:12.5px">Cargá el Raw RTG en la página "Cargar Archivos" para ver los resultados del funnel</div>
+        <div style="font-size:12.5px">Carg√° el Raw RTG en la p√°gina "Cargar Archivos" para ver los resultados del funnel</div>
       </div>
 
       <div id="resultsSection" style="display:none;margin-top:4px">
         <div class="filter-bar">
           <div class="ftabs" id="statusTabs">
             <button class="tab active" onclick="setFilter('all','status',this)">Todos</button>
-            <button class="tab" onclick="setFilter('clean','status',this)">✅ Facturables</button>
-            <button class="tab" onclick="setFilter('excl_co','status',this)">🌐 País/Primary</button>
-            <button class="tab" onclick="setFilter('excl_dup','status',this)">🔁 Múlt. comp.</button>
-            <button class="tab" onclick="setFilter('excl_step6','status',this)">⚠ Sin step_6</button>
-            <button class="tab" onclick="setFilter('excl_geo','status',this)">📍 Salto geo</button>
+            <button class="tab" onclick="setFilter('clean','status',this)">‚úÖ Facturables</button>
+            <button class="tab" onclick="setFilter('excl_co','status',this)">üåê Pa√≠s/Primary</button>
+            <button class="tab" onclick="setFilter('excl_dup','status',this)">üîÅ M√∫lt. comp.</button>
+            <button class="tab" onclick="setFilter('excl_step6','status',this)">‚ö† Sin step_6</button>
+            <button class="tab" onclick="setFilter('excl_geo','status',this)">üìç Salto geo</button>
           </div>
           <div class="fsep"></div>
           <div class="ftabs" id="productTabs">
             <button class="tab active" onclick="setFilter('all','product',this)">Todos</button>
-            <button class="tab" onclick="setFilter('libreton','product',this)">📘 Libreton</button>
-            <button class="tab" onclick="setFilter('nomina','product',this)">💼 Nómina</button>
-            <button class="tab" onclick="setFilter('other','product',this)">❓ Otro</button>
+            <button class="tab" onclick="setFilter('libreton','product',this)">üìò Libreton</button>
+            <button class="tab" onclick="setFilter('nomina','product',this)">üíº N√≥mina</button>
+            <button class="tab" onclick="setFilter('other','product',this)">‚ùì Otro</button>
           </div>
-          <div class="fsep"></div>
-          <select id="pidFilter" class="pid-select" onchange="setPidFilter(this.value)">
-            <option value="all">Todos los pids</option>
-          </select>
         </div>
         <div class="tw">
           <div class="ts">
             <table>
               <thead><tr>
                 <th>AppsFlyer ID</th><th>Estado</th><th>Filtro</th><th>Producto</th>
-                <th>País</th><th>Media Source</th><th>Completions</th><th>step_6</th><th>Geo</th><th>af_content</th>
+                <th>Pa√≠s</th><th>Media Source</th><th>Completions</th><th>step_6</th><th>Geo</th><th>af_content</th>
               </tr></thead>
               <tbody id="tableBody"></tbody>
             </table>
@@ -399,32 +388,32 @@ tr:hover td{background:#faf9ff}
         <div class="export-row">
           <button class="btn btn-secondary" onclick="exportCSV('all')">Exportar Todos</button>
           <button class="btn btn-secondary" onclick="exportCSV('libreton')">Exportar Libreton</button>
-          <button class="btn btn-secondary" onclick="exportCSV('nomina')">Exportar Nómina</button>
+          <button class="btn btn-secondary" onclick="exportCSV('nomina')">Exportar N√≥mina</button>
           <button class="btn btn-primary" onclick="exportCSV('clean')">Exportar Facturables</button>
         </div>
       </div>
     </div>
 
-    <!-- ══════ CALCULADORA CRÉDITOS ══════ -->
+    <!-- ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê CALCULADORA CR√âDITOS ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê -->
     <div class="page" id="page-credits">
       <div class="pg-header">
         <div>
-          <div class="pg-title">Calculadora de Créditos</div>
-          <div class="pg-sub">AppsFlyer Capacity Credits · BBVA Colombia</div>
+          <div class="pg-title">Calculadora de Cr√©ditos</div>
+          <div class="pg-sub">AppsFlyer Capacity Credits ¬∑ BBVA Colombia</div>
         </div>
         <button class="btn btn-secondary" onclick="resetCredits()">Limpiar manual</button>
       </div>
 
       <div id="periodBar" class="period-bar no">
-        <span>📅</span>
+        <span>üìÖ</span>
         <div>
-          <strong id="periodText">Sin período definido</strong>
-          <span id="periodSub" style="font-size:11px;color:var(--txm);margin-left:8px">Cargá los archivos para auto-detectar el período</span>
+          <strong id="periodText">Sin per√≠odo definido</strong>
+          <span id="periodSub" style="font-size:11px;color:var(--txm);margin-left:8px">Carg√° los archivos para auto-detectar el per√≠odo</span>
         </div>
       </div>
 
       <div class="criteria" style="margin-bottom:16px">
-        <strong>Tasas oficiales — Capacity Credit Consumption Metrics:</strong>
+        <strong>Tasas oficiales ‚Äî Capacity Credit Consumption Metrics:</strong>
         <table style="width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px">
           <thead><tr style="background:#f5f3fb"><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--txm);text-transform:uppercase;border-bottom:1px solid var(--border)">Tipo</th><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--txm);text-transform:uppercase;border-bottom:1px solid var(--border)">Tasa</th><th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--txm);text-transform:uppercase;border-bottom:1px solid var(--border)">Fuente</th></tr></thead>
           <tbody>
@@ -440,25 +429,25 @@ tr:hover td{background:#faf9ff}
       <div class="cr-layout">
         <div>
           <div class="mblock">
-            <div class="mblock-hdr"><span>🔄</span><span class="mblock-title">Re-attributions</span><span class="rate-badge">80 CC / 100k</span></div>
+            <div class="mblock-hdr"><span>üîÑ</span><span class="mblock-title">Re-attributions</span><span class="rate-badge">80 CC / 100k</span></div>
             <div class="mrow">
-              <div><div class="mlbl">Re-attributions</div><div class="msub">Partners Report · <code>Conversion Type = re-attribution</code></div></div>
+              <div><div class="mlbl">Re-attributions</div><div class="msub">Partners Report ¬∑ <code>Conversion Type = re-attribution</code></div></div>
               <span class="src src-m" id="src_reattr">manual</span>
               <input class="minput" type="number" id="inp_reattr" min="0" placeholder="0" oninput="calcCredits()">
               <div class="mcc" id="res_reattr">0.0000</div>
             </div>
           </div>
           <div class="mblock">
-            <div class="mblock-hdr"><span>🔁</span><span class="mblock-title">Re-engagements</span><span class="rate-badge">10 CC / 100k</span></div>
+            <div class="mblock-hdr"><span>üîÅ</span><span class="mblock-title">Re-engagements</span><span class="rate-badge">10 CC / 100k</span></div>
             <div class="mrow">
-              <div><div class="mlbl">Re-engagements</div><div class="msub">Partners Report · <code>Conversion Type = re-engagement</code></div></div>
+              <div><div class="mlbl">Re-engagements</div><div class="msub">Partners Report ¬∑ <code>Conversion Type = re-engagement</code></div></div>
               <span class="src src-m" id="src_reeng">manual</span>
               <input class="minput" type="number" id="inp_reeng" min="0" placeholder="0" oninput="calcCredits()">
               <div class="mcc" id="res_reeng">0.0000</div>
             </div>
           </div>
           <div class="mblock">
-            <div class="mblock-hdr"><span>📱</span><span class="mblock-title">In-App Events (IAEs)</span><span class="rate-badge">2 CC / 1M</span></div>
+            <div class="mblock-hdr"><span>üì±</span><span class="mblock-title">In-App Events (IAEs)</span><span class="rate-badge">2 CC / 1M</span></div>
             <div class="mrow">
               <div>
                 <div class="mlbl">IAEs totales (RTG + UA)</div>
@@ -471,7 +460,7 @@ tr:hover td{background:#faf9ff}
             </div>
           </div>
           <div class="mblock">
-            <div class="mblock-hdr"><span>🖱️</span><span class="mblock-title">Clicks</span><span class="rate-badge">2 CC / 1M</span></div>
+            <div class="mblock-hdr"><span>üñ±Ô∏è</span><span class="mblock-title">Clicks</span><span class="rate-badge">2 CC / 1M</span></div>
             <div class="mrow">
               <div><div class="mlbl">Clicks</div><div class="msub">Columna <code>Clicks</code> del Partners Report</div></div>
               <span class="src src-m" id="src_clicks">manual</span>
@@ -480,7 +469,7 @@ tr:hover td{background:#faf9ff}
             </div>
           </div>
           <div class="mblock">
-            <div class="mblock-hdr"><span>📲</span><span class="mblock-title">Sessions</span><span class="rate-badge">2 CC / 1M</span></div>
+            <div class="mblock-hdr"><span>üì≤</span><span class="mblock-title">Sessions</span><span class="rate-badge">2 CC / 1M</span></div>
             <div class="mrow">
               <div><div class="mlbl">Sessions</div><div class="msub">Columna <code>Sessions</code> del Partners Report</div></div>
               <span class="src src-m" id="src_sessions">manual</span>
@@ -491,47 +480,73 @@ tr:hover td{background:#faf9ff}
         </div>
         <div>
           <div class="total-card">
-            <div class="total-lbl">💎 Total Capacity Credits</div>
+            <div class="total-lbl">üíé Total Capacity Credits</div>
             <div class="total-val" id="totalCredits">0.0000</div>
-            <div class="total-sub" id="totalCreditsSub">Cargá los archivos para auto-completar</div>
+            <div class="total-sub" id="totalCreditsSub">Carg√° los archivos para auto-completar</div>
           </div>
           <div class="bd-card">
-            <div class="bd-hdr">📋 Desglose</div>
+            <div class="bd-hdr">üìã Desglose</div>
             <div class="bd-body">
-              <div class="br-row"><span class="br-lbl">Re-attr <span class="br-rate">×800/1M</span></span><span class="br-val" id="br_reattr">0.0000</span></div>
-              <div class="br-row"><span class="br-lbl">Re-eng <span class="br-rate">×100/1M</span></span><span class="br-val" id="br_reeng">0.0000</span></div>
-              <div class="br-row"><span class="br-lbl">IAEs <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_iae">0.0000</span></div>
-              <div class="br-row"><span class="br-lbl">Clicks <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_clicks">0.0000</span></div>
-              <div class="br-row"><span class="br-lbl">Sessions <span class="br-rate">×2/1M</span></span><span class="br-val" id="br_sessions">0.0000</span></div>
+              <div class="br-row"><span class="br-lbl">Re-attr <span class="br-rate">√ó800/1M</span></span><span class="br-val" id="br_reattr">0.0000</span></div>
+              <div class="br-row"><span class="br-lbl">Re-eng <span class="br-rate">√ó100/1M</span></span><span class="br-val" id="br_reeng">0.0000</span></div>
+              <div class="br-row"><span class="br-lbl">IAEs <span class="br-rate">√ó2/1M</span></span><span class="br-val" id="br_iae">0.0000</span></div>
+              <div class="br-row"><span class="br-lbl">Clicks <span class="br-rate">√ó2/1M</span></span><span class="br-val" id="br_clicks">0.0000</span></div>
+              <div class="br-row"><span class="br-lbl">Sessions <span class="br-rate">√ó2/1M</span></span><span class="br-val" id="br_sessions">0.0000</span></div>
               <div class="br-tot"><span class="br-tot-lbl">Total CC</span><span class="br-tot-val" id="br_total">0.0000</span></div>
             </div>
           </div>
           <div style="margin-top:12px;padding:10px 14px;background:#f5f3fb;border-radius:6px;font-size:11px;color:var(--txm)">
-            <span class="src src-a" style="margin-right:6px">auto</span> Extraído de los archivos cargados<br>
+            <span class="src src-a" style="margin-right:6px">auto</span> Extra√≠do de los archivos cargados<br>
             <span class="src src-m" style="margin-right:6px;margin-top:4px;display:inline-block">manual</span> Ingresar a mano
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="sec-lbl" style="margin-top:20px">Créditos totales por día × Media Source (pid)</div>
-      <div class="card" style="padding:20px 20px 14px;margin-bottom:12px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
-          <div style="font-size:12px;color:var(--txm)">Capacity Credits por día, apilados por media source</div>
-          <div id="creditsChartLegend" style="display:flex;gap:10px 14px;flex-wrap:wrap;font-size:11px;color:var(--txm)"></div>
+    <!-- ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê VALIDACI√ìN HASTA JULIO 2026 ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê -->
+    <div class="page" id="page-julio">
+      <div class="pg-header">
+        <div>
+          <div class="pg-title">Validaci√≥n hasta Julio 2026</div>
+          <div class="pg-sub">Vista informativa ¬∑ aplica adem√°s "m√°x. 4 IPs por AppsFlyer ID" ¬∑ NO escribe en el Sheet</div>
         </div>
-        <div id="creditsChart" style="width:100%;overflow-x:auto"></div>
+        <button class="btn btn-secondary" onclick="analyzeJulio()">‚Üª Recalcular</button>
       </div>
 
-      <div class="sec-lbl" style="margin-top:20px">Por Media Source (pid)</div>
-      <div class="tw">
-        <div class="ts">
-          <table>
-            <thead><tr>
-              <th>Media Source (pid)</th><th>IAEs</th><th>Clicks</th><th>Sessions</th>
-              <th>Re-attr</th><th>Re-eng</th><th>Total CC</th>
-            </tr></thead>
-            <tbody id="creditsByPidBody"></tbody>
-          </table>
+      <div class="criteria">
+        <strong>Vista informativa ‚Äî no impacta el Google Sheet.</strong><br>
+        &nbsp;üìÖ Toma solo eventos <strong>hasta el 31/07/2026</strong>.<br>
+        &nbsp;üåê Adem√°s de los filtros del funnel, descarta AppsFlyer IDs con <strong>m√°s de 4 IPs distintas</strong> (hasta 4 se aceptan).<br>
+        &nbsp;‚ÑπÔ∏è Requiere que el Raw RTG tenga columna <code>IP</code>. Si no la tiene, el filtro de IP se omite y se avisa.
+      </div>
+
+      <div id="julioNoData" style="background:#f0eff5;border:1px solid var(--border);border-radius:8px;padding:32px;text-align:center;color:var(--txm)">
+        <div style="font-size:32px;margin-bottom:10px">üóìÔ∏è</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:6px">Sin datos cargados</div>
+        <div style="font-size:12.5px">Carg√° el Raw RTG en "Cargar Archivos" para ver la validaci√≥n hasta julio 2026</div>
+      </div>
+
+      <div id="julioSection" style="display:none">
+        <div class="msg msg-info" id="julioIpWarn" style="display:none"></div>
+
+        <div class="sec-lbl">Resumen</div>
+        <div class="kpi-grid kpi-grid-3">
+          <div class="kpi-card ap"><div class="kpi-lbl">V√°lidas (funnel normal)</div><div class="kpi-val" style="color:var(--ac)" id="jFunnelValid">0</div></div>
+          <div class="kpi-card ab"><div class="kpi-lbl">V√°lidas con IP ‚â§ 4</div><div class="kpi-val" style="color:var(--bl)" id="jFinalValid">0</div></div>
+          <div class="kpi-card aw"><div class="kpi-lbl">Descartadas por >4 IPs</div><div class="kpi-val" style="color:var(--wn)" id="jIpExcl">0</div></div>
+        </div>
+
+        <div class="sec-lbl">Waterfall de filtros (hasta jul-2026)</div>
+        <div class="tw"><div class="ts"><table>
+          <thead><tr><th>Paso</th><th style="text-align:right">Descarta</th><th style="text-align:right">Quedan</th></tr></thead>
+          <tbody id="julioWaterfall"></tbody>
+        </table></div></div>
+
+        <div class="sec-lbl">V√°lidas por producto (con IP ‚â§ 4)</div>
+        <div class="kpi-grid kpi-grid-3">
+          <div class="kpi-card ap"><div class="kpi-lbl">Libreton / Cuenta Digital</div><div class="kpi-val" style="color:var(--ac)" id="jLibreton">0</div></div>
+          <div class="kpi-card ab"><div class="kpi-lbl">N√≥mina</div><div class="kpi-val" style="color:var(--bl)" id="jNomina">0</div></div>
+          <div class="kpi-card aw"><div class="kpi-lbl">Otro / Sin clasificar</div><div class="kpi-val" style="color:var(--wn)" id="jOther">0</div></div>
         </div>
       </div>
     </div>
@@ -540,11 +555,11 @@ tr:hover td{background:#faf9ff}
 </div>
 
 <script>
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 // CONFIG
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 const LOOKER_ID   = '1vU55gWrRgt9Y2V-X0VcqHpWSLyv7NPiqPlnZN_t_UJI';
-const WEBAPP_URL  = 'https://script.google.com/macros/s/AKfycbzO0pGwB4yRSrYyVoGdWTtB6UxsHAtZZbdPHb-fEsBozXNimxoko0suYWB1hIR98Md3/exec';
+const WEBAPP_URL  = 'https://script.google.com/macros/s/AKfycbxLGa_sATkCncCl_THt7JOzLIz84lBRua1gH2axrqtEkhZSnhJ8AatNJHVxcop-STyc/exec';
 const CC_RATES   = { reattr:800/1e6, reeng:100/1e6, iae:2/1e6, clicks:2/1e6, sessions:2/1e6 };
 
 const STEP_6               = 'apertura_cuenta_en_linea_no_cliente-app_step_6';
@@ -554,15 +569,12 @@ const COMPLETED_CONTRATADO = 'apertura_cuenta_en_linea_no_cliente-app_completed_
 const COMPLETION_EVENTS    = [COMPLETED_APROBADO, COMPLETED_CONTRATADO];
 const KNOWN_STEPS          = [STEP_1, STEP_6, COMPLETED_APROBADO, COMPLETED_CONTRATADO];
 const GEO_MIN              = 50;
+const JULIO_CUTOFF         = '2026-07-31';   // validaci√≥n informativa: solo eventos hasta esta fecha
+const MAX_IPS              = 4;              // se aceptan hasta 4 IPs por AppsFlyer ID (>4 se descarta)
 
-// Paleta categórica para pids + asignación estable (mismo pid → mismo color en toda la app)
-const PID_PALETTE = ['#7c3aed','#2563eb','#059669','#d97706','#db2777','#0891b2','#65a30d','#9333ea','#e11d48','#0d9488','#f59e0b','#4f46e5','#7A53CA','#6592FF','#72EAE1'];
-const _pidColorReg = {}; let _pidColorN = 0;
-function pidColor(p){ if(!(p in _pidColorReg)){ _pidColorReg[p]=PID_PALETTE[_pidColorN%PID_PALETTE.length]; _pidColorN++; } return _pidColorReg[p]; }
-
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 // STATE
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 let rtgRows      = null;
 let uaRows       = null;
 let partnerRows  = null;
@@ -570,27 +582,25 @@ let allResults   = [];
 let funnelPeriod = { min:null, max:null };
 let activeStatus = 'all';
 let activeProduct= 'all';
-let activePid    = 'all';
 
-const pidOf = r => (r.mediaSource && r.mediaSource.trim()) ? r.mediaSource.trim() : '(sin pid)';
-
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 // NAVIGATION
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   btn.classList.add('active');
-  const names  = { upload:'Cargar Archivos', funnel:'Resultados Funnel', credits:'Calculadora Créditos' };
-  const badges = { upload:'RTG · UA · Partners', funnel:'step_6 + completed_aprobado', credits:'Capacity Credits' };
+  const names  = { upload:'Cargar Archivos', funnel:'Resultados Funnel', credits:'Calculadora Cr√©ditos', julio:'Validaci√≥n hasta Julio 2026' };
+  const badges = { upload:'RTG ¬∑ UA ¬∑ Partners', funnel:'step_6 + completed_aprobado', credits:'Capacity Credits', julio:'IP ‚â§ 4 ¬∑ hasta jul-2026' };
   document.getElementById('topbarActive').textContent = names[id];
   document.getElementById('topbarBadge').textContent  = badges[id];
+  if(id==='julio') analyzeJulio();
 }
 
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 // CSV PARSER
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 function parseCSVFile(file, onComplete) {
   const reader = new FileReader();
   reader.onerror = () => alert('No se pudo leer el archivo.');
@@ -605,7 +615,7 @@ function parseCSVFile(file, onComplete) {
     const delim = tabs>semis&&tabs>commas?'\t':semis>commas?';':',';
     Papa.parse(text,{header:true,skipEmptyLines:true,delimiter:delim,
       transformHeader:h=>h.trim(),transform:v=>(v||'').trim(),
-      complete:r=>{if(!r.data||!r.data.length){alert('Archivo vacío.');return;}onComplete(r.data);}
+      complete:r=>{if(!r.data||!r.data.length){alert('Archivo vac√≠o.');return;}onComplete(r.data);}
     });
   };
   reader.readAsArrayBuffer(file);
@@ -617,7 +627,7 @@ function numVal(v) {
   return isNaN(n)?0:n;
 }
 
-// ─── FIX 3: extracción de Event Time case-insensitive ──────────
+// ‚îÄ‚îÄ‚îÄ FIX 3: extracci√≥n de Event Time case-insensitive ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 function getEventTime(row) {
   const key = Object.keys(row).find(k =>
     k.toLowerCase().replace(/\s+/g, '_') === 'event_time'
@@ -625,19 +635,9 @@ function getEventTime(row) {
   return key ? row[key] : null;
 }
 
-// ─── Media Source (pid) case-insensitive · cubre RTG/UA ("Media Source") y Partners ("Media Source (pid)")
-function getMediaSource(row) {
-  const key = Object.keys(row).find(k => {
-    const n = k.toLowerCase().replace(/\s+/g, ' ').trim();
-    return n === 'media source' || n === 'media source (pid)';
-  });
-  const v = key ? row[key] : '';
-  return (v && String(v).trim()) ? String(v).trim() : '(sin pid)';
-}
-
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 // FILE UPLOADS SETUP
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 function setupUpload(zoneId, inputId, onFile) {
   const zone  = document.getElementById(zoneId);
   const input = document.getElementById(inputId);
@@ -669,6 +669,8 @@ function resetFile(type) {
   checkProcessBtn();
 }
 
+// Con solo el RTG cargado ya se puede procesar (funnel + IAEs RTG).
+// UA y Partners son opcionales: enriquecen los cr√©ditos.
 function checkProcessBtn() {
   document.getElementById('btnProcess').disabled = !rtgRows;
 }
@@ -701,54 +703,54 @@ document.addEventListener('DOMContentLoaded', () => {
         if(t==='re-attribution')reattr+=v;
         else if(t==='re-engagement')reeng+=v;
       });
-      showFileBar('partners', file.name, `${rows.length.toLocaleString('es-CO')} filas · ${Math.round(reattr).toLocaleString('es-CO')} re-attr · ${Math.round(reeng).toLocaleString('es-CO')} re-eng`);
+      showFileBar('partners', file.name, `${rows.length.toLocaleString('es-CO')} filas ¬∑ ${Math.round(reattr).toLocaleString('es-CO')} re-attr ¬∑ ${Math.round(reeng).toLocaleString('es-CO')} re-eng`);
     });
   });
 });
 
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 // PROCESS ALL
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 async function processAll() {
   const btn = document.getElementById('btnProcess');
   btn.disabled = true;
-  btn.textContent = '⏳ Procesando...';
-  showProcessStatus('loading','⏳ Procesando archivos...',0);
+  btn.textContent = '‚è≥ Procesando...';
+  showProcessStatus('loading','‚è≥ Procesando archivos...',0);
 
-  showProcessStatus('loading','🔍 Analizando funnel (RTG)...',20);
+  showProcessStatus('loading','üîç Analizando funnel (RTG)...',20);
   await sleep(10);
   analyze(rtgRows);
 
-  showProcessStatus('loading','💎 Calculando créditos...',50);
+  showProcessStatus('loading','üíé Calculando cr√©ditos...',50);
   await sleep(10);
   buildCredits();
 
-  showProcessStatus('loading','📤 Escribiendo en Google Sheet...',75);
+  showProcessStatus('loading','üì§ Escribiendo en Google Sheet...',75);
   await sleep(10);
   const writeResult = await writeToLooker();
 
   const iaeTotal = (rtgRows ? rtgRows.length : 0) + (uaRows ? uaRows.length : 0);
   const optionalNote = (!uaRows || !partnerRows)
-    ? `<br><small style="color:var(--txm)">ℹ️ Procesado solo con ${uaRows?'':'RTG'}${(!uaRows&&!partnerRows)?' ':''}${!partnerRows?'(sin Partners: créditos de re-attr/re-eng/clicks/sessions en 0)':''}${!uaRows?' — sin UA':''}.</small>`
+    ? `<br><small style="color:var(--txm)">‚ÑπÔ∏è Procesado solo con ${uaRows?'':'RTG'}${(!uaRows&&!partnerRows)?' ':''}${!partnerRows?'(sin Partners: cr√©ditos de re-attr/re-eng/clicks/sessions en 0)':''}${!uaRows?' ‚Äî sin UA':''}.</small>`
     : '';
 
   if (writeResult.ok) {
     showProcessStatus('ok',
-      `✅ <strong>Todo procesado correctamente</strong><br>
+      `‚úÖ <strong>Todo procesado correctamente</strong><br>
       <small style="color:var(--txm)">
-        ${allResults.filter(r=>r.status==='clean').length} altas válidas ·
-        IAEs: ${iaeTotal.toLocaleString('es-CO')} ·
+        ${allResults.filter(r=>r.status==='clean').length} altas v√°lidas ¬∑
+        IAEs: ${iaeTotal.toLocaleString('es-CO')} ¬∑
         ${writeResult.msg}<br>
-        <a href="https://docs.google.com/spreadsheets/d/${LOOKER_ID}/edit" target="_blank" style="color:var(--ac)">Ver Sheet →</a>
+        <a href="https://docs.google.com/spreadsheets/d/${LOOKER_ID}/edit" target="_blank" style="color:var(--ac)">Ver Sheet ‚Üí</a>
       </small>${optionalNote}`, 100);
   } else {
     showProcessStatus('warn',
-      `⚠️ <strong>Procesado con advertencias</strong><br>
+      `‚ö†Ô∏è <strong>Procesado con advertencias</strong><br>
       <small style="color:var(--txm)">${writeResult.msg}</small>${optionalNote}`, 100);
   }
 
   btn.disabled = false;
-  btn.textContent = '⚡ Procesar todo';
+  btn.textContent = '‚ö° Procesar todo';
 }
 
 function showProcessStatus(type, html, pct) {
@@ -765,9 +767,9 @@ function showProcessStatus(type, html, pct) {
 
 function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
 
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 // BUILD CREDITS FROM ALL FILES
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 function buildCredits() {
   const iaeRTG = rtgRows ? rtgRows.length : 0;
   const iaeUA  = uaRows  ? uaRows.length  : 0;
@@ -816,72 +818,68 @@ function buildCredits() {
   }
 
   calcCredits();
-  renderCreditsByPid();
-  renderCreditsChart();
 }
 
-// ═══════════════════════════════════════════════
-// WRITE TO LOOKER SHEET  (por día × Media Source pid)
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// WRITE TO LOOKER SHEET
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 async function writeToLooker() {
   try {
     const fileName = new Date().toISOString().slice(0,10);
 
-    const evByKey = {};
+    // ‚îÄ‚îÄ eventos_validos ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+    const eventsByDay = {};
     const clean = allResults.filter(r=>r.status==='clean'&&r.completionDate);
     clean.forEach(r=>{
-      const ms = pidOf(r);
-      const k = r.completionDate + '||' + ms;
-      if(!evByKey[k]) evByKey[k]={date:r.completionDate,ms,total:0,libreton:0,nomina:0,otro:0};
-      const b=evByKey[k]; b.total++;
-      b[r.product==='libreton'?'libreton':r.product==='nomina'?'nomina':'otro']++;
+      if(!eventsByDay[r.completionDate]) eventsByDay[r.completionDate]={total:0,libreton:0,nomina:0,otro:0};
+      eventsByDay[r.completionDate].total++;
+      eventsByDay[r.completionDate][r.product==='libreton'?'libreton':r.product==='nomina'?'nomina':'otro']++;
     });
-    const eventRows = Object.values(evByKey)
-      .sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:(a.ms<b.ms?-1:1))
-      .map(b=>[b.date, b.ms, b.total, b.libreton, b.nomina, b.otro,
-               `${funnelPeriod.min||'?'} → ${funnelPeriod.max||'?'}`, fileName]);
 
-    const crByKey = {};
-    const addDay = (date, ms, key, val=1) => {
+    const eventRows = Object.keys(eventsByDay).sort().map(d=>[
+      d, eventsByDay[d].total, eventsByDay[d].libreton, eventsByDay[d].nomina, eventsByDay[d].otro,
+      `${funnelPeriod.min||'?'} ‚Üí ${funnelPeriod.max||'?'}`, fileName
+    ]);
+
+    // ‚îÄ‚îÄ creditos ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+    const creditsByDay = {};
+
+    const addDay = (date, key, val=1) => {
       if(!date) return;
       const d = date.slice(0,10);
-      const m = (ms && String(ms).trim()) ? String(ms).trim() : '(sin pid)';
-      const k = d + '||' + m;
-      if(!crByKey[k]) crByKey[k]={date:d,ms:m,reattr:0,reeng:0,iaeRTG:0,iaeUA:0,clicks:0,sessions:0};
-      crByKey[k][key] += val;
+      if(!creditsByDay[d]) creditsByDay[d]={reattr:0,reeng:0,iaeRTG:0,iaeUA:0,clicks:0,sessions:0};
+      creditsByDay[d][key] += val;
     };
 
-    if(rtgRows) rtgRows.forEach(r => addDay(getEventTime(r), getMediaSource(r), 'iaeRTG'));
-    if(uaRows)  uaRows.forEach(r  => addDay(getEventTime(r), getMediaSource(r), 'iaeUA'));
+    // FIX 3: usar getEventTime() en lugar de acceso directo por nombre
+    if(rtgRows) rtgRows.forEach(r => addDay(getEventTime(r), 'iaeRTG'));
+    if(uaRows)  uaRows.forEach(r  => addDay(getEventTime(r), 'iaeUA'));
 
     if(partnerRows){
       const cols=Object.keys(partnerRows[0]||{});
       const fc=(...ns)=>cols.find(c=>ns.some(n=>c.toLowerCase().trim()===n.toLowerCase()))||null;
-      const cDate=fc('date'),cConv=fc('conversions'),cType=fc('conversion type'),
-            cClk=fc('clicks'),cSes=fc('sessions'),cMs=fc('media source (pid)','media source');
+      const cDate=fc('date'),cConv=fc('conversions'),cType=fc('conversion type'),cClk=fc('clicks'),cSes=fc('sessions');
       partnerRows.forEach(r=>{
         const d=cDate?r[cDate]:'';
         if(!d)return;
-        const ms=cMs?r[cMs]:'';
         const t=cType?(r[cType]||'').toLowerCase().trim():'';
         const v=cConv?numVal(r[cConv]):0;
-        if(t==='re-attribution') addDay(d,ms,'reattr',v);
-        else if(t==='re-engagement') addDay(d,ms,'reeng',v);
-        if(cClk) addDay(d,ms,'clicks',numVal(r[cClk]));
-        if(cSes) addDay(d,ms,'sessions',numVal(r[cSes]));
+        if(t==='re-attribution') addDay(d,'reattr',v);
+        else if(t==='re-engagement') addDay(d,'reeng',v);
+        if(cClk) addDay(d,'clicks',numVal(r[cClk]));
+        if(cSes) addDay(d,'sessions',numVal(r[cSes]));
       });
     }
 
-    const creditRows = Object.values(crByKey)
-      .sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:(a.ms<b.ms?-1:1))
-      .map(x=>{
-        const iaeT=x.iaeRTG+x.iaeUA;
-        const ccR=x.reattr*CC_RATES.reattr, ccE=x.reeng*CC_RATES.reeng;
-        const ccI=iaeT*CC_RATES.iae, ccC=x.clicks*CC_RATES.clicks, ccS=x.sessions*CC_RATES.sessions;
-        return [x.date, x.ms, x.reattr, x.reeng, x.iaeRTG, x.iaeUA, iaeT, x.clicks, x.sessions,
-                ccR, ccE, ccI, ccC, ccS, ccR+ccE+ccI+ccC+ccS, fileName];
-      });
+    const creditRows = Object.keys(creditsByDay).sort().map(d=>{
+      const x=creditsByDay[d];
+      const iaeT=x.iaeRTG+x.iaeUA;
+      const ccR=x.reattr*CC_RATES.reattr, ccE=x.reeng*CC_RATES.reeng;
+      const ccI=iaeT*CC_RATES.iae, ccC=x.clicks*CC_RATES.clicks, ccS=x.sessions*CC_RATES.sessions;
+      return [d,x.reattr,x.reeng,x.iaeRTG,x.iaeUA,iaeT,x.clicks,x.sessions,ccR,ccE,ccI,ccC,ccS,ccR+ccE+ccI+ccC+ccS,fileName];
+    });
 
+    // FIX 1+2: siempre llamar al servidor aunque rows est√© vac√≠o ‚Äî el server limpia igual
     const upsert = async (sheet, rows) => {
       const res = await fetch(WEBAPP_URL, {
         method: 'POST',
@@ -896,16 +894,16 @@ async function writeToLooker() {
     await upsert('eventos_validos', eventRows);
     await upsert('creditos', creditRows);
 
-    return { ok:true, msg:`${eventRows.length} filas de eventos · ${creditRows.length} filas de créditos (día × pid) escritas en Sheet` };
+    return { ok:true, msg:`${eventRows.length} d√≠as de eventos ¬∑ ${creditRows.length} d√≠as de cr√©ditos escritos en Sheet` };
 
   } catch(e) {
-    return { ok:false, msg:`No se pudo escribir en Sheet: ${e.message}. Los datos están procesados localmente.` };
+    return { ok:false, msg:`No se pudo escribir en Sheet: ${e.message}. Los datos est√°n procesados localmente.` };
   }
 }
 
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 // CREDITS CALC
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 function calcCredits() {
   const g = id=>{const v=parseFloat(document.getElementById('inp_'+id).value);return isNaN(v)||v<0?0:v;};
   const fmt=n=>n.toFixed(4);
@@ -922,7 +920,7 @@ function calcCredits() {
   const parts=[];
   if(ra)parts.push(`${fn(ra)} re-attr`);if(re)parts.push(`${fn(re)} re-eng`);
   if(ia)parts.push(`${fn(ia)} IAEs`);if(cl)parts.push(`${fn(cl)} clicks`);if(se)parts.push(`${fn(se)} sessions`);
-  document.getElementById('totalCreditsSub').textContent=parts.length?parts.join(' · '):'Cargá los archivos para auto-completar';
+  document.getElementById('totalCreditsSub').textContent=parts.length?parts.join(' ¬∑ '):'Carg√° los archivos para auto-completar';
 }
 
 function setAutoVal(id,val,isAuto){
@@ -939,80 +937,25 @@ function resetCredits(){
   calcCredits();
 }
 
-function renderCreditsByPid(){
-  const body=document.getElementById('creditsByPidBody'); if(!body)return;
-  const agg={};
-  const add=(ms,k,v)=>{const m=(ms&&String(ms).trim())?String(ms).trim():'(sin pid)';if(!agg[m])agg[m]={iae:0,clicks:0,sessions:0,reattr:0,reeng:0};agg[m][k]+=v;};
-  if(rtgRows) rtgRows.forEach(r=>add(getMediaSource(r),'iae',1));
-  if(uaRows)  uaRows.forEach(r=>add(getMediaSource(r),'iae',1));
-  if(partnerRows){
-    const cols=Object.keys(partnerRows[0]||{});
-    const fc=(...ns)=>cols.find(c=>ns.some(n=>c.toLowerCase().trim()===n.toLowerCase()))||null;
-    const cType=fc('conversion type'),cConv=fc('conversions'),cClk=fc('clicks'),cSes=fc('sessions'),cMs=fc('media source (pid)','media source');
-    partnerRows.forEach(r=>{
-      const ms=cMs?r[cMs]:'', t=cType?(r[cType]||'').toLowerCase().trim():'', v=cConv?numVal(r[cConv]):0;
-      if(t==='re-attribution')add(ms,'reattr',v); else if(t==='re-engagement')add(ms,'reeng',v);
-      if(cClk)add(ms,'clicks',numVal(r[cClk])); if(cSes)add(ms,'sessions',numVal(r[cSes]));
-    });
-  }
-  const fmt=n=>Math.round(n).toLocaleString('es-CO');
-  body.innerHTML = Object.entries(agg).map(([ms,x])=>{
-    const cc=x.reattr*CC_RATES.reattr+x.reeng*CC_RATES.reeng+x.iae*CC_RATES.iae+x.clicks*CC_RATES.clicks+x.sessions*CC_RATES.sessions;
-    return {ms,x,cc};
-  }).sort((a,b)=>b.cc-a.cc).map(({ms,x,cc})=>`<tr>
-      <td style="font-family:monospace;font-size:11px;font-weight:600">${esc(ms)}</td>
-      <td>${fmt(x.iae)}</td><td>${fmt(x.clicks)}</td><td>${fmt(x.sessions)}</td>
-      <td>${fmt(x.reattr)}</td><td>${fmt(x.reeng)}</td>
-      <td style="font-family:monospace;font-weight:700;color:var(--ac)">${cc.toFixed(4)}</td></tr>`).join('')
-    || `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txm)">Cargá archivos para ver el desglose</td></tr>`;
-}
-
-function renderCreditsChart(){
-  const byDay={}; const pids=new Set();
-  const add=(date, ms, cc)=>{
-    if(!date||!cc) return;
-    const d=String(date).slice(0,10);
-    const m=(ms&&String(ms).trim())?String(ms).trim():'(sin pid)';
-    pids.add(m); (byDay[d]=byDay[d]||{}); byDay[d][m]=(byDay[d][m]||0)+cc;
-  };
-  if(rtgRows) rtgRows.forEach(r=>add(getEventTime(r), getMediaSource(r), CC_RATES.iae));
-  if(uaRows)  uaRows.forEach(r=>add(getEventTime(r), getMediaSource(r), CC_RATES.iae));
-  if(partnerRows){
-    const cols=Object.keys(partnerRows[0]||{});
-    const fc=(...ns)=>cols.find(c=>ns.some(n=>c.toLowerCase().trim()===n.toLowerCase()))||null;
-    const cDate=fc('date'),cType=fc('conversion type'),cConv=fc('conversions'),cClk=fc('clicks'),cSes=fc('sessions'),cMs=fc('media source (pid)','media source');
-    partnerRows.forEach(r=>{
-      const d=cDate?r[cDate]:''; if(!d)return;
-      const ms=cMs?r[cMs]:'', t=cType?(r[cType]||'').toLowerCase().trim():'', v=cConv?numVal(r[cConv]):0;
-      if(t==='re-attribution') add(d,ms,v*CC_RATES.reattr);
-      else if(t==='re-engagement') add(d,ms,v*CC_RATES.reeng);
-      if(cClk) add(d,ms,numVal(r[cClk])*CC_RATES.clicks);
-      if(cSes) add(d,ms,numVal(r[cSes])*CC_RATES.sessions);
-    });
-  }
-  const cats=Array.from(pids).sort();
-  renderStackedByPid('creditsChart','creditsChartLegend',byDay,cats, v=>v.toFixed(1));
-}
-
 function updatePeriodBar(){
   const bar=document.getElementById('periodBar'),t=document.getElementById('periodText'),s=document.getElementById('periodSub');
   if(funnelPeriod.min&&funnelPeriod.max){
     bar.className='period-bar has';
-    t.textContent=`Período: ${funnelPeriod.min} → ${funnelPeriod.max}`;
-    s.textContent='Extraído del Partners Report';
+    t.textContent=`Per√≠odo: ${funnelPeriod.min} ‚Üí ${funnelPeriod.max}`;
+    s.textContent='Extra√≠do del Partners Report';
   } else {
     bar.className='period-bar no';
-    t.textContent='Sin período definido';
-    s.textContent='Cargá los archivos para auto-detectar el período';
+    t.textContent='Sin per√≠odo definido';
+    s.textContent='Carg√° los archivos para auto-detectar el per√≠odo';
   }
 }
 
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 // FUNNEL VALIDATOR
-// ═══════════════════════════════════════════════
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
 function parseTime(s){if(!s)return null;const d=new Date(s.replace(' ','T'));return isNaN(d.getTime())?null:d.getTime();}
 function getAfContent(v){try{return JSON.parse(v).af_content||'';}catch(e){return '';}}
-function classifyProduct(c){c=(c||'').toLowerCase();if(c.includes('libreton'))return 'libreton';if(c.includes('nomina')||c.includes('nómina')||c.includes('pensional'))return 'nomina';return 'other';}
+function classifyProduct(c){c=(c||'').toLowerCase();if(c.includes('libreton'))return 'libreton';if(c.includes('nomina')||c.includes('n√≥mina')||c.includes('pensional'))return 'nomina';return 'other';}
 
 function analyze(rows) {
   const byId={};
@@ -1045,13 +988,13 @@ function analyze(rows) {
     const validCO=country==='CO';
     const validPrimary=isPrimary==='true'||isPrimary===''||isPrimary==='1';
 
-    if(!validCO||!validPrimary){results.push({id,status:'excl_co',filter:'País/Primary',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:'',completionDate});return;}
-    if(completionCount>1){const geo=detectGeoJump(evs);results.push({id,status:'excl_dup',filter:`Múlt. completions (${completionCount})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:geo.detail,completionDate});return;}
+    if(!validCO||!validPrimary){results.push({id,status:'excl_co',filter:'Pa√≠s/Primary',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:'',completionDate});return;}
+    if(completionCount>1){const geo=detectGeoJump(evs);results.push({id,status:'excl_dup',filter:`M√∫lt. completions (${completionCount})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:geo.detail,completionDate});return;}
     if(!hasStep6){results.push({id,status:'excl_step6',filter:'Sin step_6',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:'',completionDate});return;}
     const geo=detectGeoJump(evs);
     if(geo.hasJump){results.push({id,status:'excl_geo',filter:'Salto geo <50min',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:geo.detail,completionDate});return;}
     if(completionDate)validDates.push(completionDate);
-    results.push({id,status:'clean',filter:'—',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:'',completionDate});
+    results.push({id,status:'clean',filter:'‚Äî',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:'',completionDate});
   });
 
   if(validDates.length){const s=validDates.slice().sort();funnelPeriod.min=s[0];funnelPeriod.max=s[s.length-1];updatePeriodBar();}
@@ -1067,10 +1010,96 @@ function detectGeoJump(evs){
     if(dm<0)continue;
     if(p.city&&c.city&&p.city!==c.city&&dm<GEO_MIN){
       const ps=p.event.split('-app_')[1]||p.event,cs=c.event.split('-app_')[1]||c.event;
-      return{hasJump:true,detail:`${p.city}→${c.city} en ${dm.toFixed(1)} min (${ps}→${cs})`};
+      return{hasJump:true,detail:`${p.city}‚Üí${c.city} en ${dm.toFixed(1)} min (${ps}‚Üí${cs})`};
     }
   }
   return{hasJump:false,detail:''};
+}
+
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// VALIDACI√ìN HASTA JULIO 2026 (informativa ¬∑ +filtro m√°x 4 IPs ¬∑ NO escribe al Sheet)
+// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+function getIPVal(row){
+  const k=Object.keys(row).find(k=>k.toLowerCase().replace(/\s+/g,'')==='ip');
+  return k?(row[k]||'').trim():'';
+}
+
+function analyzeJulio(){
+  const noData=document.getElementById('julioNoData'), sec=document.getElementById('julioSection');
+  if(!rtgRows){ if(noData)noData.style.display='block'; if(sec)sec.style.display='none'; return; }
+
+  const byId={}; let hasIpCol=false;
+  rtgRows.forEach(row=>{
+    const id=row['AppsFlyer ID'], event=row['Event Name'];
+    if(!id||!event) return;
+    const rawTime=row['Event Time']||'';
+    const d=(rawTime||'').slice(0,10);
+    if(d && d>JULIO_CUTOFF) return;                 // solo hasta julio 2026
+    const ip=getIPVal(row); if(ip) hasIpCol=true;
+    if(!byId[id]) byId[id]=[];
+    byId[id].push({
+      event, value:row['Event Value']||'',
+      country:(row['Country Code']||'').toUpperCase().trim(),
+      isPrimary:(row['Is Primary Attribution']||'').toLowerCase().trim(),
+      city:(row['City']||'').toLowerCase().trim(), ip,
+      rawTime, time:parseTime(rawTime)
+    });
+  });
+
+  const completionIds=Object.keys(byId).filter(id=>byId[id].some(e=>COMPLETION_EVENTS.includes(e.event)));
+  const s0=completionIds.length;
+  let excl_co=0, excl_dup=0, excl_s6=0, excl_geo=0, excl_ip=0;
+  const prod={libreton:0,nomina:0,other:0};
+
+  completionIds.forEach(id=>{
+    const evs=byId[id].sort((a,b)=>(a.time||0)-(b.time||0));
+    const ce=evs.find(e=>e.event===COMPLETED_CONTRATADO)||evs.find(e=>e.event===COMPLETED_APROBADO);
+    const country=ce?ce.country:'', isPrimary=ce?ce.isPrimary:'';
+    const product=classifyProduct(getAfContent(ce?ce.value:''));
+    const completionCount=evs.filter(e=>COMPLETION_EVENTS.includes(e.event)).length;
+    const hasStep6=evs.some(e=>e.event===STEP_6);
+    const validCO=country==='CO';
+    const validPrimary=isPrimary==='true'||isPrimary===''||isPrimary==='1';
+    const nIps=new Set(evs.filter(e=>e.ip).map(e=>e.ip)).size;
+
+    if(!validCO||!validPrimary){excl_co++;return;}
+    if(completionCount>1){excl_dup++;return;}
+    if(!hasStep6){excl_s6++;return;}
+    if(detectGeoJump(evs).hasJump){excl_geo++;return;}
+    if(nIps>MAX_IPS){excl_ip++;return;}          // NUEVO filtro: m√°x 4 IPs por ID
+    prod[product]++;
+  });
+
+  const funnelValid = s0-excl_co-excl_dup-excl_s6-excl_geo;   // sin filtro IP
+  const finalValid  = funnelValid-excl_ip;                     // con IP ‚â§ 4
+
+  document.getElementById('jFunnelValid').textContent=funnelValid;
+  document.getElementById('jFinalValid').textContent=finalValid;
+  document.getElementById('jIpExcl').textContent=excl_ip;
+  document.getElementById('jLibreton').textContent=prod.libreton;
+  document.getElementById('jNomina').textContent=prod.nomina;
+  document.getElementById('jOther').textContent=prod.other;
+
+  const rows=[
+    ['Base ‚Äî altas con completed (hasta 31/07/2026)', '', s0],
+    ['Pa√≠s ‚â† CO / no primary', excl_co, s0-excl_co],
+    ['M√∫ltiples completions', excl_dup, s0-excl_co-excl_dup],
+    ['Sin step_6', excl_s6, s0-excl_co-excl_dup-excl_s6],
+    ['Salto geo <50min', excl_geo, funnelValid],
+    ['+ M√°x. 4 IPs por ID (nuevo)', excl_ip, finalValid],
+  ];
+  document.getElementById('julioWaterfall').innerHTML=rows.map(r=>
+    `<tr><td>${esc(r[0])}</td><td style="text-align:right;color:${r[1]?'var(--er)':'var(--txm)'}">${r[1]===''?'‚Äî':'‚àí'+r[1]}</td><td style="text-align:right;font-weight:700">${r[2]}</td></tr>`
+  ).join('');
+
+  const warn=document.getElementById('julioIpWarn');
+  if(warn){
+    if(!hasIpCol){ warn.style.display='block'; warn.textContent='‚ö†Ô∏è El Raw RTG cargado no tiene columna IP ‚Äî el filtro de "m√°x. 4 IPs" no se pudo aplicar (0 descartadas por IP).'; }
+    else { warn.style.display='none'; }
+  }
+
+  if(noData)noData.style.display='none';
+  if(sec)sec.style.display='block';
 }
 
 function renderFunnelUI(totalBase){
@@ -1081,10 +1110,10 @@ function renderFunnelUI(totalBase){
   const clean=allResults.filter(r=>r.status==='clean').length;
   const s0=totalBase,s1=s0-exc_co,s2=s1-exc_dup,s3=s2-exc_s6,s4=s3-exc_geo;
   document.getElementById('fS0').textContent=s0;
-  document.getElementById('fS1').textContent=s1;document.getElementById('fE1').textContent=exc_co?`−${exc_co}`:'—';
-  document.getElementById('fS2').textContent=s2;document.getElementById('fE2').textContent=exc_dup?`−${exc_dup}`:'—';
-  document.getElementById('fS3').textContent=s3;document.getElementById('fE3').textContent=exc_s6?`−${exc_s6}`:'—';
-  document.getElementById('fS4').textContent=s4;document.getElementById('fE4').textContent=exc_geo?`−${exc_geo}`:'—';
+  document.getElementById('fS1').textContent=s1;document.getElementById('fE1').textContent=exc_co?`‚àí${exc_co}`:'‚Äî';
+  document.getElementById('fS2').textContent=s2;document.getElementById('fE2').textContent=exc_dup?`‚àí${exc_dup}`:'‚Äî';
+  document.getElementById('fS3').textContent=s3;document.getElementById('fE3').textContent=exc_s6?`‚àí${exc_s6}`:'‚Äî';
+  document.getElementById('fS4').textContent=s4;document.getElementById('fE4').textContent=exc_geo?`‚àí${exc_geo}`:'‚Äî';
   document.getElementById('fValid').textContent=clean;
   const fact=allResults.filter(r=>r.status==='clean');
   document.getElementById('sLibreton').textContent=fact.filter(r=>r.product==='libreton').length;
@@ -1093,66 +1122,7 @@ function renderFunnelUI(totalBase){
   document.getElementById('funnelSection').style.display='block';
   document.getElementById('noFunnelData').style.display='none';
   document.getElementById('resultsSection').style.display='block';
-  renderByPid();populatePidFilter();
   renderChart();renderTable();
-}
-
-function renderByPid(){
-  const agg={};
-  allResults.forEach(r=>{
-    const ms=pidOf(r);
-    if(!agg[ms])agg[ms]={valid:0,lib:0,nom:0,otro:0,excl:0};
-    if(r.status==='clean'){ agg[ms].valid++; agg[ms][r.product==='libreton'?'lib':r.product==='nomina'?'nom':'otro']++; }
-    else agg[ms].excl++;
-  });
-  document.getElementById('byPidBody').innerHTML = Object.entries(agg)
-    .sort((a,b)=>b[1].valid-a[1].valid)
-    .map(([ms,x])=>`<tr>
-      <td style="font-family:monospace;font-size:11px;font-weight:600">${esc(ms)}</td>
-      <td style="font-weight:700;color:var(--ok)">${x.valid}</td>
-      <td>${x.lib}</td><td>${x.nom}</td><td>${x.otro}</td>
-      <td style="color:var(--txm)">${x.excl}</td></tr>`).join('')
-    || `<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--txm)">Sin datos</td></tr>`;
-}
-
-function populatePidFilter(){
-  const sel=document.getElementById('pidFilter'); if(!sel)return;
-  const pids=Array.from(new Set(allResults.map(pidOf))).sort();
-  sel.innerHTML='<option value="all">Todos los pids</option>'+pids.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
-  activePid='all';
-}
-
-function setPidFilter(v){ activePid=v; renderTable(); }
-
-function renderStackedByPid(chartId, legendId, byDay, cats, fmt){
-  const el = document.getElementById(chartId); if(!el) return;
-  const colors = {}; cats.forEach(p=>colors[p]=pidColor(p));
-  const lg = document.getElementById(legendId);
-  if(lg) lg.innerHTML = cats.map(p=>`<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:${colors[p]};display:inline-block"></span>${esc(p)}</span>`).join('');
-  const dates = Object.keys(byDay).sort();
-  if(!dates.length){ el.innerHTML='<div style="padding:20px;color:var(--txm);font-size:12px">Sin datos</div>'; return; }
-  const totals = dates.map(d=>cats.reduce((s,p)=>s+(byDay[d][p]||0),0));
-  const maxVal = Math.max(...totals, 1);
-  const labels = dates.map(d=>{const parts=d.split('-');return `${parts[2]}/${parts[1]}`;});
-  const BW=Math.max(28,Math.min(58,Math.floor(780/Math.max(dates.length,1))));
-  const G=Math.max(6,Math.round(BW*.28)), PL=48, PR=12, PT=20, PB=40, CH=200;
-  const TW=PL+dates.length*(BW+G)-G+PR;
-  const gl='#e4e2ee', ld='#9997b3', tt='#1a1927';
-  const svg=[`<svg xmlns="http://www.w3.org/2000/svg" width="${TW}" height="${CH+PT+PB}" style="font-family:'Inter',sans-serif;display:block">`];
-  [0, maxVal/2, maxVal].forEach(tk=>{const y=PT+CH-Math.round((tk/maxVal)*CH);svg.push(`<line x1="${PL}" y1="${y}" x2="${TW-PR}" y2="${y}" stroke="${gl}" stroke-width="1"/><text x="${PL-6}" y="${y+4}" text-anchor="end" font-size="9" fill="${ld}">${fmt(tk)}</text>`);});
-  dates.forEach((d,i)=>{
-    const x=PL+i*(BW+G); let yO=PT+CH;
-    cats.forEach(p=>{
-      const v=byDay[d][p]||0; if(v<=0)return;
-      const h=Math.round((v/maxVal)*CH); yO-=h;
-      svg.push(`<rect x="${x}" y="${yO}" width="${BW}" height="${h}" fill="${colors[p]}"><title>${esc(p)} · ${labels[i]}: ${fmt(v)}</title></rect>`);
-    });
-    const t=totals[i];
-    if(t>0) svg.push(`<text x="${x+BW/2}" y="${PT+CH-Math.round((t/maxVal)*CH)-4}" text-anchor="middle" font-size="10" font-weight="700" fill="${tt}">${fmt(t)}</text>`);
-    svg.push(`<text x="${x+BW/2}" y="${PT+CH+16}" text-anchor="middle" font-size="10" fill="${ld}">${labels[i]}</text>`);
-  });
-  svg.push('</svg>');
-  el.innerHTML=svg.join('');
 }
 
 function setFilter(val,type,btn){
@@ -1165,23 +1135,22 @@ function renderTable(){
   let data=allResults;
   if(activeStatus!=='all')data=data.filter(r=>r.status===activeStatus);
   if(activeProduct!=='all')data=data.filter(r=>r.product===activeProduct);
-  if(activePid!=='all')data=data.filter(r=>pidOf(r)===activePid);
   document.getElementById('tableBody').innerHTML=data.map(r=>{
-    const sb=r.status==='clean'?'<span class="badge bv">✅ Facturable</span>'
-      :r.status==='excl_co'?'<span class="badge bi">🌐 País/Primary</span>'
-      :r.status==='excl_dup'?'<span class="badge bi">🔁 Múlt. comp.</span>'
-      :r.status==='excl_step6'?'<span class="badge bw">⚠ Sin step_6</span>'
-      :'<span class="badge bi">📍 Salto geo</span>';
-    const fb=r.filter==='—'?`<span style="color:var(--txm);font-size:11px">—</span>`:`<span style="font-size:11px;color:var(--er)">${esc(r.filter)}</span>`;
-    const pb=r.status!=='clean'?'<span style="color:var(--txm);font-size:11px">—</span>'
-      :r.product==='libreton'?'<span class="badge bn">📘 Libreton</span>'
-      :r.product==='nomina'?'<span class="badge bb">💼 Nómina</span>'
-      :'<span class="badge bw">❓ Otro</span>';
-    const cc=r.country==='CO'?`<span class="badge bv">${r.country}</span>`:`<span class="badge bi">${r.country||'—'}</span>`;
+    const sb=r.status==='clean'?'<span class="badge bv">‚úÖ Facturable</span>'
+      :r.status==='excl_co'?'<span class="badge bi">üåê Pa√≠s/Primary</span>'
+      :r.status==='excl_dup'?'<span class="badge bi">üîÅ M√∫lt. comp.</span>'
+      :r.status==='excl_step6'?'<span class="badge bw">‚ö† Sin step_6</span>'
+      :'<span class="badge bi">üìç Salto geo</span>';
+    const fb=r.filter==='‚Äî'?`<span style="color:var(--txm);font-size:11px">‚Äî</span>`:`<span style="font-size:11px;color:var(--er)">${esc(r.filter)}</span>`;
+    const pb=r.status!=='clean'?'<span style="color:var(--txm);font-size:11px">‚Äî</span>'
+      :r.product==='libreton'?'<span class="badge bn">üìò Libreton</span>'
+      :r.product==='nomina'?'<span class="badge bb">üíº N√≥mina</span>'
+      :'<span class="badge bw">‚ùì Otro</span>';
+    const cc=r.country==='CO'?`<span class="badge bv">${r.country}</span>`:`<span class="badge bi">${r.country||'‚Äî'}</span>`;
     const comp=r.completionCount===1?`<span style="font-size:12px;color:var(--txm)">1</span>`:`<span class="badge bi">${r.completionCount}</span>`;
-    const s6=r.hasStep6?'<span class="badge bv">✓</span>':'<span class="badge bi">✗</span>';
-    const geo=r.geoDetail?`<span style="font-size:11px;color:var(--er)">${esc(r.geoDetail)}</span>`:`<span style="color:var(--txm);font-size:11px">—</span>`;
-    return `<tr><td style="font-family:monospace;font-size:11px;font-weight:600">${esc(r.id)}</td><td>${sb}</td><td>${fb}</td><td>${pb}</td><td>${cc}</td><td style="font-size:11px">${esc(r.mediaSource||'—')}</td><td style="text-align:center">${comp}</td><td style="text-align:center">${s6}</td><td style="max-width:240px">${geo}</td><td style="font-size:11px;color:var(--txm);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'—'}</td></tr>`;
+    const s6=r.hasStep6?'<span class="badge bv">‚úì</span>':'<span class="badge bi">‚úó</span>';
+    const geo=r.geoDetail?`<span style="font-size:11px;color:var(--er)">${esc(r.geoDetail)}</span>`:`<span style="color:var(--txm);font-size:11px">‚Äî</span>`;
+    return `<tr><td style="font-family:monospace;font-size:11px;font-weight:600">${esc(r.id)}</td><td>${sb}</td><td>${fb}</td><td>${pb}</td><td>${cc}</td><td style="font-size:11px">${esc(r.mediaSource||'‚Äî')}</td><td style="text-align:center">${comp}</td><td style="text-align:center">${s6}</td><td style="max-width:240px">${geo}</td><td style="font-size:11px;color:var(--txm);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'‚Äî'}</td></tr>`;
   }).join('')||`<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--txm)">Sin resultados para este filtro</td></tr>`;
 }
 
@@ -1190,19 +1159,38 @@ function exportCSV(which){
   if(which==='clean')data=data.filter(r=>r.status==='clean');
   if(which==='libreton')data=data.filter(r=>r.status==='clean'&&r.product==='libreton');
   if(which==='nomina')data=data.filter(r=>r.status==='clean'&&r.product==='nomina');
-  const rows=[['AppsFlyer ID','Estado','Filtro','Producto','País','Media Source','Completions','Tiene step_6','Detalle geo','af_content']];
-  data.forEach(r=>rows.push([r.id,r.status,r.filter,r.product,r.country,r.mediaSource||'',r.completionCount,r.hasStep6?'Sí':'No',r.geoDetail,r.afContent]));
+  const rows=[['AppsFlyer ID','Estado','Filtro','Producto','Pa√≠s','Media Source','Completions','Tiene step_6','Detalle geo','af_content']];
+  data.forEach(r=>rows.push([r.id,r.status,r.filter,r.product,r.country,r.mediaSource||'',r.completionCount,r.hasStep6?'S√≠':'No',r.geoDetail,r.afContent]));
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'})),download:`bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`});
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob(['Ôªø'+csv],{type:'text/csv;charset=utf-8;'})),download:`bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`});
   document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
 }
 
 function renderChart(){
   const clean=allResults.filter(r=>r.status==='clean'&&r.completionDate);
-  const byDay={};
-  clean.forEach(r=>{ const d=r.completionDate, p=pidOf(r); (byDay[d]=byDay[d]||{})[p]=(byDay[d][p]||0)+1; });
-  const cats=Array.from(new Set(clean.map(pidOf))).sort();
-  renderStackedByPid('dailyChart','dailyLegend',byDay,cats, v=>Math.round(v).toLocaleString('es-CO'));
+  const dates=Array.from(new Set(clean.map(r=>r.completionDate))).sort();
+  const byDay={};dates.forEach(d=>{byDay[d]={libreton:0,nomina:0,other:0,total:0};});
+  clean.forEach(r=>{if(!byDay[r.completionDate])return;byDay[r.completionDate][r.product]++;byDay[r.completionDate].total++;});
+  const maxVal=Math.max(...dates.map(d=>byDay[d].total),1);
+  const labels=dates.map(d=>{const[y,m,day]=d.split('-');return `${day}/${m}`;});
+  const BW=Math.max(36,Math.min(64,Math.floor(700/Math.max(dates.length,1))));
+  const G=Math.max(6,Math.round(BW*.28)),PL=36,PR=12,PT=20,PB=40,CH=180;
+  const TW=PL+dates.length*(BW+G)-G+PR;
+  const C={l:'#7c3aed',n:'#2563eb',o:'#d97706',gl:'#e4e2ee',ld:'#9997b3',tt:'#1a1927'};
+  const ticks=[0,Math.ceil(maxVal/2),maxVal];
+  let svg=[`<svg xmlns="http://www.w3.org/2000/svg" width="${TW}" height="${CH+PT+PB}" style="font-family:'Inter',sans-serif;display:block">`];
+  ticks.forEach(tick=>{const y=PT+CH-Math.round((tick/maxVal)*CH);svg.push(`<line x1="${PL}" y1="${y}" x2="${TW-PR}" y2="${y}" stroke="${C.gl}" stroke-width="1"/><text x="${PL-5}" y="${y+4}" text-anchor="end" font-size="9" fill="${C.ld}">${tick}</text>`);});
+  dates.forEach((d,i)=>{
+    const x=PL+i*(BW+G),{libreton:l,nomina:n,other:o,total:t}=byDay[d];
+    const hL=Math.round((l/maxVal)*CH),hN=Math.round((n/maxVal)*CH),hO=Math.round((o/maxVal)*CH);
+    let yO=PT+CH;
+    const seg=(h,c)=>{if(h<=0)return '';yO-=h;return `<rect x="${x}" y="${yO}" width="${BW}" height="${h}" fill="${c}" rx="2"/>`;};
+    svg.push(seg(hL,C.l));svg.push(seg(hN,C.n));svg.push(seg(hO,C.o));
+    if(t>0)svg.push(`<text x="${x+BW/2}" y="${PT+CH-Math.round((t/maxVal)*CH)-4}" text-anchor="middle" font-size="10" font-weight="700" fill="${C.tt}">${t}</text>`);
+    svg.push(`<text x="${x+BW/2}" y="${PT+CH+16}" text-anchor="middle" font-size="10" fill="${C.ld}">${labels[i]}</text>`);
+  });
+  svg.push('</svg>');
+  document.getElementById('dailyChart').innerHTML=svg.join('');
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
