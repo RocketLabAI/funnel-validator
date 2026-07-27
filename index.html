@@ -516,8 +516,9 @@ tr:hover td{background:#faf9ff}
       <div class="criteria">
         <strong>Vista informativa — no impacta el Google Sheet.</strong><br>
         &nbsp;📅 Toma solo eventos <strong>hasta el 31/07/2026</strong>.<br>
-        &nbsp;🌐 Además de los filtros del funnel, descarta AppsFlyer IDs con <strong>más de 4 IPs distintas</strong> (hasta 4 se aceptan).<br>
-        &nbsp;ℹ️ Requiere que el Raw RTG tenga columna <code>IP</code>. Si no la tiene, el filtro de IP se omite y se avisa.
+        &nbsp;🔀 Orden: País/Primary → Múltiples completions → <strong>Máx. 4 IPs por AppsFlyer ID</strong> → <strong>IDs repetidos (IP con >4 IDs)</strong> → Sin step_6 → Salto geo.<br>
+        &nbsp;🌐 <strong>Máx 4 IPs por ID</strong>: descarta 1 AppsFlyer ID con más de 4 IPs distintas. &nbsp;<strong>IDs repetidos</strong>: descarta si la IP tiene más de 4 AppsFlyer IDs.<br>
+        &nbsp;ℹ️ Requiere que el Raw RTG tenga columna <code>IP</code>. Si no la tiene, los filtros de IP se omiten y se avisa.
       </div>
 
       <div id="julioNoData" style="background:#f0eff5;border:1px solid var(--border);border-radius:8px;padding:32px;text-align:center;color:var(--txm)">
@@ -531,9 +532,9 @@ tr:hover td{background:#faf9ff}
 
         <div class="sec-lbl">Resumen</div>
         <div class="kpi-grid kpi-grid-3">
-          <div class="kpi-card ap"><div class="kpi-lbl">Válidas (funnel normal)</div><div class="kpi-val" style="color:var(--ac)" id="jFunnelValid">0</div></div>
-          <div class="kpi-card ab"><div class="kpi-lbl">Válidas con IP ≤ 4</div><div class="kpi-val" style="color:var(--bl)" id="jFinalValid">0</div></div>
-          <div class="kpi-card aw"><div class="kpi-lbl">Descartadas por >4 IPs</div><div class="kpi-val" style="color:var(--wn)" id="jIpExcl">0</div></div>
+          <div class="kpi-card ap"><div class="kpi-lbl">Válidas finales</div><div class="kpi-val" style="color:var(--ac)" id="jFinalValid">0</div></div>
+          <div class="kpi-card ab"><div class="kpi-lbl">Descartadas por >4 IPs</div><div class="kpi-val" style="color:var(--bl)" id="jIpExcl">0</div></div>
+          <div class="kpi-card aw"><div class="kpi-lbl">Descartadas por IDs repetidos</div><div class="kpi-val" style="color:var(--wn)" id="jIdDupExcl">0</div></div>
         </div>
 
         <div class="sec-lbl">Waterfall de filtros (hasta jul-2026)</div>
@@ -571,6 +572,7 @@ const KNOWN_STEPS          = [STEP_1, STEP_6, COMPLETED_APROBADO, COMPLETED_CONT
 const GEO_MIN              = 50;
 const JULIO_CUTOFF         = '2026-07-31';   // validación informativa: solo eventos hasta esta fecha
 const MAX_IPS              = 4;              // se aceptan hasta 4 IPs por AppsFlyer ID (>4 se descarta)
+const MAX_IDS_PER_IP       = 4;             // IDs repetidos: una IP con >4 AppsFlyer IDs se descarta (ajustable)
 
 // ═══════════════════════════════════════════════
 // STATE
@@ -1028,14 +1030,15 @@ function analyzeJulio(){
   const noData=document.getElementById('julioNoData'), sec=document.getElementById('julioSection');
   if(!rtgRows){ if(noData)noData.style.display='block'; if(sec)sec.style.display='none'; return; }
 
-  const byId={}; let hasIpCol=false;
+  const byId={}; const ipToIds={}; let hasIpCol=false;
   rtgRows.forEach(row=>{
     const id=row['AppsFlyer ID'], event=row['Event Name'];
     if(!id||!event) return;
     const rawTime=row['Event Time']||'';
     const d=(rawTime||'').slice(0,10);
     if(d && d>JULIO_CUTOFF) return;                 // solo hasta julio 2026
-    const ip=getIPVal(row); if(ip) hasIpCol=true;
+    const ip=getIPVal(row);
+    if(ip){ hasIpCol=true; (ipToIds[ip]=ipToIds[ip]||new Set()).add(id); }
     if(!byId[id]) byId[id]=[];
     byId[id].push({
       event, value:row['Event Value']||'',
@@ -1048,7 +1051,7 @@ function analyzeJulio(){
 
   const completionIds=Object.keys(byId).filter(id=>byId[id].some(e=>COMPLETION_EVENTS.includes(e.event)));
   const s0=completionIds.length;
-  let excl_co=0, excl_dup=0, excl_s6=0, excl_geo=0, excl_ip=0;
+  let excl_co=0, excl_dup=0, excl_ip=0, excl_iddup=0, excl_s6=0, excl_geo=0;
   const prod={libreton:0,nomina:0,other:0};
 
   completionIds.forEach(id=>{
@@ -1060,33 +1063,38 @@ function analyzeJulio(){
     const hasStep6=evs.some(e=>e.event===STEP_6);
     const validCO=country==='CO';
     const validPrimary=isPrimary==='true'||isPrimary===''||isPrimary==='1';
-    const nIps=new Set(evs.filter(e=>e.ip).map(e=>e.ip)).size;
+    const ips=[...new Set(evs.filter(e=>e.ip).map(e=>e.ip))];
+    const nIps=ips.length;
+    const idRepetido=ips.some(ip=>ipToIds[ip] && ipToIds[ip].size>MAX_IDS_PER_IP);
 
+    // ORDEN: país → múlt. completions → máx 4 IPs por ID → IDs repetidos (IP con >4 IDs) → sin step_6 → salto geo
     if(!validCO||!validPrimary){excl_co++;return;}
     if(completionCount>1){excl_dup++;return;}
+    if(nIps>MAX_IPS){excl_ip++;return;}                 // máx 4 IPs por AppsFlyer ID
+    if(idRepetido){excl_iddup++;return;}                // IDs repetidos: IP con >4 AppsFlyer IDs
     if(!hasStep6){excl_s6++;return;}
     if(detectGeoJump(evs).hasJump){excl_geo++;return;}
-    if(nIps>MAX_IPS){excl_ip++;return;}          // NUEVO filtro: máx 4 IPs por ID
     prod[product]++;
   });
 
-  const funnelValid = s0-excl_co-excl_dup-excl_s6-excl_geo;   // sin filtro IP
-  const finalValid  = funnelValid-excl_ip;                     // con IP ≤ 4
+  const s1=s0-excl_co, s2=s1-excl_dup, s3=s2-excl_ip, s4=s3-excl_iddup, s5=s4-excl_s6;
+  const finalValid=s5-excl_geo;
 
-  document.getElementById('jFunnelValid').textContent=funnelValid;
   document.getElementById('jFinalValid').textContent=finalValid;
   document.getElementById('jIpExcl').textContent=excl_ip;
+  document.getElementById('jIdDupExcl').textContent=excl_iddup;
   document.getElementById('jLibreton').textContent=prod.libreton;
   document.getElementById('jNomina').textContent=prod.nomina;
   document.getElementById('jOther').textContent=prod.other;
 
   const rows=[
     ['Base — altas con completed (hasta 31/07/2026)', '', s0],
-    ['País ≠ CO / no primary', excl_co, s0-excl_co],
-    ['Múltiples completions', excl_dup, s0-excl_co-excl_dup],
-    ['Sin step_6', excl_s6, s0-excl_co-excl_dup-excl_s6],
-    ['Salto geo <50min', excl_geo, funnelValid],
-    ['+ Máx. 4 IPs por ID (nuevo)', excl_ip, finalValid],
+    ['País ≠ CO / no primary', excl_co, s1],
+    ['Múltiples completions', excl_dup, s2],
+    ['Máx. 4 IPs por AppsFlyer ID', excl_ip, s3],
+    ['IDs repetidos (IP con >4 IDs)', excl_iddup, s4],
+    ['Sin step_6', excl_s6, s5],
+    ['Salto geo <50min', excl_geo, finalValid],
   ];
   document.getElementById('julioWaterfall').innerHTML=rows.map(r=>
     `<tr><td>${esc(r[0])}</td><td style="text-align:right;color:${r[1]?'var(--er)':'var(--txm)'}">${r[1]===''?'—':'−'+r[1]}</td><td style="text-align:right;font-weight:700">${r[2]}</td></tr>`
@@ -1094,7 +1102,7 @@ function analyzeJulio(){
 
   const warn=document.getElementById('julioIpWarn');
   if(warn){
-    if(!hasIpCol){ warn.style.display='block'; warn.textContent='⚠️ El Raw RTG cargado no tiene columna IP — el filtro de "máx. 4 IPs" no se pudo aplicar (0 descartadas por IP).'; }
+    if(!hasIpCol){ warn.style.display='block'; warn.textContent='⚠️ El Raw RTG cargado no tiene columna IP — los filtros de IP (máx 4 IPs por ID e IDs repetidos) no se pudieron aplicar.'; }
     else { warn.style.display='none'; }
   }
 
