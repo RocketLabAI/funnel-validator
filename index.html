@@ -320,12 +320,13 @@ tr:hover td{background:#faf9ff}
 
       <div id="funnelSection" style="display:none">
         <div class="sec-lbl">Waterfall de filtros</div>
-        <div class="funnel">
+        <div class="funnel" style="grid-template-columns:repeat(7,1fr)">
           <div class="fs s0"><div class="fs-n">Base</div><div class="fs-v" id="fS0">—</div><div class="fs-l">Altas brutas</div><div class="fa">›</div></div>
           <div class="fs sf"><div class="fs-n">Filtro 1</div><div class="fs-v" id="fS1">—</div><div class="fs-l">Tras País/Primary</div><div class="fs-x" id="fE1">—</div><div class="fa">›</div></div>
           <div class="fs sf"><div class="fs-n">Filtro 2</div><div class="fs-v" id="fS2">—</div><div class="fs-l">Tras múlt. comp.</div><div class="fs-x" id="fE2">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 3</div><div class="fs-v" id="fS3">—</div><div class="fs-l">Tras sin step_6</div><div class="fs-x" id="fE3">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 4</div><div class="fs-v" id="fS4">—</div><div class="fs-l">Tras salto geo</div><div class="fs-x" id="fE4">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 3</div><div class="fs-v" id="fSIp">—</div><div class="fs-l">Tras máx 2 IPs</div><div class="fs-x" id="fEIp">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 4</div><div class="fs-v" id="fS3">—</div><div class="fs-l">Tras sin step_6</div><div class="fs-x" id="fE3">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 5</div><div class="fs-v" id="fS4">—</div><div class="fs-l">Tras salto geo</div><div class="fs-x" id="fE4">—</div><div class="fa">›</div></div>
           <div class="fs se"><div class="fs-n">Válidas</div><div class="fs-v" id="fValid">—</div><div class="fs-l">Altas pagables</div></div>
         </div>
 
@@ -363,6 +364,7 @@ tr:hover td{background:#faf9ff}
             <button class="tab" onclick="setFilter('clean','status',this)">✅ Facturables</button>
             <button class="tab" onclick="setFilter('excl_co','status',this)">🌐 País/Primary</button>
             <button class="tab" onclick="setFilter('excl_dup','status',this)">🔁 Múlt. comp.</button>
+            <button class="tab" onclick="setFilter('excl_ip','status',this)">🌐 >2 IPs</button>
             <button class="tab" onclick="setFilter('excl_step6','status',this)">⚠ Sin step_6</button>
             <button class="tab" onclick="setFilter('excl_geo','status',this)">📍 Salto geo</button>
           </div>
@@ -572,7 +574,8 @@ const COMPLETION_EVENTS    = [COMPLETED_APROBADO, COMPLETED_CONTRATADO];
 const KNOWN_STEPS          = [STEP_1, STEP_6, COMPLETED_APROBADO, COMPLETED_CONTRATADO];
 const GEO_MIN              = 50;
 const JULIO_CUTOFF         = '2026-07-31';   // validación informativa: solo eventos hasta esta fecha
-const MAX_IPS              = 4;              // se aceptan hasta 4 IPs por AppsFlyer ID (>4 se descarta)
+const MAX_IPS              = 4;              // vista informativa (Julio + hoja eventos_validos_ip): hasta 4 IPs por ID
+const MAX_IPS_MAIN         = 2;              // validador principal: hasta 2 IPs por AppsFlyer ID (>2 se descarta)
 
 // ═══════════════════════════════════════════════
 // STATE
@@ -1017,7 +1020,7 @@ function analyze(rows) {
       event,value:row['Event Value']||'',mediaSource:row['Media Source']||'',
       country:(row['Country Code']||'').toUpperCase().trim(),
       isPrimary:(row['Is Primary Attribution']||'').toLowerCase().trim(),
-      city:(row['City']||'').toLowerCase().trim(),
+      city:(row['City']||'').toLowerCase().trim(), ip:getIPVal(row),
       rawTime:row['Event Time']||'',time:parseTime(row['Event Time']||'')
     });
   });
@@ -1035,12 +1038,14 @@ function analyze(rows) {
     const completionCount=evs.filter(e=>COMPLETION_EVENTS.includes(e.event)).length;
     const hasStep6=evs.some(e=>e.event===STEP_6);
     const hasStep1=evs.some(e=>e.event===STEP_1);
+    const nIps=new Set(evs.filter(e=>e.ip).map(e=>e.ip)).size;
     const validCO=country==='CO';
     const validPrimary=isPrimary==='true'||isPrimary===''||isPrimary==='1';
 
-    if(!validCO||!validPrimary){results.push({id,status:'excl_co',filter:'País/Primary',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:'',completionDate});return;}
-    if(completionCount>1){const geo=detectGeoJump(evs);results.push({id,status:'excl_dup',filter:`Múlt. completions (${completionCount})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:geo.detail,completionDate});return;}
-    if(!hasStep6){results.push({id,status:'excl_step6',filter:'Sin step_6',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:'',completionDate});return;}
+    if(!validCO||!validPrimary){results.push({id,status:'excl_co',filter:'País/Primary',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,geoDetail:'',completionDate});return;}
+    if(completionCount>1){const geo=detectGeoJump(evs);results.push({id,status:'excl_dup',filter:`Múlt. completions (${completionCount})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,geoDetail:geo.detail,completionDate});return;}
+    if(nIps>MAX_IPS_MAIN){results.push({id,status:'excl_ip',filter:`>${MAX_IPS_MAIN} IPs (${nIps})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,geoDetail:'',completionDate});return;}
+    if(!hasStep6){results.push({id,status:'excl_step6',filter:'Sin step_6',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,geoDetail:'',completionDate});return;}
     const geo=detectGeoJump(evs);
     if(geo.hasJump){results.push({id,status:'excl_geo',filter:'Salto geo <50min',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,geoDetail:geo.detail,completionDate});return;}
     if(completionDate)validDates.push(completionDate);
@@ -1157,13 +1162,15 @@ function analyzeJulio(){
 function renderFunnelUI(totalBase){
   const exc_co=allResults.filter(r=>r.status==='excl_co').length;
   const exc_dup=allResults.filter(r=>r.status==='excl_dup').length;
+  const exc_ip=allResults.filter(r=>r.status==='excl_ip').length;
   const exc_s6=allResults.filter(r=>r.status==='excl_step6').length;
   const exc_geo=allResults.filter(r=>r.status==='excl_geo').length;
   const clean=allResults.filter(r=>r.status==='clean').length;
-  const s0=totalBase,s1=s0-exc_co,s2=s1-exc_dup,s3=s2-exc_s6,s4=s3-exc_geo;
+  const s0=totalBase,s1=s0-exc_co,s2=s1-exc_dup,sIp=s2-exc_ip,s3=sIp-exc_s6,s4=s3-exc_geo;
   document.getElementById('fS0').textContent=s0;
   document.getElementById('fS1').textContent=s1;document.getElementById('fE1').textContent=exc_co?`−${exc_co}`:'—';
   document.getElementById('fS2').textContent=s2;document.getElementById('fE2').textContent=exc_dup?`−${exc_dup}`:'—';
+  document.getElementById('fSIp').textContent=sIp;document.getElementById('fEIp').textContent=exc_ip?`−${exc_ip}`:'—';
   document.getElementById('fS3').textContent=s3;document.getElementById('fE3').textContent=exc_s6?`−${exc_s6}`:'—';
   document.getElementById('fS4').textContent=s4;document.getElementById('fE4').textContent=exc_geo?`−${exc_geo}`:'—';
   document.getElementById('fValid').textContent=clean;
@@ -1191,6 +1198,7 @@ function renderTable(){
     const sb=r.status==='clean'?'<span class="badge bv">✅ Facturable</span>'
       :r.status==='excl_co'?'<span class="badge bi">🌐 País/Primary</span>'
       :r.status==='excl_dup'?'<span class="badge bi">🔁 Múlt. comp.</span>'
+      :r.status==='excl_ip'?'<span class="badge bi">🌐 >2 IPs</span>'
       :r.status==='excl_step6'?'<span class="badge bw">⚠ Sin step_6</span>'
       :'<span class="badge bi">📍 Salto geo</span>';
     const fb=r.filter==='—'?`<span style="color:var(--txm);font-size:11px">—</span>`:`<span style="font-size:11px;color:var(--er)">${esc(r.filter)}</span>`;
