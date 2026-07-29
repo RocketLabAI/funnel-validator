@@ -825,6 +825,50 @@ function buildCredits() {
 // ═══════════════════════════════════════════════
 // WRITE TO LOOKER SHEET
 // ═══════════════════════════════════════════════
+// ── data diaria con filtro de IP (máx 4 IPs por AppsFlyer ID) para la hoja eventos_validos_ip ──
+// Orden: País/Primary → Múltiples completions → Máx 4 IPs → Sin step_6 → Salto geo
+// Filas: [fecha, total_ip, libreton, nomina, otro, descartadas_>4ip, período, fileName]
+function computeIpDailyRows(fileName){
+  const byId={};
+  (rtgRows||[]).forEach(row=>{
+    const id=row['AppsFlyer ID'], event=row['Event Name'];
+    if(!id||!event) return;
+    if(!byId[id]) byId[id]=[];
+    byId[id].push({
+      event, value:row['Event Value']||'',
+      country:(row['Country Code']||'').toUpperCase().trim(),
+      isPrimary:(row['Is Primary Attribution']||'').toLowerCase().trim(),
+      city:(row['City']||'').toLowerCase().trim(), ip:getIPVal(row),
+      rawTime:row['Event Time']||'', time:parseTime(row['Event Time']||'')
+    });
+  });
+  const byDay={};
+  const D=d=>{ if(!byDay[d]) byDay[d]={total:0,libreton:0,nomina:0,otro:0,descIp:0}; return byDay[d]; };
+  Object.keys(byId).forEach(id=>{
+    const evs=byId[id].sort((a,b)=>(a.time||0)-(b.time||0));
+    if(!evs.some(e=>COMPLETION_EVENTS.includes(e.event))) return;
+    const ce=evs.find(e=>e.event===COMPLETED_CONTRATADO)||evs.find(e=>e.event===COMPLETED_APROBADO);
+    const date=ce&&ce.rawTime?ce.rawTime.slice(0,10):'';
+    if(!date) return;
+    const validCO=(ce?ce.country:'')==='CO';
+    const isP=ce?ce.isPrimary:''; const validPrimary=isP==='true'||isP===''||isP==='1';
+    const completionCount=evs.filter(e=>COMPLETION_EVENTS.includes(e.event)).length;
+    const hasStep6=evs.some(e=>e.event===STEP_6);
+    const nIps=new Set(evs.filter(e=>e.ip).map(e=>e.ip)).size;
+    const product=classifyProduct(getAfContent(ce?ce.value:''));
+    if(!validCO||!validPrimary) return;
+    if(completionCount>1) return;
+    if(nIps>MAX_IPS){ D(date).descIp++; return; }       // descartada por >4 IPs
+    if(!hasStep6) return;
+    if(detectGeoJump(evs).hasJump) return;
+    const g=D(date); g.total++; g[product==='libreton'?'libreton':product==='nomina'?'nomina':'otro']++;
+  });
+  const period=`${funnelPeriod.min||'?'} → ${funnelPeriod.max||'?'}`;
+  return Object.keys(byDay).sort().map(d=>[
+    d, byDay[d].total, byDay[d].libreton, byDay[d].nomina, byDay[d].otro, byDay[d].descIp, period, fileName
+  ]);
+}
+
 async function writeToLooker() {
   try {
     const fileName = new Date().toISOString().slice(0,10);
@@ -893,10 +937,14 @@ async function writeToLooker() {
       if(!data.ok) throw new Error(data.error || 'Error en Web App');
     };
 
+    // ── eventos_validos_ip (data diaria con filtro máx 4 IPs por ID) ──
+    const ipRows = computeIpDailyRows(fileName);
+
     await upsert('eventos_validos', eventRows);
     await upsert('creditos', creditRows);
+    await upsert('eventos_validos_ip', ipRows);
 
-    return { ok:true, msg:`${eventRows.length} días de eventos · ${creditRows.length} días de créditos escritos en Sheet` };
+    return { ok:true, msg:`${eventRows.length} días de eventos · ${creditRows.length} días de créditos · ${ipRows.length} días con filtro IP escritos en Sheet` };
 
   } catch(e) {
     return { ok:false, msg:`No se pudo escribir en Sheet: ${e.message}. Los datos están procesados localmente.` };
