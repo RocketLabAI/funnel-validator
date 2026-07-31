@@ -834,28 +834,31 @@ function buildCredits() {
 // ── data diaria con filtro de IP (máx 4 IPs por AppsFlyer ID) para la hoja eventos_validos_ip ──
 // Orden: País/Primary → Múltiples completions → Máx 4 IPs → Sin step_6 → Salto geo
 // Filas: [fecha, total_ip, libreton, nomina, otro, descartadas_>4ip, período, fileName]
-function computeIpDailyRows(fileName){
+// eventos_validos_ip: por (fecha, media_source), filtro informativo máx 4 IPs por ID
+// Filas: [fecha, media_source, validos_ip_total, libreton, nomina, otro, descartadas_mas_4_ip, periodo, archivo]
+function computeIpDailyRows(fileName, period){
   const byId={};
   (rtgRows||[]).forEach(row=>{
     const id=row['AppsFlyer ID'], event=row['Event Name'];
     if(!id||!event) return;
     if(!byId[id]) byId[id]=[];
     byId[id].push({
-      event, value:row['Event Value']||'',
+      event, value:row['Event Value']||'', mediaSource:row['Media Source']||'',
       country:(row['Country Code']||'').toUpperCase().trim(),
       isPrimary:(row['Is Primary Attribution']||'').toLowerCase().trim(),
       city:(row['City']||'').toLowerCase().trim(), ip:getIPVal(row),
       rawTime:row['Event Time']||'', time:parseTime(row['Event Time']||'')
     });
   });
-  const byDay={};
-  const D=d=>{ if(!byDay[d]) byDay[d]={total:0,libreton:0,nomina:0,otro:0,descIp:0}; return byDay[d]; };
+  const byKey={};
+  const K=(date,ms)=>{ const k=date+'||'+ms; if(!byKey[k]) byKey[k]={date,ms,total:0,libreton:0,nomina:0,otro:0,descIp:0}; return byKey[k]; };
   Object.keys(byId).forEach(id=>{
     const evs=byId[id].sort((a,b)=>(a.time||0)-(b.time||0));
     if(!evs.some(e=>COMPLETION_EVENTS.includes(e.event))) return;
     const ce=evs.find(e=>e.event===COMPLETED_CONTRATADO)||evs.find(e=>e.event===COMPLETED_APROBADO);
     const date=ce&&ce.rawTime?ce.rawTime.slice(0,10):'';
     if(!date) return;
+    const ms=((ce&&ce.mediaSource)||'').trim()||'(sin media source)';
     const validCO=(ce?ce.country:'')==='CO';
     const isP=ce?ce.isPrimary:''; const validPrimary=isP==='true'||isP===''||isP==='1';
     const completionCount=evs.filter(e=>COMPLETION_EVENTS.includes(e.event)).length;
@@ -864,72 +867,64 @@ function computeIpDailyRows(fileName){
     const product=classifyProduct(getAfContent(ce?ce.value:''));
     if(!validCO||!validPrimary) return;
     if(completionCount>1) return;
-    if(nIps>MAX_IPS){ D(date).descIp++; return; }       // descartada por >4 IPs
+    if(nIps>MAX_IPS){ K(date,ms).descIp++; return; }       // descartada por >4 IPs (informativo)
     if(!hasStep6) return;
     if(detectGeoJump(evs).hasJump) return;
-    const g=D(date); g.total++; g[product==='libreton'?'libreton':product==='nomina'?'nomina':'otro']++;
+    const g=K(date,ms); g.total++; g[product==='libreton'?'libreton':product==='nomina'?'nomina':'otro']++;
   });
-  const period=`${funnelPeriod.min||'?'} → ${funnelPeriod.max||'?'}`;
-  return Object.keys(byDay).sort().map(d=>[
-    d, byDay[d].total, byDay[d].libreton, byDay[d].nomina, byDay[d].otro, byDay[d].descIp, period, fileName
-  ]);
+  return Object.values(byKey)
+    .sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:(a.ms<b.ms?-1:1))
+    .map(o=>[o.date,o.ms,o.total,o.libreton,o.nomina,o.otro,o.descIp,period,fileName]);
 }
 
 async function writeToLooker() {
   try {
     const fileName = new Date().toISOString().slice(0,10);
 
-    // ── eventos_validos ──────────────────────────────────────
-    const eventsByDay = {};
-    const clean = allResults.filter(r=>r.status==='clean'&&r.completionDate);
-    clean.forEach(r=>{
-      if(!eventsByDay[r.completionDate]) eventsByDay[r.completionDate]={total:0,libreton:0,nomina:0,otro:0};
-      eventsByDay[r.completionDate].total++;
-      eventsByDay[r.completionDate][r.product==='libreton'?'libreton':r.product==='nomina'?'nomina':'otro']++;
+    const period=`${funnelPeriod.min||'?'} → ${funnelPeriod.max||'?'}`;
+    const msRaw=row=>{const k=Object.keys(row).find(c=>c.toLowerCase().replace(/\s+/g,'')==='mediasource');return k?((row[k]||'').trim()||'(sin media source)'):'(sin media source)';};
+
+    // ── eventos_validos: por (fecha, media_source) ────────────
+    // [fecha, media_source, validos_total, libreton, nomina, otro, periodo, archivo]
+    const evByKey={};
+    allResults.filter(r=>r.status==='clean'&&r.completionDate).forEach(r=>{
+      const ms=((r.mediaSource||'').trim())||'(sin media source)';
+      const k=r.completionDate+'||'+ms;
+      if(!evByKey[k]) evByKey[k]={date:r.completionDate,ms,total:0,libreton:0,nomina:0,otro:0};
+      const o=evByKey[k]; o.total++; o[r.product==='libreton'?'libreton':r.product==='nomina'?'nomina':'otro']++;
     });
+    const eventRows = Object.values(evByKey)
+      .sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:(a.ms<b.ms?-1:1))
+      .map(o=>[o.date,o.ms,o.total,o.libreton,o.nomina,o.otro,period,fileName]);
 
-    const eventRows = Object.keys(eventsByDay).sort().map(d=>[
-      d, eventsByDay[d].total, eventsByDay[d].libreton, eventsByDay[d].nomina, eventsByDay[d].otro,
-      `${funnelPeriod.min||'?'} → ${funnelPeriod.max||'?'}`, fileName
-    ]);
-
-    // ── creditos ─────────────────────────────────────────────
-    const creditsByDay = {};
-
-    const addDay = (date, key, val=1) => {
-      if(!date) return;
-      const d = date.slice(0,10);
-      if(!creditsByDay[d]) creditsByDay[d]={reattr:0,reeng:0,iaeRTG:0,iaeUA:0,clicks:0,sessions:0};
-      creditsByDay[d][key] += val;
-    };
-
-    // FIX 3: usar getEventTime() en lugar de acceso directo por nombre
-    if(rtgRows) rtgRows.forEach(r => addDay(getEventTime(r), 'iaeRTG'));
-    if(uaRows)  uaRows.forEach(r  => addDay(getEventTime(r), 'iaeUA'));
-
+    // ── creditos: por (fecha, media_source) ───────────────────
+    // [fecha, media_source, re_attributions, re_engagements, iae_rtg, iae_ua, iae_total, clicks, sessions, cc_reattr, cc_reeng, cc_iae, cc_clicks, cc_sessions, cc_total, archivo]
+    const crByKey={};
+    const CK=(date,ms)=>{const k=date+'||'+ms;if(!crByKey[k])crByKey[k]={date,ms,reattr:0,reeng:0,iaeRTG:0,iaeUA:0,clicks:0,sessions:0};return crByKey[k];};
+    // IAEs desde el raw (una IAE por fila), por (fecha del evento, Media Source de la fila)
+    if(rtgRows) rtgRows.forEach(r=>{const d=(getEventTime(r)||'').slice(0,10);if(d)CK(d,msRaw(r)).iaeRTG++;});
+    if(uaRows)  uaRows.forEach(r =>{const d=(getEventTime(r)||'').slice(0,10);if(d)CK(d,msRaw(r)).iaeUA++;});
+    // Partners Report: re-attr / re-eng / clicks / sessions por (Date, Media Source (pid))
     if(partnerRows){
       const cols=Object.keys(partnerRows[0]||{});
       const fc=(...ns)=>cols.find(c=>ns.some(n=>c.toLowerCase().trim()===n.toLowerCase()))||null;
-      const cDate=fc('date'),cConv=fc('conversions'),cType=fc('conversion type'),cClk=fc('clicks'),cSes=fc('sessions');
+      const cDate=fc('date'),cMs=fc('media source (pid)','media source','pid'),cConv=fc('conversions'),cType=fc('conversion type'),cClk=fc('clicks'),cSes=fc('sessions');
       partnerRows.forEach(r=>{
-        const d=cDate?r[cDate]:'';
-        if(!d)return;
-        const t=cType?(r[cType]||'').toLowerCase().trim():'';
-        const v=cConv?numVal(r[cConv]):0;
-        if(t==='re-attribution') addDay(d,'reattr',v);
-        else if(t==='re-engagement') addDay(d,'reeng',v);
-        if(cClk) addDay(d,'clicks',numVal(r[cClk]));
-        if(cSes) addDay(d,'sessions',numVal(r[cSes]));
+        const d=cDate?(r[cDate]||'').slice(0,10):''; if(!d)return;
+        const ms=cMs?((r[cMs]||'').trim()||'(sin media source)'):'(sin media source)';
+        const o=CK(d,ms);
+        const t=cType?(r[cType]||'').toLowerCase().trim():''; const v=cConv?numVal(r[cConv]):0;
+        if(t==='re-attribution') o.reattr+=v; else if(t==='re-engagement') o.reeng+=v;
+        if(cClk) o.clicks+=numVal(r[cClk]); if(cSes) o.sessions+=numVal(r[cSes]);
       });
     }
-
-    const creditRows = Object.keys(creditsByDay).sort().map(d=>{
-      const x=creditsByDay[d];
-      const iaeT=x.iaeRTG+x.iaeUA;
-      const ccR=x.reattr*CC_RATES.reattr, ccE=x.reeng*CC_RATES.reeng;
-      const ccI=iaeT*CC_RATES.iae, ccC=x.clicks*CC_RATES.clicks, ccS=x.sessions*CC_RATES.sessions;
-      return [d,x.reattr,x.reeng,x.iaeRTG,x.iaeUA,iaeT,x.clicks,x.sessions,ccR,ccE,ccI,ccC,ccS,ccR+ccE+ccI+ccC+ccS,fileName];
-    });
+    const creditRows = Object.values(crByKey)
+      .sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:(a.ms<b.ms?-1:1))
+      .map(o=>{
+        const iaeT=o.iaeRTG+o.iaeUA;
+        const ccR=o.reattr*CC_RATES.reattr, ccE=o.reeng*CC_RATES.reeng, ccI=iaeT*CC_RATES.iae, ccC=o.clicks*CC_RATES.clicks, ccS=o.sessions*CC_RATES.sessions;
+        return [o.date,o.ms,o.reattr,o.reeng,o.iaeRTG,o.iaeUA,iaeT,o.clicks,o.sessions,ccR,ccE,ccI,ccC,ccS,ccR+ccE+ccI+ccC+ccS,fileName];
+      });
 
     // FIX 1+2: siempre llamar al servidor aunque rows esté vacío — el server limpia igual
     const upsert = async (sheet, rows) => {
@@ -944,7 +939,7 @@ async function writeToLooker() {
     };
 
     // ── eventos_validos_ip (data diaria con filtro máx 4 IPs por ID) ──
-    const ipRows = computeIpDailyRows(fileName);
+    const ipRows = computeIpDailyRows(fileName, period);
 
     await upsert('eventos_validos', eventRows);
     await upsert('creditos', creditRows);
