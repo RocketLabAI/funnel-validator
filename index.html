@@ -851,7 +851,7 @@ function computeIpDailyRows(fileName, period){
     });
   });
   const byKey={};
-  const K=(date,ms)=>{ const k=date+'||'+ms; if(!byKey[k]) byKey[k]={date,ms,total:0,libreton:0,nomina:0,otro:0,descIp:0}; return byKey[k]; };
+  const K=(date,ms)=>{ const k=date+'||'+ms; if(!byKey[k]) byKey[k]={date,ms,total:0,libreton:0,nomina:0,otro:0,descIp:0,descFast:0}; return byKey[k]; };
   Object.keys(byId).forEach(id=>{
     const evs=byId[id].sort((a,b)=>(a.time||0)-(b.time||0));
     if(!evs.some(e=>COMPLETION_EVENTS.includes(e.event))) return;
@@ -864,17 +864,22 @@ function computeIpDailyRows(fileName, period){
     const completionCount=evs.filter(e=>COMPLETION_EVENTS.includes(e.event)).length;
     const hasStep6=evs.some(e=>e.event===STEP_6);
     const nIps=new Set(evs.filter(e=>e.ip).map(e=>e.ip)).size;
+    const s1t=evs.filter(e=>e.event===STEP_1&&e.time).map(e=>e.time);
+    const ct=ce?ce.time:null;
+    const funnelMin=(s1t.length&&ct!=null)?(ct-Math.min.apply(null,s1t))/60000:null;
+    const tooFast=funnelMin!=null&&funnelMin<MIN_FUNNEL_MIN;
     const product=classifyProduct(getAfContent(ce?ce.value:''));
     if(!validCO||!validPrimary) return;
     if(completionCount>1) return;
     if(nIps>MAX_IPS){ K(date,ms).descIp++; return; }       // descartada por >4 IPs (informativo)
+    if(tooFast){ K(date,ms).descFast++; return; }          // descartada por duración <5min
     if(!hasStep6) return;
     if(detectGeoJump(evs).hasJump) return;
     const g=K(date,ms); g.total++; g[product==='libreton'?'libreton':product==='nomina'?'nomina':'otro']++;
   });
   return Object.values(byKey)
     .sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:(a.ms<b.ms?-1:1))
-    .map(o=>[o.date,o.ms,o.total,o.libreton,o.nomina,o.otro,o.descIp,period,fileName]);
+    .map(o=>[o.date,o.ms,o.total,o.libreton,o.nomina,o.otro,o.descIp,o.descFast,period,fileName]);
 }
 
 async function writeToLooker() {
@@ -1109,7 +1114,7 @@ function analyzeJulio(){
   // completionIds = AppsFlyer IDs ÚNICOS con alta (cada ID una sola vez → "uno por fila")
   const completionIds=Object.keys(byId).filter(id=>byId[id].some(e=>COMPLETION_EVENTS.includes(e.event)));
   const s0=completionIds.length;
-  let excl_co=0, excl_dup=0, excl_ip=0, excl_s6=0, excl_geo=0;
+  let excl_co=0, excl_dup=0, excl_ip=0, excl_fast=0, excl_s6=0, excl_geo=0;
   const prod={libreton:0,nomina:0,other:0};
 
   completionIds.forEach(id=>{
@@ -1122,17 +1127,22 @@ function analyzeJulio(){
     const validCO=country==='CO';
     const validPrimary=isPrimary==='true'||isPrimary===''||isPrimary==='1';
     const nIps=new Set(evs.filter(e=>e.ip).map(e=>e.ip)).size;
+    const s1t=evs.filter(e=>e.event===STEP_1&&e.time).map(e=>e.time);
+    const ct=ce?ce.time:null;
+    const funnelMin=(s1t.length&&ct!=null)?(ct-Math.min.apply(null,s1t))/60000:null;
+    const tooFast=funnelMin!=null&&funnelMin<MIN_FUNNEL_MIN;
 
-    // ORDEN: país → múlt. completions → máx 4 IPs por ID → sin step_6 → salto geo
+    // ORDEN: país → múlt. completions → máx 4 IPs → duración <5min → sin step_6 → salto geo
     if(!validCO||!validPrimary){excl_co++;return;}
     if(completionCount>1){excl_dup++;return;}
     if(nIps>MAX_IPS){excl_ip++;return;}                 // máx 4 IPs por AppsFlyer ID (hasta 4 válido)
+    if(tooFast){excl_fast++;return;}                    // duración step_1 -> completed < 5 min
     if(!hasStep6){excl_s6++;return;}
     if(detectGeoJump(evs).hasJump){excl_geo++;return;}
     prod[product]++;
   });
 
-  const s1=s0-excl_co, s2=s1-excl_dup, s3=s2-excl_ip, s4=s3-excl_s6;
+  const s1=s0-excl_co, s2=s1-excl_dup, s3=s2-excl_ip, sFast=s3-excl_fast, s4=sFast-excl_s6;
   const finalValid=s4-excl_geo;
 
   document.getElementById('jFinalValid').textContent=finalValid;
@@ -1147,6 +1157,7 @@ function analyzeJulio(){
     ['País ≠ CO / no primary', excl_co, s1],
     ['Múltiples completions', excl_dup, s2],
     ['Máx. 4 IPs por AppsFlyer ID', excl_ip, s3],
+    ['Duración <5min (step_1 a completed)', excl_fast, sFast],
     ['Sin step_6', excl_s6, s4],
     ['Salto geo <50min', excl_geo, finalValid],
   ];
