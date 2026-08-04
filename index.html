@@ -192,6 +192,9 @@ tr:hover td{background:#faf9ff}
   <button class="sb-item" onclick="showPage('julio',this)">
     <span class="si">🗓️</span> Validación hasta Julio 2026
   </button>
+  <button class="sb-item" onclick="showPage('nuevo',this)">
+    <span class="si">🧪</span> Nuevo Validador
+  </button>
 </aside>
 
 <div class="app">
@@ -512,18 +515,19 @@ tr:hover td{background:#faf9ff}
       <div class="pg-header">
         <div>
           <div class="pg-title">Validación hasta Julio 2026</div>
-          <div class="pg-sub">Vista informativa · aplica además "máx. 4 IPs por AppsFlyer ID" · NO escribe en el Sheet</div>
+          <div class="pg-sub">Vista informativa · aplica además máx. 4 IPs por AppsFlyer ID y duración >5min · NO escribe en el Sheet</div>
         </div>
         <button class="btn btn-secondary" onclick="analyzeJulio()">↻ Recalcular</button>
       </div>
 
       <div class="criteria">
-        <strong>Vista informativa — no impacta el Google Sheet.</strong><br>
+        <strong>Vista informativa: no impacta el Google Sheet.</strong><br>
         &nbsp;📅 Toma solo eventos <strong>hasta el 31/07/2026</strong>.<br>
-        &nbsp;🔑 <strong>1 AppsFlyer ID por fila</strong>: cada ID se cuenta una sola vez (garantizado — se agrupa por AppsFlyer ID, no puede haber dos iguales).<br>
+        &nbsp;🔑 <strong>1 AppsFlyer ID por fila</strong>: cada ID se cuenta una sola vez (garantizado: se agrupa por AppsFlyer ID, no puede haber dos iguales).<br>
         &nbsp;🌐 <strong>Máx. 4 IPs por AppsFlyer ID</strong>: descarta el ID si tiene más de 4 IPs distintas (hasta 4 se acepta).<br>
-        &nbsp;🔀 Orden: País/Primary → Múltiples completions → Máx. 4 IPs por ID → Sin step_6 → Salto geo.<br>
-        &nbsp;ℹ️ El filtro de IP requiere que el Raw RTG tenga columna <code>IP</code>. Si no la tiene, se omite y se avisa.
+        &nbsp;⏱ <strong>Duración >5min</strong>: descarta si el flujo (step_1 a completed) dura menos de 5 minutos.<br>
+        &nbsp;🔀 Orden: País/Primary → Múltiples completions → Máx. 4 IPs por ID → Duración <5min → Sin step_6 → Salto geo.<br>
+        &nbsp;ℹ️ Los filtros de IP y duración requieren que el Raw RTG tenga columnas <code>IP</code> y <code>step_1</code>. Si faltan, ese filtro se omite y se avisa.
       </div>
 
       <div id="julioNoData" style="background:#f0eff5;border:1px solid var(--border);border-radius:8px;padding:32px;text-align:center;color:var(--txm)">
@@ -557,6 +561,50 @@ tr:hover td{background:#faf9ff}
       </div>
     </div>
 
+    <!-- ══════ NUEVO VALIDADOR ══════ -->
+    <div class="page" id="page-nuevo">
+      <div class="pg-header">
+        <div>
+          <div class="pg-title">Nuevo Validador</div>
+          <div class="pg-sub">Criterio nuevo (8 filtros, sin p360) · escribe en la hoja <code>nuevo_validador</code> del Sheet</div>
+        </div>
+        <button class="btn btn-secondary" onclick="analyzeNuevo()">↻ Recalcular</button>
+      </div>
+
+      <div class="criteria">
+        <strong>Orden de los filtros (invalida el ID si...):</strong><br>
+        &nbsp;1. <strong>reglas_negocio</strong>: el <code>completed_aprobado</code> no cumple producto (libreton/nomina) + Is Primary = true + Country = CO + Partner contiene "rocket".<br>
+        &nbsp;2. <strong>secuencia_incompleta</strong>: no existe la cadena <code>step_1</code> → <code>step_6</code> → <code>completed_aprobado</code> en orden cronológico.<br>
+        &nbsp;3. <strong>completed_menor_5_min</strong>: menos de 5 min entre step_1 y completed_aprobado.<br>
+        &nbsp;4. <strong>completed_mayor_45_min</strong>: más de 45 min entre step_1 y completed_aprobado.<br>
+        &nbsp;5. <strong>city_mismatch</strong>: la ciudad del último step_1 no coincide con la del completed_aprobado.<br>
+        &nbsp;6. <strong>multiple_ip_por_id</strong>: el ID usó más de 2 IPs distintas (hasta 2 se permite).<br>
+        &nbsp;7. <strong>ip_duplicada</strong>: la IP del completed_aprobado la usan más de 2 AppsFlyer IDs (hasta 2 se permite).<br>
+        &nbsp;ℹ️ p360 se omite (aplica a UA, acá corremos solo RTG).
+      </div>
+
+      <div id="nvNoData" style="background:#f0eff5;border:1px solid var(--border);border-radius:8px;padding:32px;text-align:center;color:var(--txm)">
+        <div style="font-size:32px;margin-bottom:10px">🧪</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:6px">Sin datos cargados</div>
+        <div style="font-size:12.5px">Cargá el Raw RTG en "Cargar Archivos" para ver el Nuevo Validador</div>
+      </div>
+
+      <div id="nvSection" style="display:none">
+        <div class="sec-lbl">Resumen</div>
+        <div class="kpi-grid kpi-grid-3">
+          <div class="kpi-card ap"><div class="kpi-lbl">Válidas</div><div class="kpi-val" style="color:var(--ac)" id="nvValidas">0</div></div>
+          <div class="kpi-card ab"><div class="kpi-lbl">Libreton</div><div class="kpi-val" style="color:var(--bl)" id="nvLibreton">0</div></div>
+          <div class="kpi-card ab"><div class="kpi-lbl">Nómina</div><div class="kpi-val" style="color:var(--bl)" id="nvNomina">0</div></div>
+        </div>
+
+        <div class="sec-lbl">Waterfall de filtros</div>
+        <div class="tw"><div class="ts"><table>
+          <thead><tr><th>Paso</th><th style="text-align:right">Descarta</th><th style="text-align:right">Quedan</th></tr></thead>
+          <tbody id="nvWaterfall"></tbody>
+        </table></div></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -579,6 +627,11 @@ const JULIO_CUTOFF         = '2026-07-31';   // validación informativa: solo ev
 const MAX_IPS              = 4;              // vista informativa (Julio + hoja eventos_validos_ip): hasta 4 IPs por ID
 const MAX_IPS_MAIN         = 2;              // validador principal: hasta 2 IPs por AppsFlyer ID (>2 se descarta)
 const MIN_FUNNEL_MIN       = 5;              // validador principal: duracion step_1 -> completed debe ser >= 5 min
+// Nuevo Validador (8 filtros, sin p360): umbrales
+const NV_MIN_FUNNEL        = 5;              // completed_menor_5_min: < 5 min invalida
+const NV_MAX_FUNNEL        = 45;             // completed_mayor_45_min: > 45 min invalida
+const NV_MAX_IPS           = 2;              // multiple_ip_por_id: > 2 IPs invalida (hasta 2 ok)
+const NV_MAX_IDS_PER_IP    = 2;             // ip_duplicada: IP del completed usada por > 2 IDs invalida (hasta 2 ok)
 
 // ═══════════════════════════════════════════════
 // STATE
@@ -599,11 +652,12 @@ function showPage(id, btn) {
   document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   btn.classList.add('active');
-  const names  = { upload:'Cargar Archivos', funnel:'Resultados Funnel', credits:'Calculadora Créditos', julio:'Validación hasta Julio 2026' };
-  const badges = { upload:'RTG · UA · Partners', funnel:'step_6 + completed_aprobado', credits:'Capacity Credits', julio:'IP ≤ 4 · hasta jul-2026' };
+  const names  = { upload:'Cargar Archivos', funnel:'Resultados Funnel', credits:'Calculadora Créditos', julio:'Validación hasta Julio 2026', nuevo:'Nuevo Validador' };
+  const badges = { upload:'RTG · UA · Partners', funnel:'step_6 + completed_aprobado', credits:'Capacity Credits', julio:'IP ≤ 4 · hasta jul-2026', nuevo:'8 filtros nuevos' };
   document.getElementById('topbarActive').textContent = names[id];
   document.getElementById('topbarBadge').textContent  = badges[id];
   if(id==='julio') analyzeJulio();
+  if(id==='nuevo') analyzeNuevo();
 }
 
 // ═══════════════════════════════════════════════
@@ -882,6 +936,97 @@ function computeIpDailyRows(fileName, period){
     .map(o=>[o.date,o.ms,o.total,o.libreton,o.nomina,o.otro,o.descIp,o.descFast,period,fileName]);
 }
 
+// ═══════════════════════════════════════════════
+// NUEVO VALIDADOR (8 filtros, sin p360) — solo completed_aprobado
+// ═══════════════════════════════════════════════
+function runNuevoValidador(){
+  const byId={};
+  (rtgRows||[]).forEach(row=>{
+    const id=row['AppsFlyer ID'], e=row['Event Name'];
+    if(!id||!e) return;
+    if(!byId[id]) byId[id]=[];
+    byId[id].push({
+      event:e, value:row['Event Value']||'', ms:(row['Media Source']||'').trim(),
+      partner:(row['Partner']||'').trim(),
+      country:(row['Country Code']||'').toUpperCase().trim(),
+      isPrimary:(row['Is Primary Attribution']||'').toLowerCase().trim(),
+      city:(row['City']||'').toLowerCase().trim(), ip:getIPVal(row),
+      raw:row['Event Time']||'', time:parseTime(row['Event Time']||'')
+    });
+  });
+  // ce = primer completed_aprobado por tiempo; ip2ids para ip_duplicada
+  const ceOf={}, ip2ids={};
+  Object.keys(byId).forEach(id=>{
+    const cas=byId[id].filter(x=>x.event===COMPLETED_APROBADO).sort((a,b)=>(a.time||0)-(b.time||0));
+    if(!cas.length) return;
+    ceOf[id]=cas[0];
+    if(cas[0].ip){ (ip2ids[cas[0].ip]=ip2ids[cas[0].ip]||new Set()).add(id); }
+  });
+  const seqOk=evs=>{
+    let st=0;
+    const sorted=evs.slice().sort((a,b)=>(a.time||0)-(b.time||0));
+    for(const x of sorted){
+      if(st===0 && x.event===STEP_1) st=1;
+      else if(st===1 && x.event===STEP_6) st=2;
+      else if(st===2 && x.event===COMPLETED_APROBADO) return true;
+    }
+    return false;
+  };
+  const wf={base:0,reglas:0,secuencia:0,fast:0,slow:0,city:0,multiip:0,ipdup:0,clean:0};
+  const prod={libreton:0,nomina:0};
+  const byMs={};
+  Object.keys(ceOf).forEach(id=>{
+    const evs=byId[id], ce=ceOf[id]; wf.base++;
+    const product=classifyProduct(getAfContent(ce.value));
+    const prodOk=(product==='libreton'||product==='nomina');
+    if(!(prodOk && ce.isPrimary==='true' && ce.country==='CO' && ce.partner.toLowerCase().indexOf('rocket')>=0)){ wf.reglas++; return; }
+    if(!seqOk(evs)){ wf.secuencia++; return; }
+    const s1b=evs.filter(x=>x.event===STEP_1 && x.time!=null && ce.time!=null && x.time<=ce.time);
+    const s1ref=s1b.length? s1b.reduce((a,b)=>a.time>=b.time?a:b) : null;
+    const dur=(s1ref && ce.time!=null)?(ce.time-s1ref.time)/60000:null;
+    if(dur!=null && dur<NV_MIN_FUNNEL){ wf.fast++; return; }
+    if(dur!=null && dur>NV_MAX_FUNNEL){ wf.slow++; return; }
+    if(s1ref && s1ref.city && ce.city && s1ref.city!==ce.city){ wf.city++; return; }
+    const nips=new Set(evs.filter(x=>x.ip).map(x=>x.ip)).size;
+    if(nips>NV_MAX_IPS){ wf.multiip++; return; }
+    if(ce.ip && ip2ids[ce.ip] && ip2ids[ce.ip].size>NV_MAX_IDS_PER_IP){ wf.ipdup++; return; }
+    wf.clean++; prod[product]++;
+    const d=(ce.raw||'').slice(0,10), ms=ce.ms||'(sin media source)';
+    if(d){ const k=d+'||'+ms; if(!byMs[k]) byMs[k]={date:d,ms,total:0,libreton:0,nomina:0}; byMs[k].total++; byMs[k][product]++; }
+  });
+  return {wf, prod, byMs};
+}
+
+function analyzeNuevo(){
+  const noData=document.getElementById('nvNoData'), sec=document.getElementById('nvSection');
+  if(!rtgRows){ if(noData)noData.style.display='block'; if(sec)sec.style.display='none'; return; }
+  const {wf,prod}=runNuevoValidador();
+  document.getElementById('nvValidas').textContent=wf.clean;
+  document.getElementById('nvLibreton').textContent=prod.libreton;
+  document.getElementById('nvNomina').textContent=prod.nomina;
+  let rem=wf.base; const rows=[['Base: IDs con completed_aprobado','',rem]];
+  [['1. Reglas de negocio (prod/primary/CO/partner rocket)',wf.reglas],
+   ['2. Secuencia step_1 → step_6 → completed',wf.secuencia],
+   ['3. Completed <5min',wf.fast],
+   ['4. Completed >45min',wf.slow],
+   ['5. City mismatch',wf.city],
+   ['6. Múltiples IPs (>2)',wf.multiip],
+   ['7. IP duplicada (>2 IDs)',wf.ipdup]].forEach(([lbl,ex])=>{ rem-=ex; rows.push([lbl,ex,rem]); });
+  document.getElementById('nvWaterfall').innerHTML=rows.map(r=>
+    `<tr><td>${esc(r[0])}</td><td style="text-align:right;color:${r[1]?'var(--er)':'var(--txm)'}">${r[1]===''?'—':'−'+r[1]}</td><td style="text-align:right;font-weight:700">${r[2]}</td></tr>`
+  ).join('');
+  if(noData)noData.style.display='none';
+  if(sec)sec.style.display='block';
+}
+
+// nuevo_validador: [fecha, media_source, validos_total, libreton, nomina, periodo, archivo]
+function computeNuevoRows(fileName, period){
+  const {byMs}=runNuevoValidador();
+  return Object.values(byMs)
+    .sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:(a.ms<b.ms?-1:1))
+    .map(o=>[o.date,o.ms,o.total,o.libreton,o.nomina,period,fileName]);
+}
+
 async function writeToLooker() {
   try {
     const fileName = new Date().toISOString().slice(0,10);
@@ -945,12 +1090,15 @@ async function writeToLooker() {
 
     // ── eventos_validos_ip (data diaria con filtro máx 4 IPs por ID) ──
     const ipRows = computeIpDailyRows(fileName, period);
+    // ── nuevo_validador (8 filtros nuevos) ──
+    const nuevoRows = computeNuevoRows(fileName, period);
 
     await upsert('eventos_validos', eventRows);
     await upsert('creditos', creditRows);
     await upsert('eventos_validos_ip', ipRows);
+    await upsert('nuevo_validador', nuevoRows);
 
-    return { ok:true, msg:`${eventRows.length} días de eventos · ${creditRows.length} días de créditos · ${ipRows.length} días con filtro IP escritos en Sheet` };
+    return { ok:true, msg:`${eventRows.length} eventos · ${creditRows.length} créditos · ${ipRows.length} IP · ${nuevoRows.length} nuevo_validador (filas fecha×media_source)` };
 
   } catch(e) {
     return { ok:false, msg:`No se pudo escribir en Sheet: ${e.message}. Los datos están procesados localmente.` };
