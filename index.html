@@ -296,6 +296,18 @@ tr:hover td{background:#faf9ff}
         </div>
       </div>
 
+      <!-- P360: lista de exclusión (carga manual) -->
+      <div style="margin-top:16px">
+        <div class="sec-lbl">🚫 P360 · lista de exclusión <span style="color:var(--txm)">(carga manual)</span></div>
+        <div class="card" style="padding:14px 16px">
+          <div style="font-size:11.5px;color:var(--txm);margin-bottom:8px">
+            Pegá los <strong>AppsFlyer ID</strong> de las hojas P360 (Instalaciones / Eventos). Uno por línea, o separados por coma, punto y coma o espacio. Se aplican como filtro en el validador principal y en el Nuevo Validador.
+          </div>
+          <textarea id="p360Input" oninput="parseP360()" placeholder="1788235678664-7905749234502571802&#10;1788201716270-..." style="width:100%;min-height:90px;font-family:monospace;font-size:11px;border:1px solid var(--border);border-radius:6px;padding:8px;resize:vertical"></textarea>
+          <div style="font-size:11px;color:var(--txm);margin-top:6px"><span id="p360Count">0 IDs cargados</span></div>
+        </div>
+      </div>
+
       <!-- Process status -->
       <div id="processStatus" style="display:none"></div>
 
@@ -323,14 +335,15 @@ tr:hover td{background:#faf9ff}
 
       <div id="funnelSection" style="display:none">
         <div class="sec-lbl">Waterfall de filtros</div>
-        <div class="funnel" style="grid-template-columns:repeat(8,1fr)">
+        <div class="funnel" style="grid-template-columns:repeat(9,1fr)">
           <div class="fs s0"><div class="fs-n">Base</div><div class="fs-v" id="fS0">—</div><div class="fs-l">Altas brutas</div><div class="fa">›</div></div>
           <div class="fs sf"><div class="fs-n">Filtro 1</div><div class="fs-v" id="fS1">—</div><div class="fs-l">Tras País/Primary</div><div class="fs-x" id="fE1">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 2</div><div class="fs-v" id="fS2">—</div><div class="fs-l">Tras múlt. comp.</div><div class="fs-x" id="fE2">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 3</div><div class="fs-v" id="fSIp">—</div><div class="fs-l">Tras máx 2 IPs</div><div class="fs-x" id="fEIp">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 4</div><div class="fs-v" id="fSFast">—</div><div class="fs-l">Tras duración <5min</div><div class="fs-x" id="fEFast">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 5</div><div class="fs-v" id="fS3">—</div><div class="fs-l">Tras sin step_6</div><div class="fs-x" id="fE3">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 6</div><div class="fs-v" id="fS4">—</div><div class="fs-l">Tras salto geo</div><div class="fs-x" id="fE4">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 2</div><div class="fs-v" id="fSP360">—</div><div class="fs-l">Tras P360</div><div class="fs-x" id="fEP360">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 3</div><div class="fs-v" id="fS2">—</div><div class="fs-l">Tras múlt. comp.</div><div class="fs-x" id="fE2">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 4</div><div class="fs-v" id="fSIp">—</div><div class="fs-l">Tras máx 3 IPs</div><div class="fs-x" id="fEIp">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 5</div><div class="fs-v" id="fSFast">—</div><div class="fs-l">Tras duración <4min</div><div class="fs-x" id="fEFast">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 6</div><div class="fs-v" id="fS3">—</div><div class="fs-l">Tras sin step_6</div><div class="fs-x" id="fE3">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 7</div><div class="fs-v" id="fS4">—</div><div class="fs-l">Tras salto geo</div><div class="fs-x" id="fE4">—</div><div class="fa">›</div></div>
           <div class="fs se"><div class="fs-n">Válidas</div><div class="fs-v" id="fValid">—</div><div class="fs-l">Altas pagables</div></div>
         </div>
 
@@ -367,9 +380,10 @@ tr:hover td{background:#faf9ff}
             <button class="tab active" onclick="setFilter('all','status',this)">Todos</button>
             <button class="tab" onclick="setFilter('clean','status',this)">✅ Facturables</button>
             <button class="tab" onclick="setFilter('excl_co','status',this)">🌐 País/Primary</button>
+            <button class="tab" onclick="setFilter('excl_p360','status',this)">🚫 P360</button>
             <button class="tab" onclick="setFilter('excl_dup','status',this)">🔁 Múlt. comp.</button>
-            <button class="tab" onclick="setFilter('excl_ip','status',this)">🌐 >2 IPs</button>
-            <button class="tab" onclick="setFilter('excl_fast','status',this)">⏱ Funnel <5min</button>
+            <button class="tab" onclick="setFilter('excl_ip','status',this)">🌐 >3 IPs</button>
+            <button class="tab" onclick="setFilter('excl_fast','status',this)">⏱ Funnel <4min</button>
             <button class="tab" onclick="setFilter('excl_step6','status',this)">⚠ Sin step_6</button>
             <button class="tab" onclick="setFilter('excl_geo','status',this)">📍 Salto geo</button>
           </div>
@@ -515,7 +529,7 @@ tr:hover td{background:#faf9ff}
       <div class="pg-header">
         <div>
           <div class="pg-title">Validación hasta Julio 2026</div>
-          <div class="pg-sub">Vista informativa · aplica además máx. 4 IPs por AppsFlyer ID y duración >5min · NO escribe en el Sheet</div>
+          <div class="pg-sub">Vista informativa · aplica además máx. 4 IPs por AppsFlyer ID y duración >4min · NO escribe en el Sheet</div>
         </div>
         <button class="btn btn-secondary" onclick="analyzeJulio()">↻ Recalcular</button>
       </div>
@@ -525,8 +539,8 @@ tr:hover td{background:#faf9ff}
         &nbsp;📅 Toma solo eventos <strong>hasta el 31/07/2026</strong>.<br>
         &nbsp;🔑 <strong>1 AppsFlyer ID por fila</strong>: cada ID se cuenta una sola vez (garantizado: se agrupa por AppsFlyer ID, no puede haber dos iguales).<br>
         &nbsp;🌐 <strong>Máx. 4 IPs por AppsFlyer ID</strong>: descarta el ID si tiene más de 4 IPs distintas (hasta 4 se acepta).<br>
-        &nbsp;⏱ <strong>Duración >5min</strong>: descarta si el flujo (step_1 a completed) dura menos de 5 minutos.<br>
-        &nbsp;🔀 Orden: País/Primary → Múltiples completions → Máx. 4 IPs por ID → Duración <5min → Sin step_6 → Salto geo.<br>
+        &nbsp;⏱ <strong>Duración >4min</strong>: descarta si el flujo (step_1 a completed) dura menos de 4 minutos.<br>
+        &nbsp;🔀 Orden: País/Primary → Múltiples completions → Máx. 4 IPs por ID → Duración <4min → Sin step_6 → Salto geo.<br>
         &nbsp;ℹ️ Los filtros de IP y duración requieren que el Raw RTG tenga columnas <code>IP</code> y <code>step_1</code>. Si faltan, ese filtro se omite y se avisa.
       </div>
 
@@ -566,7 +580,7 @@ tr:hover td{background:#faf9ff}
       <div class="pg-header">
         <div>
           <div class="pg-title">Nuevo Validador</div>
-          <div class="pg-sub">Criterio nuevo (8 filtros, sin p360) · escribe en la hoja <code>nuevo_validador</code> del Sheet</div>
+          <div class="pg-sub">Criterio nuevo · escribe en la hoja <code>nuevo_validador</code> del Sheet</div>
         </div>
         <button class="btn btn-secondary" onclick="analyzeNuevo()">↻ Recalcular</button>
       </div>
@@ -574,12 +588,13 @@ tr:hover td{background:#faf9ff}
       <div class="criteria">
         <strong>Orden de los filtros (invalida el ID si...):</strong><br>
         &nbsp;1. <strong>reglas_negocio</strong>: el <code>completed_aprobado</code> no cumple producto (libreton/nomina) + Is Primary = true + Country = CO + Partner contiene "rocket".<br>
-        &nbsp;2. <strong>completed_menor_5_min</strong>: menos de 5 min entre step_1 y completed_aprobado.<br>
-        &nbsp;3. <strong>completed_mayor_45_min</strong>: más de 45 min entre step_1 y completed_aprobado.<br>
-        &nbsp;4. <strong>city_mismatch</strong>: la ciudad del último step_1 no coincide con la del completed_aprobado.<br>
-        &nbsp;5. <strong>multiple_ip_por_id</strong>: el ID usó más de 2 IPs distintas (hasta 2 se permite).<br>
-        &nbsp;6. <strong>ip_duplicada</strong>: la IP del completed_aprobado la usan más de 2 AppsFlyer IDs (hasta 2 se permite).<br>
-        &nbsp;ℹ️ Sin secuencia obligatoria (no se exige step_1→step_6→completed). p360 se omite (aplica a UA, acá corremos solo RTG).
+        &nbsp;2. <strong>p360</strong>: el ID está en la lista de exclusión P360 (se carga a mano en "Cargar Archivos").<br>
+        &nbsp;3. <strong>completed_menor_4_min</strong>: menos de 4 min entre step_1 y completed_aprobado.<br>
+        &nbsp;4. <strong>completed_mayor_45_min</strong>: más de 45 min entre step_1 y completed_aprobado.<br>
+        &nbsp;5. <strong>city_mismatch</strong>: la ciudad del último step_1 no coincide con la del completed_aprobado.<br>
+        &nbsp;6. <strong>multiple_ip_por_id</strong>: el ID usó más de 3 IPs distintas (hasta 3 se permite).<br>
+        &nbsp;7. <strong>ip_duplicada</strong>: la IP del completed_aprobado la usan más de 2 AppsFlyer IDs (hasta 2 se permite).<br>
+        &nbsp;ℹ️ Sin secuencia obligatoria (no se exige step_1→step_6→completed).
       </div>
 
       <div id="nvNoData" style="background:#f0eff5;border:1px solid var(--border);border-radius:8px;padding:32px;text-align:center;color:var(--txm)">
@@ -624,12 +639,12 @@ const KNOWN_STEPS          = [STEP_1, STEP_6, COMPLETED_APROBADO, COMPLETED_CONT
 const GEO_MIN              = 50;
 const JULIO_CUTOFF         = '2026-07-31';   // validación informativa: solo eventos hasta esta fecha
 const MAX_IPS              = 4;              // vista informativa (Julio + hoja eventos_validos_ip): hasta 4 IPs por ID
-const MAX_IPS_MAIN         = 2;              // validador principal: hasta 2 IPs por AppsFlyer ID (>2 se descarta)
-const MIN_FUNNEL_MIN       = 5;              // validador principal: duracion step_1 -> completed debe ser >= 5 min
-// Nuevo Validador (8 filtros, sin p360): umbrales
-const NV_MIN_FUNNEL        = 5;              // completed_menor_5_min: < 5 min invalida
+const MAX_IPS_MAIN         = 3;              // validador principal: hasta 3 IPs por AppsFlyer ID (>3 se descarta)
+const MIN_FUNNEL_MIN       = 4;              // validador principal: duracion step_1 -> completed debe ser >= 4 min
+// Nuevo Validador (8 filtros, con p360 de carga manual): umbrales
+const NV_MIN_FUNNEL        = 4;              // completed_menor_5_min: < 4 min invalida
 const NV_MAX_FUNNEL        = 45;             // completed_mayor_45_min: > 45 min invalida
-const NV_MAX_IPS           = 2;              // multiple_ip_por_id: > 2 IPs invalida (hasta 2 ok)
+const NV_MAX_IPS           = 3;              // multiple_ip_por_id: > 3 IPs invalida (hasta 3 ok)
 const NV_MAX_IDS_PER_IP    = 2;             // ip_duplicada: IP del completed usada por > 2 IDs invalida (hasta 2 ok)
 
 // ═══════════════════════════════════════════════
@@ -642,6 +657,17 @@ let allResults   = [];
 let funnelPeriod = { min:null, max:null };
 let activeStatus = 'all';
 let activeProduct= 'all';
+let p360Ids      = new Set();   // lista de exclusión P360 (carga manual, pestaña Cargar Archivos)
+
+// Lee el textarea de P360 y arma el Set de AppsFlyer IDs a excluir (separados por salto de línea, coma, ; o espacio)
+function parseP360(){
+  const el = document.getElementById('p360Input');
+  const txt = el ? (el.value||'') : '';
+  p360Ids = new Set(txt.split(/[\s,;]+/).map(s=>s.trim()).filter(Boolean));
+  const c = document.getElementById('p360Count');
+  if(c) c.textContent = p360Ids.size + (p360Ids.size===1?' ID cargado':' IDs cargados');
+  return p360Ids;
+}
 
 // ═══════════════════════════════════════════════
 // NAVIGATION
@@ -939,6 +965,7 @@ function computeIpDailyRows(fileName, period){
 // NUEVO VALIDADOR (8 filtros, sin p360) — solo completed_aprobado
 // ═══════════════════════════════════════════════
 function runNuevoValidador(){
+  parseP360();
   const byId={};
   (rtgRows||[]).forEach(row=>{
     const id=row['AppsFlyer ID'], e=row['Event Name'];
@@ -961,7 +988,7 @@ function runNuevoValidador(){
     ceOf[id]=cas[0];
     if(cas[0].ip){ (ip2ids[cas[0].ip]=ip2ids[cas[0].ip]||new Set()).add(id); }
   });
-  const wf={base:0,reglas:0,fast:0,slow:0,city:0,multiip:0,ipdup:0,clean:0};
+  const wf={base:0,reglas:0,p360:0,fast:0,slow:0,city:0,multiip:0,ipdup:0,clean:0};
   const prod={libreton:0,nomina:0};
   const byMs={};
   Object.keys(ceOf).forEach(id=>{
@@ -969,6 +996,7 @@ function runNuevoValidador(){
     const product=classifyProduct(getAfContent(ce.value));
     const prodOk=(product==='libreton'||product==='nomina');
     if(!(prodOk && ce.isPrimary==='true' && ce.country==='CO' && ce.partner.toLowerCase().indexOf('rocket')>=0)){ wf.reglas++; return; }
+    if(p360Ids.has(id)){ wf.p360++; return; }   // lista de exclusión P360 (carga manual)
     // (sin filtro de secuencia obligatoria: no se exige step_1 -> step_6 -> completed)
     const s1b=evs.filter(x=>x.event===STEP_1 && x.time!=null && ce.time!=null && x.time<=ce.time);
     const s1ref=s1b.length? s1b.reduce((a,b)=>a.time>=b.time?a:b) : null;
@@ -995,11 +1023,12 @@ function analyzeNuevo(){
   document.getElementById('nvNomina').textContent=prod.nomina;
   let rem=wf.base; const rows=[['Base: IDs con completed_aprobado','',rem]];
   [['1. Reglas de negocio (prod/primary/CO/partner rocket)',wf.reglas],
-   ['2. Completed <5min',wf.fast],
-   ['3. Completed >45min',wf.slow],
-   ['4. City mismatch',wf.city],
-   ['5. Múltiples IPs (>2)',wf.multiip],
-   ['6. IP duplicada (>2 IDs)',wf.ipdup]].forEach(([lbl,ex])=>{ rem-=ex; rows.push([lbl,ex,rem]); });
+   ['2. P360 (lista de exclusión, carga manual)',wf.p360],
+   ['3. Completed <4min',wf.fast],
+   ['4. Completed >45min',wf.slow],
+   ['5. City mismatch',wf.city],
+   ['6. Múltiples IPs (>3)',wf.multiip],
+   ['7. IP duplicada (>2 IDs)',wf.ipdup]].forEach(([lbl,ex])=>{ rem-=ex; rows.push([lbl,ex,rem]); });
   document.getElementById('nvWaterfall').innerHTML=rows.map(r=>
     `<tr><td>${esc(r[0])}</td><td style="text-align:right;color:${r[1]?'var(--er)':'var(--txm)'}">${r[1]===''?'—':'−'+r[1]}</td><td style="text-align:right;font-weight:700">${r[2]}</td></tr>`
   ).join('');
@@ -1150,6 +1179,7 @@ function getAfContent(v){try{return JSON.parse(v).af_content||'';}catch(e){retur
 function classifyProduct(c){c=(c||'').toLowerCase();if(c.includes('libreton'))return 'libreton';if(c.includes('nomina')||c.includes('nómina')||c.includes('pensional'))return 'nomina';return 'other';}
 
 function analyze(rows) {
+  parseP360();
   const byId={};
   rows.forEach(row=>{
     const id=row['AppsFlyer ID'],event=row['Event Name'];
@@ -1188,6 +1218,7 @@ function analyze(rows) {
     const validPrimary=isPrimary==='true'||isPrimary===''||isPrimary==='1';
 
     if(!validCO||!validPrimary){results.push({id,status:'excl_co',filter:'País/Primary',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
+    if(p360Ids.has(id)){results.push({id,status:'excl_p360',filter:'P360',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
     if(completionCount>1){const geo=detectGeoJump(evs);results.push({id,status:'excl_dup',filter:`Múlt. completions (${completionCount})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:geo.detail,completionDate});return;}
     if(nIps>MAX_IPS_MAIN){results.push({id,status:'excl_ip',filter:`>${MAX_IPS_MAIN} IPs (${nIps})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
     if(tooFast){results.push({id,status:'excl_fast',filter:`Funnel <${MIN_FUNNEL_MIN}min (${funnelMin.toFixed(1)})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
@@ -1293,7 +1324,7 @@ function analyzeJulio(){
     ['País ≠ CO / no primary', excl_co, s1],
     ['Múltiples completions', excl_dup, s2],
     ['Máx. 4 IPs por AppsFlyer ID', excl_ip, s3],
-    ['Duración <5min (step_1 a completed)', excl_fast, sFast],
+    ['Duración <4min (step_1 a completed)', excl_fast, sFast],
     ['Sin step_6', excl_s6, s4],
     ['Salto geo <50min', excl_geo, finalValid],
   ];
@@ -1313,15 +1344,17 @@ function analyzeJulio(){
 
 function renderFunnelUI(totalBase){
   const exc_co=allResults.filter(r=>r.status==='excl_co').length;
+  const exc_p360=allResults.filter(r=>r.status==='excl_p360').length;
   const exc_dup=allResults.filter(r=>r.status==='excl_dup').length;
   const exc_ip=allResults.filter(r=>r.status==='excl_ip').length;
   const exc_fast=allResults.filter(r=>r.status==='excl_fast').length;
   const exc_s6=allResults.filter(r=>r.status==='excl_step6').length;
   const exc_geo=allResults.filter(r=>r.status==='excl_geo').length;
   const clean=allResults.filter(r=>r.status==='clean').length;
-  const s0=totalBase,s1=s0-exc_co,s2=s1-exc_dup,sIp=s2-exc_ip,sFast=sIp-exc_fast,s3=sFast-exc_s6,s4=s3-exc_geo;
+  const s0=totalBase,s1=s0-exc_co,sP360=s1-exc_p360,s2=sP360-exc_dup,sIp=s2-exc_ip,sFast=sIp-exc_fast,s3=sFast-exc_s6,s4=s3-exc_geo;
   document.getElementById('fS0').textContent=s0;
   document.getElementById('fS1').textContent=s1;document.getElementById('fE1').textContent=exc_co?`−${exc_co}`:'—';
+  document.getElementById('fSP360').textContent=sP360;document.getElementById('fEP360').textContent=exc_p360?`−${exc_p360}`:'—';
   document.getElementById('fS2').textContent=s2;document.getElementById('fE2').textContent=exc_dup?`−${exc_dup}`:'—';
   document.getElementById('fSIp').textContent=sIp;document.getElementById('fEIp').textContent=exc_ip?`−${exc_ip}`:'—';
   document.getElementById('fSFast').textContent=sFast;document.getElementById('fEFast').textContent=exc_fast?`−${exc_fast}`:'—';
@@ -1351,9 +1384,10 @@ function renderTable(){
   document.getElementById('tableBody').innerHTML=data.map(r=>{
     const sb=r.status==='clean'?'<span class="badge bv">✅ Facturable</span>'
       :r.status==='excl_co'?'<span class="badge bi">🌐 País/Primary</span>'
+      :r.status==='excl_p360'?'<span class="badge bi">🚫 P360</span>'
       :r.status==='excl_dup'?'<span class="badge bi">🔁 Múlt. comp.</span>'
-      :r.status==='excl_ip'?'<span class="badge bi">🌐 >2 IPs</span>'
-      :r.status==='excl_fast'?'<span class="badge bi">⏱ Funnel <5min</span>'
+      :r.status==='excl_ip'?'<span class="badge bi">🌐 >3 IPs</span>'
+      :r.status==='excl_fast'?'<span class="badge bi">⏱ Funnel <4min</span>'
       :r.status==='excl_step6'?'<span class="badge bw">⚠ Sin step_6</span>'
       :'<span class="badge bi">📍 Salto geo</span>';
     const fb=r.filter==='—'?`<span style="color:var(--txm);font-size:11px">—</span>`:`<span style="font-size:11px;color:var(--er)">${esc(r.filter)}</span>`;
