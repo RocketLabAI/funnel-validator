@@ -296,17 +296,28 @@ tr:hover td{background:#faf9ff}
         </div>
       </div>
 
-      <!-- P360: lista de exclusión (carga manual) -->
+      <!-- P360: archivo de exclusión -->
       <div style="margin-top:16px">
-        <div class="sec-lbl">🚫 P360 · lista de exclusión <span style="color:var(--txm)">(carga manual)</span></div>
-        <div class="card" style="padding:14px 16px">
-          <div style="font-size:11.5px;color:var(--txm);margin-bottom:8px">
-            Cantidad de cuentas que descuenta P360 (número entero, del reporte del cliente; no tenemos el desglose por ID). Se resta en el paso P360 del waterfall, en el validador principal y en el Nuevo Validador.
+        <div class="sec-lbl">🚫 P360 · archivo de exclusión <span style="color:var(--txm)">(opcional)</span></div>
+        <div style="font-size:11.5px;color:var(--txm);margin-bottom:8px">
+          Subí el export de AppsFlyer de P360 (Instalaciones / Eventos). Se excluyen los <strong>AppsFlyer ID</strong> que aparezcan en ese archivo, y el validador te muestra cuántos se filtran por P360.
+        </div>
+        <div id="p360Bar" style="display:none;margin-bottom:8px" class="fbar">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span>✅</span>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--ok)" id="p360Name">—</div>
+              <div style="font-size:10.5px;color:var(--txm)" id="p360Summary">—</div>
+            </div>
           </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <input type="number" id="p360Num" min="0" step="1" value="0" oninput="parseP360()" style="width:140px;font-size:14px;font-weight:600;border:1px solid var(--border);border-radius:6px;padding:8px 10px">
-            <span style="font-size:11.5px;color:var(--txm)">cuentas a descontar</span>
-          </div>
+          <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('p360')">✕</button>
+        </div>
+        <div class="uzone" id="p360Zone" style="padding:20px" onclick="document.getElementById('p360Input').click()">
+          <input type="file" id="p360Input" accept=".csv,.tsv,.txt" style="display:none">
+          <div style="font-size:24px;margin-bottom:6px">🚫</div>
+          <h2>Archivo P360</h2>
+          <p>Export AppsFlyer de P360 · match por AppsFlyer ID</p>
+          <div class="uhint">AppsFlyer ID · (mismo formato que el Raw)</div>
         </div>
       </div>
 
@@ -382,6 +393,7 @@ tr:hover td{background:#faf9ff}
             <button class="tab active" onclick="setFilter('all','status',this)">Todos</button>
             <button class="tab" onclick="setFilter('clean','status',this)">✅ Facturables</button>
             <button class="tab" onclick="setFilter('excl_co','status',this)">🌐 País/Primary</button>
+            <button class="tab" onclick="setFilter('excl_p360','status',this)">🚫 P360</button>
             <button class="tab" onclick="setFilter('excl_dup','status',this)">🔁 Múlt. comp.</button>
             <button class="tab" onclick="setFilter('excl_ip','status',this)">🌐 >3 IPs</button>
             <button class="tab" onclick="setFilter('excl_fast','status',this)">⏱ Funnel <4min</button>
@@ -589,7 +601,7 @@ tr:hover td{background:#faf9ff}
       <div class="criteria">
         <strong>Orden de los filtros (invalida el ID si...):</strong><br>
         &nbsp;1. <strong>reglas_negocio</strong>: el <code>completed_aprobado</code> no cumple producto (libreton/nomina) + Is Primary = true + Country = CO + Partner contiene "rocket".<br>
-        &nbsp;2. <strong>p360</strong>: resta la cantidad de cuentas de P360 (número entero, se carga a mano en "Cargar Archivos"; sin desglose por ID).<br>
+        &nbsp;2. <strong>p360</strong>: el AppsFlyer ID aparece en el archivo P360 subido en "Cargar Archivos" (match por ID).<br>
         &nbsp;3. <strong>completed_menor_4_min</strong>: menos de 4 min entre step_1 y completed_aprobado.<br>
         &nbsp;4. <strong>completed_mayor_45_min</strong>: más de 45 min entre step_1 y completed_aprobado.<br>
         &nbsp;5. <strong>city_mismatch</strong>: la ciudad del último step_1 no coincide con la del completed_aprobado.<br>
@@ -658,13 +670,18 @@ let allResults   = [];
 let funnelPeriod = { min:null, max:null };
 let activeStatus = 'all';
 let activeProduct= 'all';
-let p360N        = 0;   // P360: cantidad de cuentas a descontar (número entero, carga manual)
+let p360Rows     = null;        // P360: filas del archivo subido (export AppsFlyer de P360)
+let p360Ids      = new Set();   // P360: AppsFlyer IDs a excluir (se arman desde p360Rows)
 
-// Lee el input numérico de P360 y devuelve el entero a restar en el paso P360
+// Arma el Set de AppsFlyer IDs del archivo P360 subido (match por ID)
 function parseP360(){
-  const el = document.getElementById('p360Num');
-  p360N = el ? Math.max(0, parseInt(el.value, 10) || 0) : 0;
-  return p360N;
+  p360Ids = new Set();
+  (p360Rows||[]).forEach(r=>{
+    const k = Object.keys(r).find(c=>c.toLowerCase().replace(/\s+/g,'')==='appsflyerid');
+    const id = k ? (r[k]||'').trim() : '';
+    if(id) p360Ids.add(id);
+  });
+  return p360Ids;
 }
 
 // ═══════════════════════════════════════════════
@@ -749,6 +766,7 @@ function resetFile(type) {
   if(type==='rtg')      { rtgRows=null; }
   if(type==='ua')       { uaRows=null; }
   if(type==='partners') { partnerRows=null; }
+  if(type==='p360')     { p360Rows=null; p360Ids=new Set(); if(rtgRows){ analyze(rtgRows); analyzeNuevo(); } }
   document.getElementById(type+'Zone').style.display='block';
   document.getElementById(type+'Bar').style.display='none';
   checkProcessBtn();
@@ -772,6 +790,15 @@ document.addEventListener('DOMContentLoaded', () => {
     parseCSVFile(file, rows => {
       uaRows = rows;
       showFileBar('ua', file.name, `${rows.length.toLocaleString('es-CO')} filas (IAEs UA)`);
+    });
+  });
+
+  setupUpload('p360Zone','p360Input', file => {
+    parseCSVFile(file, rows => {
+      p360Rows = rows;
+      parseP360();
+      showFileBar('p360', file.name, `${p360Ids.size.toLocaleString('es-CO')} AppsFlyer ID en P360`);
+      if(rtgRows){ analyze(rtgRows); analyzeNuevo(); }   // recalcular si ya hay datos
     });
   });
 
@@ -994,6 +1021,7 @@ function runNuevoValidador(){
     const product=classifyProduct(getAfContent(ce.value));
     const prodOk=(product==='libreton'||product==='nomina');
     if(!(prodOk && ce.isPrimary==='true' && ce.country==='CO' && ce.partner.toLowerCase().indexOf('rocket')>=0)){ wf.reglas++; return; }
+    if(p360Ids.has(id)){ wf.p360++; return; }   // P360: ID presente en el archivo de exclusión
     // (sin filtro de secuencia obligatoria: no se exige step_1 -> step_6 -> completed)
     const s1b=evs.filter(x=>x.event===STEP_1 && x.time!=null && ce.time!=null && x.time<=ce.time);
     const s1ref=s1b.length? s1b.reduce((a,b)=>a.time>=b.time?a:b) : null;
@@ -1008,9 +1036,6 @@ function runNuevoValidador(){
     const d=(ce.raw||'').slice(0,10), ms=ce.ms||'(sin media source)';
     if(d){ const k=d+'||'+ms; if(!byMs[k]) byMs[k]={date:d,ms,total:0,libreton:0,nomina:0}; byMs[k].total++; byMs[k][product]++; }
   });
-  // P360: resta agregada (número entero, sin desglose por ID). Se aplica después de reglas_negocio.
-  wf.p360 = Math.min(p360N, wf.clean);
-  wf.clean = Math.max(0, wf.clean - p360N);
   return {wf, prod, byMs};
 }
 
@@ -1023,7 +1048,7 @@ function analyzeNuevo(){
   document.getElementById('nvNomina').textContent=prod.nomina;
   let rem=wf.base; const rows=[['Base: IDs con completed_aprobado','',rem]];
   [['1. Reglas de negocio (prod/primary/CO/partner rocket)',wf.reglas],
-   ['2. P360 (lista de exclusión, carga manual)',wf.p360],
+   ['2. P360 (archivo de exclusión, match por ID)',wf.p360],
    ['3. Completed <4min',wf.fast],
    ['4. Completed >45min',wf.slow],
    ['5. City mismatch',wf.city],
@@ -1179,6 +1204,7 @@ function getAfContent(v){try{return JSON.parse(v).af_content||'';}catch(e){retur
 function classifyProduct(c){c=(c||'').toLowerCase();if(c.includes('libreton'))return 'libreton';if(c.includes('nomina')||c.includes('nómina')||c.includes('pensional'))return 'nomina';return 'other';}
 
 function analyze(rows) {
+  parseP360();
   const byId={};
   rows.forEach(row=>{
     const id=row['AppsFlyer ID'],event=row['Event Name'];
@@ -1217,6 +1243,7 @@ function analyze(rows) {
     const validPrimary=isPrimary==='true'||isPrimary===''||isPrimary==='1';
 
     if(!validCO||!validPrimary){results.push({id,status:'excl_co',filter:'País/Primary',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
+    if(p360Ids.has(id)){results.push({id,status:'excl_p360',filter:'P360',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
     if(completionCount>1){const geo=detectGeoJump(evs);results.push({id,status:'excl_dup',filter:`Múlt. completions (${completionCount})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:geo.detail,completionDate});return;}
     if(nIps>MAX_IPS_MAIN){results.push({id,status:'excl_ip',filter:`>${MAX_IPS_MAIN} IPs (${nIps})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
     if(tooFast){results.push({id,status:'excl_fast',filter:`Funnel <${MIN_FUNNEL_MIN}min (${funnelMin.toFixed(1)})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
@@ -1342,14 +1369,14 @@ function analyzeJulio(){
 
 function renderFunnelUI(totalBase){
   const exc_co=allResults.filter(r=>r.status==='excl_co').length;
+  const exc_p360=allResults.filter(r=>r.status==='excl_p360').length;
   const exc_dup=allResults.filter(r=>r.status==='excl_dup').length;
   const exc_ip=allResults.filter(r=>r.status==='excl_ip').length;
   const exc_fast=allResults.filter(r=>r.status==='excl_fast').length;
   const exc_s6=allResults.filter(r=>r.status==='excl_step6').length;
   const exc_geo=allResults.filter(r=>r.status==='excl_geo').length;
   const clean=allResults.filter(r=>r.status==='clean').length;
-  const exc_p360=parseP360();   // P360: número entero a descontar (carga manual, sin desglose por ID)
-  const s0=totalBase,s1=s0-exc_co,sP360=Math.max(0,s1-exc_p360),s2=sP360-exc_dup,sIp=s2-exc_ip,sFast=sIp-exc_fast,s3=sFast-exc_s6,s4=Math.max(0,s3-exc_geo);
+  const s0=totalBase,s1=s0-exc_co,sP360=s1-exc_p360,s2=sP360-exc_dup,sIp=s2-exc_ip,sFast=sIp-exc_fast,s3=sFast-exc_s6,s4=s3-exc_geo;
   document.getElementById('fS0').textContent=s0;
   document.getElementById('fS1').textContent=s1;document.getElementById('fE1').textContent=exc_co?`−${exc_co}`:'—';
   document.getElementById('fSP360').textContent=sP360;document.getElementById('fEP360').textContent=exc_p360?`−${exc_p360}`:'—';
@@ -1382,6 +1409,7 @@ function renderTable(){
   document.getElementById('tableBody').innerHTML=data.map(r=>{
     const sb=r.status==='clean'?'<span class="badge bv">✅ Facturable</span>'
       :r.status==='excl_co'?'<span class="badge bi">🌐 País/Primary</span>'
+      :r.status==='excl_p360'?'<span class="badge bi">🚫 P360</span>'
       :r.status==='excl_dup'?'<span class="badge bi">🔁 Múlt. comp.</span>'
       :r.status==='excl_ip'?'<span class="badge bi">🌐 >3 IPs</span>'
       :r.status==='excl_fast'?'<span class="badge bi">⏱ Funnel <4min</span>'
