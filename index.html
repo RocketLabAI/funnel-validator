@@ -296,29 +296,20 @@ tr:hover td{background:#faf9ff}
         </div>
       </div>
 
-      <!-- P360: archivo de exclusión -->
+      <!-- P360: archivos de exclusión (hasta 6) -->
       <div style="margin-top:16px">
-        <div class="sec-lbl">🚫 P360 · archivo de exclusión <span style="color:var(--txm)">(opcional)</span></div>
+        <div class="sec-lbl">🚫 P360 · archivos de exclusión <span style="color:var(--txm)">(hasta 6, opcional)</span></div>
         <div style="font-size:11.5px;color:var(--txm);margin-bottom:8px">
-          Subí el export de AppsFlyer de P360 (Instalaciones / Eventos). Se excluyen los <strong>AppsFlyer ID</strong> que aparezcan en ese archivo, y el validador te muestra cuántos se filtran por P360.
+          Subí hasta 6 export de AppsFlyer de P360 (Instalaciones / Eventos). Se juntan todos: se excluye cualquier <strong>AppsFlyer ID</strong> que aparezca en cualquiera de los archivos, y el validador muestra cuántos se filtran por P360.
         </div>
-        <div id="p360Bar" style="display:none;margin-bottom:8px" class="fbar">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span>✅</span>
-            <div>
-              <div style="font-size:12px;font-weight:600;color:var(--ok)" id="p360Name">—</div>
-              <div style="font-size:10.5px;color:var(--txm)" id="p360Summary">—</div>
-            </div>
-          </div>
-          <button class="btn btn-secondary" style="font-size:11px;padding:3px 8px" onclick="resetFile('p360')">✕</button>
-        </div>
-        <div class="uzone" id="p360Zone" style="padding:20px" onclick="document.getElementById('p360Input').click()">
-          <input type="file" id="p360Input" accept=".csv,.tsv,.txt" style="display:none">
-          <div style="font-size:24px;margin-bottom:6px">🚫</div>
-          <h2>Archivo P360</h2>
-          <p>Export AppsFlyer de P360 · match por AppsFlyer ID</p>
+        <div class="uzone" id="p360Zone" style="padding:16px" onclick="document.getElementById('p360Input').click()">
+          <input type="file" id="p360Input" accept=".csv,.tsv,.txt" multiple style="display:none">
+          <div style="font-size:22px;margin-bottom:4px">🚫</div>
+          <h2>Archivos P360</h2>
+          <p>Export AppsFlyer de P360 · match por AppsFlyer ID · podés subir varios</p>
           <div class="uhint">AppsFlyer ID · (mismo formato que el Raw)</div>
         </div>
+        <div id="p360List" style="margin-top:8px"></div>
       </div>
 
       <!-- Process status -->
@@ -350,13 +341,13 @@ tr:hover td{background:#faf9ff}
         <div class="sec-lbl">Waterfall de filtros</div>
         <div class="funnel" style="grid-template-columns:repeat(9,1fr)">
           <div class="fs s0"><div class="fs-n">Base</div><div class="fs-v" id="fS0">—</div><div class="fs-l">Altas brutas</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 1</div><div class="fs-v" id="fS1">—</div><div class="fs-l">Tras País/Primary</div><div class="fs-x" id="fE1">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 1</div><div class="fs-v" id="fS1">—</div><div class="fs-l">Tras reglas (País/Primary)</div><div class="fs-x" id="fE1">—</div><div class="fa">›</div></div>
           <div class="fs sf"><div class="fs-n">Filtro 2</div><div class="fs-v" id="fSP360">—</div><div class="fs-l">Tras P360</div><div class="fs-x" id="fEP360">—</div><div class="fa">›</div></div>
           <div class="fs sf"><div class="fs-n">Filtro 3</div><div class="fs-v" id="fS2">—</div><div class="fs-l">Tras múlt. comp.</div><div class="fs-x" id="fE2">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 4</div><div class="fs-v" id="fSIp">—</div><div class="fs-l">Tras máx 3 IPs</div><div class="fs-x" id="fEIp">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 4</div><div class="fs-v" id="fS3">—</div><div class="fs-l">Tras sin step_6</div><div class="fs-x" id="fE3">—</div><div class="fa">›</div></div>
           <div class="fs sf"><div class="fs-n">Filtro 5</div><div class="fs-v" id="fSFast">—</div><div class="fs-l">Tras duración <4min</div><div class="fs-x" id="fEFast">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 6</div><div class="fs-v" id="fS3">—</div><div class="fs-l">Tras sin step_6</div><div class="fs-x" id="fE3">—</div><div class="fa">›</div></div>
-          <div class="fs sf"><div class="fs-n">Filtro 7</div><div class="fs-v" id="fS4">—</div><div class="fs-l">Tras salto geo</div><div class="fs-x" id="fE4">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 6</div><div class="fs-v" id="fS4">—</div><div class="fs-l">Tras salto geo</div><div class="fs-x" id="fE4">—</div><div class="fa">›</div></div>
+          <div class="fs sf"><div class="fs-n">Filtro 7</div><div class="fs-v" id="fSIp">—</div><div class="fs-l">Tras máx 3 IPs</div><div class="fs-x" id="fEIp">—</div><div class="fa">›</div></div>
           <div class="fs se"><div class="fs-n">Válidas</div><div class="fs-v" id="fValid">—</div><div class="fs-l">Altas pagables</div></div>
         </div>
 
@@ -395,10 +386,10 @@ tr:hover td{background:#faf9ff}
             <button class="tab" onclick="setFilter('excl_co','status',this)">🌐 País/Primary</button>
             <button class="tab" onclick="setFilter('excl_p360','status',this)">🚫 P360</button>
             <button class="tab" onclick="setFilter('excl_dup','status',this)">🔁 Múlt. comp.</button>
-            <button class="tab" onclick="setFilter('excl_ip','status',this)">🌐 >3 IPs</button>
-            <button class="tab" onclick="setFilter('excl_fast','status',this)">⏱ Funnel <4min</button>
             <button class="tab" onclick="setFilter('excl_step6','status',this)">⚠ Sin step_6</button>
+            <button class="tab" onclick="setFilter('excl_fast','status',this)">⏱ Funnel <4min</button>
             <button class="tab" onclick="setFilter('excl_geo','status',this)">📍 Salto geo</button>
+            <button class="tab" onclick="setFilter('excl_ip','status',this)">🌐 >3 IPs</button>
           </div>
           <div class="fsep"></div>
           <div class="ftabs" id="productTabs">
@@ -670,18 +661,49 @@ let allResults   = [];
 let funnelPeriod = { min:null, max:null };
 let activeStatus = 'all';
 let activeProduct= 'all';
-let p360Rows     = null;        // P360: filas del archivo subido (export AppsFlyer de P360)
-let p360Ids      = new Set();   // P360: AppsFlyer IDs a excluir (se arman desde p360Rows)
+let p360Files    = [];          // P360: hasta 6 archivos subidos, cada uno {name, rows}
+let p360Ids      = new Set();   // P360: AppsFlyer IDs a excluir (unión de todos los archivos)
+const P360_MAX_FILES = 6;
 
-// Arma el Set de AppsFlyer IDs del archivo P360 subido (match por ID)
+// Arma el Set de AppsFlyer IDs uniendo TODOS los archivos P360 (match por ID)
 function parseP360(){
   p360Ids = new Set();
-  (p360Rows||[]).forEach(r=>{
+  p360Files.forEach(f => (f.rows||[]).forEach(r=>{
     const k = Object.keys(r).find(c=>c.toLowerCase().replace(/\s+/g,'')==='appsflyerid');
     const id = k ? (r[k]||'').trim() : '';
     if(id) p360Ids.add(id);
-  });
+  }));
   return p360Ids;
+}
+
+// Agrega uno o varios archivos P360 (hasta 6 en total) y recalcula
+function addP360Files(fileList){
+  Array.from(fileList||[]).forEach(f=>{
+    if(p360Files.length >= P360_MAX_FILES){ alert('Máximo '+P360_MAX_FILES+' archivos P360.'); return; }
+    parseCSVFile(f, rows=>{
+      p360Files.push({ name:f.name, rows });
+      parseP360(); renderP360List();
+      if(rtgRows){ analyze(rtgRows); analyzeNuevo(); }   // recalcular si ya hay datos
+    });
+  });
+}
+function removeP360(i){
+  p360Files.splice(i,1);
+  parseP360(); renderP360List();
+  if(rtgRows){ analyze(rtgRows); analyzeNuevo(); }
+}
+function renderP360List(){
+  const el=document.getElementById('p360List'); if(!el) return;
+  if(!p360Files.length){ el.innerHTML=''; return; }
+  const rows=p360Files.map((f,i)=>
+    `<div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;padding:4px 0">
+       <span>✅ ${esc(f.name)} <span style="color:var(--txm)">(${(f.rows.length).toLocaleString('es-CO')} filas)</span></span>
+       <button class="btn btn-secondary" style="font-size:10px;padding:2px 7px" onclick="removeP360(${i})">✕</button>
+     </div>`).join('');
+  el.innerHTML=`<div class="card" style="padding:10px 14px">${rows}
+     <div style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px;font-size:12px;font-weight:600;color:var(--ac)">
+       ${p360Files.length}/${P360_MAX_FILES} archivos · ${p360Ids.size.toLocaleString('es-CO')} AppsFlyer ID únicos en P360
+     </div></div>`;
 }
 
 // ═══════════════════════════════════════════════
@@ -766,7 +788,6 @@ function resetFile(type) {
   if(type==='rtg')      { rtgRows=null; }
   if(type==='ua')       { uaRows=null; }
   if(type==='partners') { partnerRows=null; }
-  if(type==='p360')     { p360Rows=null; p360Ids=new Set(); if(rtgRows){ analyze(rtgRows); analyzeNuevo(); } }
   document.getElementById(type+'Zone').style.display='block';
   document.getElementById(type+'Bar').style.display='none';
   checkProcessBtn();
@@ -793,14 +814,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  setupUpload('p360Zone','p360Input', file => {
-    parseCSVFile(file, rows => {
-      p360Rows = rows;
-      parseP360();
-      showFileBar('p360', file.name, `${p360Ids.size.toLocaleString('es-CO')} AppsFlyer ID en P360`);
-      if(rtgRows){ analyze(rtgRows); analyzeNuevo(); }   // recalcular si ya hay datos
-    });
-  });
+  // P360: acepta varios archivos (hasta 6), drag&drop o selección múltiple
+  (function(){
+    const zone=document.getElementById('p360Zone'), input=document.getElementById('p360Input');
+    if(!zone||!input) return;
+    zone.addEventListener('dragover', e=>{e.preventDefault();e.stopPropagation();zone.classList.add('drag-over');});
+    zone.addEventListener('dragleave', e=>{e.stopPropagation();zone.classList.remove('drag-over');});
+    zone.addEventListener('drop', e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('drag-over');addP360Files(e.dataTransfer.files);});
+    input.addEventListener('change', e=>{addP360Files(e.target.files);e.target.value='';});
+  })();
 
   setupUpload('partnersZone','partnersInput', file => {
     parseCSVFile(file, rows => {
@@ -1242,14 +1264,15 @@ function analyze(rows) {
     const validCO=country==='CO';
     const validPrimary=isPrimary==='true'||isPrimary===''||isPrimary==='1';
 
+    // Orden del cliente: Reglas(País/Primary) -> P360 -> Múlt. comp. -> Sin step_6 -> Duración -> Salto geo -> Máx IPs
     if(!validCO||!validPrimary){results.push({id,status:'excl_co',filter:'País/Primary',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
     if(p360Ids.has(id)){results.push({id,status:'excl_p360',filter:'P360',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
     if(completionCount>1){const geo=detectGeoJump(evs);results.push({id,status:'excl_dup',filter:`Múlt. completions (${completionCount})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:geo.detail,completionDate});return;}
-    if(nIps>MAX_IPS_MAIN){results.push({id,status:'excl_ip',filter:`>${MAX_IPS_MAIN} IPs (${nIps})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
-    if(tooFast){results.push({id,status:'excl_fast',filter:`Funnel <${MIN_FUNNEL_MIN}min (${funnelMin.toFixed(1)})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
     if(!hasStep6){results.push({id,status:'excl_step6',filter:'Sin step_6',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
+    if(tooFast){results.push({id,status:'excl_fast',filter:`Funnel <${MIN_FUNNEL_MIN}min (${funnelMin.toFixed(1)})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
     const geo=detectGeoJump(evs);
     if(geo.hasJump){results.push({id,status:'excl_geo',filter:'Salto geo <50min',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:geo.detail,completionDate});return;}
+    if(nIps>MAX_IPS_MAIN){results.push({id,status:'excl_ip',filter:`>${MAX_IPS_MAIN} IPs (${nIps})`,country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});return;}
     if(completionDate)validDates.push(completionDate);
     results.push({id,status:'clean',filter:'—',country,product,mediaSource,afContent,completionCount,hasStep6,hasStep1,nIps,funnelMin,geoDetail:'',completionDate});
   });
@@ -1376,16 +1399,17 @@ function renderFunnelUI(totalBase){
   const exc_s6=allResults.filter(r=>r.status==='excl_step6').length;
   const exc_geo=allResults.filter(r=>r.status==='excl_geo').length;
   const clean=allResults.filter(r=>r.status==='clean').length;
-  const s0=totalBase,s1=s0-exc_co,sP360=s1-exc_p360,s2=sP360-exc_dup,sIp=s2-exc_ip,sFast=sIp-exc_fast,s3=sFast-exc_s6,s4=s3-exc_geo;
+  // Orden cliente: Reglas -> P360 -> Múlt. comp. -> Sin step_6 -> Duración -> Salto geo -> Máx IPs
+  const s0=totalBase,s1=s0-exc_co,sP360=s1-exc_p360,s2=sP360-exc_dup,sS6=s2-exc_s6,sFast=sS6-exc_fast,sGeo=sFast-exc_geo,sIp=sGeo-exc_ip;
   document.getElementById('fS0').textContent=s0;
   document.getElementById('fS1').textContent=s1;document.getElementById('fE1').textContent=exc_co?`−${exc_co}`:'—';
   document.getElementById('fSP360').textContent=sP360;document.getElementById('fEP360').textContent=exc_p360?`−${exc_p360}`:'—';
   document.getElementById('fS2').textContent=s2;document.getElementById('fE2').textContent=exc_dup?`−${exc_dup}`:'—';
-  document.getElementById('fSIp').textContent=sIp;document.getElementById('fEIp').textContent=exc_ip?`−${exc_ip}`:'—';
+  document.getElementById('fS3').textContent=sS6;document.getElementById('fE3').textContent=exc_s6?`−${exc_s6}`:'—';
   document.getElementById('fSFast').textContent=sFast;document.getElementById('fEFast').textContent=exc_fast?`−${exc_fast}`:'—';
-  document.getElementById('fS3').textContent=s3;document.getElementById('fE3').textContent=exc_s6?`−${exc_s6}`:'—';
-  document.getElementById('fS4').textContent=s4;document.getElementById('fE4').textContent=exc_geo?`−${exc_geo}`:'—';
-  document.getElementById('fValid').textContent=s4;
+  document.getElementById('fS4').textContent=sGeo;document.getElementById('fE4').textContent=exc_geo?`−${exc_geo}`:'—';
+  document.getElementById('fSIp').textContent=sIp;document.getElementById('fEIp').textContent=exc_ip?`−${exc_ip}`:'—';
+  document.getElementById('fValid').textContent=sIp;
   const fact=allResults.filter(r=>r.status==='clean');
   document.getElementById('sLibreton').textContent=fact.filter(r=>r.product==='libreton').length;
   document.getElementById('sNomina').textContent=fact.filter(r=>r.product==='nomina').length;
