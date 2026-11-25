@@ -1,0 +1,3 @@
+# Every pull request requests a review from the infra team. The team needs write access to this
+# repository: GitHub ignores an owner without it.
+* @RocketLabAI/infra
